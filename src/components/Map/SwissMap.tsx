@@ -32,7 +32,7 @@ export default function SwissMap() {
         zoom: 12,
       }}
       mapStyle={mapStyle as any}
-      style={{ width: "100vw", height: "100vh" }}
+      style={{ width: "100%", height: "100%" }}
     >
       <NavigationControl position="top-right" />
     </Map>

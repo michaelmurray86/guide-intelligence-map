@@ -1,5 +1,5 @@
-import SwissMap from "@/components/Map";
+import AppLayout from "@/components/layout/AppLayout";
 
 export default function Home() {
-  return <SwissMap />;
+  return <AppLayout />;
 }
