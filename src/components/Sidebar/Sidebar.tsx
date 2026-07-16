@@ -1,3 +1,5 @@
+import { guideNotes } from "@/data/guideNotes";
+
 export default function Sidebar() {
   return (
     <aside className="w-80 bg-slate-100 border-r border-slate-300 p-5 overflow-y-auto text-slate-800">
@@ -35,23 +37,21 @@ export default function Sidebar() {
 
 <div className="text-sm text-slate-700">
 
+    <h3 className="font-semibold mb-2">
+        Guide Intelligence
+    </h3>
+
     <p>
-        <strong>Guide Notes</strong>
+        Guide Notes: {guideNotes.length}
     </p>
 
-    <p>5</p>
-
-    <br />
-
-    <p>
-        <strong>Last Updated</strong>
+    <p className="mt-3">
+        Last Updated
     </p>
 
     <p>July 2026</p>
 
-    <br />
-
-    <p className="text-slate-500">
+    <p className="mt-6 text-slate-500">
         Prototype 0.2
     </p>
 
@@ -59,6 +59,4 @@ export default function Sidebar() {
 
     </aside>
   );
-
-  
 }
