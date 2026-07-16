@@ -2,7 +2,7 @@
 
 import { Marker } from "react-map-gl/maplibre";
 import { GuideNote } from "@/types/GuideNote";
-import { markerColours } from "./markerColours";
+import { markerIcons } from "./markerIcons";
 
 type Props = {
   note: GuideNote;
@@ -19,18 +19,31 @@ export default function GuideMarker({
       latitude={note.latitude}
     >
       <div
-        onClick={() => onClick(note)}
-        title={note.title}
-        style={{
-          width: 18,
-          height: 18,
-          borderRadius: "50%",
-          background: markerColours[note.category],
-          border: "2px solid white",
-          cursor: "pointer",
-          boxShadow: "0 0 4px rgba(0,0,0,0.4)",
-        }}
-      />
+  onClick={() => onClick(note)}
+  title={note.title}
+  style={{
+    width: 32,
+    height: 32,
+    borderRadius: "50%",
+    background: "white",
+    border: "3px solid white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    fontSize: "20px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+    transition: "transform 0.15s ease",
+  }}
+  onMouseEnter={(e) =>
+    (e.currentTarget.style.transform = "scale(1.2)")
+  }
+  onMouseLeave={(e) =>
+    (e.currentTarget.style.transform = "scale(1)")
+  }
+>
+  {markerIcons[note.category]}
+</div>
     </Marker>
   );
 }

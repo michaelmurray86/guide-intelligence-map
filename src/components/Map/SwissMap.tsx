@@ -34,6 +34,14 @@ export default function SwissMap() {
 const [selectedNote, setSelectedNote] =
   useState<GuideNote | null>(null);
 
+  const handleMarkerClick = (note: GuideNote) => {
+  if (selectedNote?.id === note.id) {
+    setSelectedNote(null);
+  } else {
+    setSelectedNote(note);
+  }
+};
+
   return (
     <>
       <Map
@@ -50,7 +58,7 @@ const [selectedNote, setSelectedNote] =
           <GuideMarker
             key={note.id}
             note={note}
-            onClick={setSelectedNote}
+            onClick={handleMarkerClick}
           />
         ))}
       </Map>

@@ -1,6 +1,7 @@
 "use client";
 
 import { GuideNote } from "@/types/GuideNote";
+import { markerIcons } from "../map/markerIcons";
 
 type Props = {
   note: GuideNote | null;
@@ -21,45 +22,42 @@ export default function GuideNotePanel({
       right-4
       w-96
       bg-white
-      rounded-lg
-      shadow-xl
-      p-5
+      rounded-xl
+      shadow-2xl
+      p-6
       z-20"
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4">
 
-        <h2 className="text-xl font-bold">
-          {note.title}
-        </h2>
+    <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+  <span>{markerIcons[note.category]}</span>
+  {note.title}
+</h2>
 
-        <button
-          onClick={onClose}
-          className="text-xl"
-        >
-          ✕
-        </button>
 
       </div>
 
-      <p className="text-sm text-slate-500 mb-5">
+      <p className="inline-block mt-3 mb-6 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 capitalize">
         {note.category}
       </p>
 
-      <h3 className="font-semibold">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
         Description
       </h3>
 
-      <p className="mt-2">
+      <p className="mt-2 text-slate-800 leading-7">
         {note.description}
       </p>
 
       <hr className="my-5" />
 
-      <p>
-        <strong>Last Updated</strong>
-      </p>
+    <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-slate-500">
+        Last Updated
+    </h3>
 
-      <p>{note.updated}</p>
+      <p className="mt-2 text-slate-700">
+  {note.updated}
+</p>
 
     </aside>
   );

@@ -15,10 +15,26 @@ export default function Sidebar() {
             Guide Intelligence
           </h3>
 
-          <label className="block"><input type="checkbox" defaultChecked /> Guide Notes</label>
-          <label className="block"><input type="checkbox" defaultChecked /> Water Sources</label>
-          <label className="block"><input type="checkbox" defaultChecked /> Huts & Cafés</label>
-          <label className="block"><input type="checkbox" defaultChecked /> Hazards</label>
+<label className="block">
+  <input type="checkbox" defaultChecked /> 💧 Water
+</label>
+
+<label className="block">
+  <input type="checkbox" defaultChecked /> ⚠️ Hazards
+</label>
+
+<label className="block">
+  <input type="checkbox" defaultChecked /> 🛖 Huts
+</label>
+
+<label className="block">
+  <input type="checkbox" defaultChecked /> ☕ Cafés
+</label>
+
+<label className="block">
+  <input type="checkbox" defaultChecked /> ℹ️ Information
+</label>
+
         </div>
 
         <div>
