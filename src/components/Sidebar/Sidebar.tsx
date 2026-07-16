@@ -1,49 +1,64 @@
 export default function Sidebar() {
   return (
-    <aside className="w-72 bg-white border-r p-4 overflow-y-auto">
-      <h2 className="font-semibold mb-4">
+    <aside className="w-80 bg-slate-100 border-r border-slate-300 p-5 overflow-y-auto text-slate-800">
+
+      <h2 className="text-xl font-semibold mb-6">
         Layers
       </h2>
 
-      <div className="space-y-2">
+      <div className="space-y-6">
 
-        <h3 className="font-medium mt-4">
-          Guide Intelligence
-        </h3>
+        <div>
+          <h3 className="font-semibold text-slate-900 mb-2">
+            Guide Intelligence
+          </h3>
 
-        <label className="block">
-          <input type="checkbox" defaultChecked /> Guide Notes
-        </label>
+          <label className="block"><input type="checkbox" defaultChecked /> Guide Notes</label>
+          <label className="block"><input type="checkbox" defaultChecked /> Water Sources</label>
+          <label className="block"><input type="checkbox" defaultChecked /> Huts & Cafés</label>
+          <label className="block"><input type="checkbox" defaultChecked /> Hazards</label>
+        </div>
 
-        <label className="block">
-          <input type="checkbox" defaultChecked /> Water
-        </label>
+        <div>
+          <h3 className="font-semibold text-slate-900 mb-2">
+            Official SwissTopo
+          </h3>
 
-        <label className="block">
-          <input type="checkbox" defaultChecked /> Huts
-        </label>
-
-        <label className="block">
-          <input type="checkbox" defaultChecked /> Hazards
-        </label>
-
-        <h3 className="font-medium mt-6">
-          Official Layers
-        </h3>
-
-        <label className="block">
-          <input type="checkbox" defaultChecked /> Hiking Routes
-        </label>
-
-        <label className="block">
-          <input type="checkbox" /> Hiking Grades
-        </label>
-
-        <label className="block">
-          <input type="checkbox" /> Closures
-        </label>
+          <label className="block"><input type="checkbox" defaultChecked /> Hiking Routes</label>
+          <label className="block"><input type="checkbox" /> Hiking Difficulty (Yellow / Red / Blue)</label>
+          <label className="block"><input type="checkbox" /> Trail Closures</label>
+        </div>
 
       </div>
+
+      <hr className="my-8" />
+
+<div className="text-sm text-slate-700">
+
+    <p>
+        <strong>Guide Notes</strong>
+    </p>
+
+    <p>5</p>
+
+    <br />
+
+    <p>
+        <strong>Last Updated</strong>
+    </p>
+
+    <p>July 2026</p>
+
+    <br />
+
+    <p className="text-slate-500">
+        Prototype 0.2
+    </p>
+
+</div>
+
     </aside>
   );
+
+  
 }
