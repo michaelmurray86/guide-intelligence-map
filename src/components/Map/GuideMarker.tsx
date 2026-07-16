@@ -6,15 +6,20 @@ import { markerColours } from "./markerColours";
 
 type Props = {
   note: GuideNote;
+  onClick: (note: GuideNote) => void;
 };
 
-export default function GuideMarker({ note }: Props) {
+export default function GuideMarker({
+  note,
+  onClick,
+}: Props) {
   return (
     <Marker
       longitude={note.longitude}
       latitude={note.latitude}
     >
       <div
+        onClick={() => onClick(note)}
         title={note.title}
         style={{
           width: 18,

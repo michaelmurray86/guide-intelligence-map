@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { GuideNote } from "@/types/GuideNote";
+import GuideNotePanel from "../info/GuideNotePanel";
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 import { Marker } from "react-map-gl/maplibre";
 import { guideNotes } from "@/data/guideNotes";
@@ -27,25 +30,34 @@ const mapStyle = {
 };
 
 export default function SwissMap() {
-  return (
-    <Map
-      initialViewState={{
-        longitude: 7.092,
-        latitude: 46.248,
-        zoom: 12,
-      }}
-      mapStyle={mapStyle as any}
-      style={{ width: "100%", height: "100%" }}
-    >
-      <NavigationControl position="top-right" />
-      
-{guideNotes.map((note) => (
-  <GuideMarker
-    key={note.id}
-    note={note}
-  />
-))}
 
-    </Map>
+const [selectedNote, setSelectedNote] =
+  useState<GuideNote | null>(null);
+
+  return (
+    <>
+      <Map
+        initialViewState={{
+          longitude: 7.092,
+          latitude: 46.248,
+          zoom: 12,
+        }}
+        mapStyle={mapStyle as any}
+        style={{ width: "100%", height: "100%", position: "relative" }}
+      >
+        <NavigationControl position="top-right" />
+        {guideNotes.map((note) => (
+          <GuideMarker
+            key={note.id}
+            note={note}
+            onClick={setSelectedNote}
+          />
+        ))}
+      </Map>
+      <GuideNotePanel
+        note={selectedNote}
+        onClose={() => setSelectedNote(null)}
+      />
+    </>
   );
 }
