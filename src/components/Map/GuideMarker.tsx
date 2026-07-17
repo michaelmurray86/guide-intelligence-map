@@ -32,8 +32,8 @@ export default function GuideMarker({
     justifyContent: "center",
     cursor: "pointer",
     fontSize: "20px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
-    transition: "transform 0.15s ease",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
+    transition: "all 0.15s ease",
   }}
   onMouseEnter={(e) =>
     (e.currentTarget.style.transform = "scale(1.2)")

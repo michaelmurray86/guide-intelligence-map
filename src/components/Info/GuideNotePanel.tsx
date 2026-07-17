@@ -17,47 +17,74 @@ export default function GuideNotePanel({
   return (
     <aside
       className="
-      absolute
-      top-4
-      right-4
-      w-96
-      bg-white
-      rounded-xl
-      shadow-2xl
-      p-6
-      z-20"
+        absolute
+        top-4
+        right-4
+        w-96
+        rounded-xl
+        border
+        border-slate-300
+        bg-white
+        shadow-2xl
+        overflow-hidden
+        z-30
+      "
     >
-      <div className="mb-4">
+      <div className="border-b border-slate-200 p-6">
 
-    <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
-  <span>{markerIcons[note.category]}</span>
-  {note.title}
-</h2>
+        <div className="flex items-center gap-3">
 
+          <div className="text-3xl">
+            {markerIcons[note.category]}
+          </div>
+
+          <div>
+
+            <h2 className="text-2xl font-bold text-slate-900">
+              {note.title}
+            </h2>
+
+            <span className="mt-2 inline-block rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 capitalize">
+              {note.category}
+            </span>
+
+          </div>
+
+        </div>
 
       </div>
 
-      <p className="inline-block mt-3 mb-6 rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700 capitalize">
-        {note.category}
-      </p>
+      <div className="p-6">
 
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-        Description
-      </h3>
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+          Description
+        </h3>
 
-      <p className="mt-2 text-slate-800 leading-7">
-        {note.description}
-      </p>
+        <p className="leading-7 text-slate-800">
+          {note.description}
+        </p>
 
-      <hr className="my-5" />
+        <div className="my-6 border-t border-slate-200" />
 
-    <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-slate-500">
-        Last Updated
-    </h3>
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+          Last Updated
+        </h3>
 
-      <p className="mt-2 text-slate-700">
-  {note.updated}
-</p>
+        <p className="text-slate-700">
+          {note.updated}
+        </p>
+
+        <div className="my-6 border-t border-slate-200" />
+
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+          Photo
+        </h3>
+
+        <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
+          No photo attached
+        </div>
+
+      </div>
 
     </aside>
   );

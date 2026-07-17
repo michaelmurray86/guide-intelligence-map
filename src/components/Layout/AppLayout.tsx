@@ -1,22 +1,31 @@
-import Header from "./Header";
-import Sidebar from "../sidebar/Sidebar";
+"use client";
+
+import { useState } from "react";
+import Sidebar from "../Sidebar/Sidebar";
 import SwissMap from "../map/SwissMap";
+import { GuideFilters } from "@/types/GuideFilters";
 
 export default function AppLayout() {
+
+  const [filters, setFilters] = useState<GuideFilters>({
+    water: true,
+    hazard: true,
+    hut: true,
+    cafe: true,
+    information: true,
+  });
+
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen">
 
-      <Header />
+      <Sidebar
+        filters={filters}
+        setFilters={setFilters}
+      />
 
-      <div className="flex flex-1">
-
-        <Sidebar />
-
-        <main className="flex-1">
-          <SwissMap />
-        </main>
-
-      </div>
+      <main className="flex-1">
+        <SwissMap filters={filters} />
+      </main>
 
     </div>
   );
