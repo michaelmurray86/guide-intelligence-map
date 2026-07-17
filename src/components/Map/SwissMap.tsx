@@ -8,7 +8,9 @@ import { guideNotes } from "@/data/guideNotes";
 import GuideMarker from "./GuideMarker";
 import AddGuideNoteButton from "./AddGuideNoteButton";
 import AddGuideNotePanel from "../info/AddGuideNotePanel";
-import { GuideFilters } from "@/types/GuideFilters";  
+import { GuideFilters } from "@/types/GuideFilters";
+import GuideSectionLayer from "./GuideSectionLayer";
+import { guideSections } from "@/data/guideSections";  
 
 const mapStyle = {
   version: 8,
@@ -81,6 +83,16 @@ const [newLocation, setNewLocation] = useState<{
   }}
       >
         <NavigationControl position="top-right" />
+
+{filters.sections &&
+guideSections.map((section) => (
+  <GuideSectionLayer
+    key={section.id}
+    section={section}
+  />
+))}
+
+
         {guideNotesState
   .filter((note) => filters[note.category])
   .map((note) => (

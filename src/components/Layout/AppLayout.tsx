@@ -13,6 +13,7 @@ export default function AppLayout() {
     hut: true,
     cafe: true,
     information: true,
+    sections: true,
   });
 
   return (

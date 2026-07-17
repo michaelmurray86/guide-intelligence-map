@@ -18,7 +18,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="w-80 border-r border-slate-300 bg-slate-50 p-6 overflow-y-auto">
+    <aside className="w-80 bg-slate-50 border-r border-slate-300 p-6 overflow-y-auto text-slate-800">
 
       <h1 className="mb-8 text-2xl font-bold">
         Guide Intelligence
@@ -30,7 +30,7 @@ export default function Sidebar({
 
       <div className="space-y-3">
 
-        <label className="flex items-center gap-3">
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
             checked={filters.water}
@@ -39,7 +39,7 @@ export default function Sidebar({
           💧 Water
         </label>
 
-        <label className="flex items-center gap-3">
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
             checked={filters.hazard}
@@ -48,7 +48,7 @@ export default function Sidebar({
           ⚠️ Hazards
         </label>
 
-        <label className="flex items-center gap-3">
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
             checked={filters.hut}
@@ -57,7 +57,7 @@ export default function Sidebar({
           🛖 Huts
         </label>
 
-        <label className="flex items-center gap-3">
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
             checked={filters.cafe}
@@ -66,7 +66,7 @@ export default function Sidebar({
           ☕ Cafés
         </label>
 
-        <label className="flex items-center gap-3">
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
             checked={filters.information}
@@ -74,6 +74,15 @@ export default function Sidebar({
           />
           ℹ️ Information
         </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+  <input
+    type="checkbox"
+    checked={filters.sections}
+    onChange={() => toggle("sections")}
+  />
+  🟧 Guide Intelligence Sections
+</label>
 
       </div>
 

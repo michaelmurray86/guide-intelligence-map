@@ -4,4 +4,5 @@ export type GuideFilters = {
   hut: boolean;
   cafe: boolean;
   information: boolean;
+  sections: boolean;
 };
