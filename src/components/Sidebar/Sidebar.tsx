@@ -1,19 +1,38 @@
 import { GuideFilters } from "@/types/GuideFilters";
+import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 
 type Props = {
   filters: GuideFilters;
-  setFilters: React.Dispatch<React.SetStateAction<GuideFilters>>;
+  setFilters: React.Dispatch<
+    React.SetStateAction<GuideFilters>
+  >;
+
+  officialLayers: OfficialLayerFilters;
+  setOfficialLayers: React.Dispatch<
+    React.SetStateAction<OfficialLayerFilters>
+  >;
 };
 
 export default function Sidebar({
   filters,
   setFilters,
+  officialLayers,
+  setOfficialLayers,
 }: Props) {
 
   const toggle = (key: keyof GuideFilters) => {
     setFilters({
       ...filters,
       [key]: !filters[key],
+    });
+  };
+
+  const toggleOfficial = (
+    key: keyof OfficialLayerFilters
+  ) => {
+    setOfficialLayers({
+      ...officialLayers,
+      [key]: !officialLayers[key],
     });
   };
 
@@ -76,7 +95,7 @@ export default function Sidebar({
         </label>
 
         <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-         <input
+          <input
             type="checkbox"
             checked={filters.snow}
             onChange={() => toggle("snow")}
@@ -94,13 +113,60 @@ export default function Sidebar({
         </label>
 
         <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-  <input
-    type="checkbox"
-    checked={filters.sections}
-    onChange={() => toggle("sections")}
-  />
-  🟧 Guide Intelligence Sections
-</label>
+          <input
+            type="checkbox"
+            checked={filters.sections}
+            onChange={() => toggle("sections")}
+          />
+          🟧 Guide Intelligence Sections
+        </label>
+
+      </div>
+
+      <div className="my-8 border-t border-slate-300" />
+
+      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
+        Official SwissTopo Layers
+      </h2>
+
+      <div className="space-y-3">
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+          <input
+            type="checkbox"
+            checked={officialLayers.hikingTrails}
+            onChange={() => toggleOfficial("hikingTrails")}
+          />
+          🥾 Hiking Trails
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+          <input
+            type="checkbox"
+            checked={officialLayers.closures}
+            onChange={() => toggleOfficial("closures")}
+          />
+          🚧 Closures & Diversions
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+          <input
+            type="checkbox"
+            checked={officialLayers.guardianDogs}
+            onChange={() => toggleOfficial("guardianDogs")}
+          />
+          🐕 Livestock Guardian Dogs
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+          <input
+            type="checkbox"
+            checked={officialLayers.shootingRanges}
+            onChange={() => toggleOfficial("shootingRanges")}
+          />
+          🎯 Shooting Range Bulletins
+        </label>
+
 
       </div>
 

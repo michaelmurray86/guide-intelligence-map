@@ -15,6 +15,7 @@ import {
   loadGuideNotes,
   saveGuideNotes,
 } from "@/lib/guideNoteStorage";
+import OfficialLayers from "../Layers/OfficialLayers";
 
 
 const mapStyle = {
@@ -41,11 +42,19 @@ const mapStyle = {
 
 type Props = {
   filters: GuideFilters;
+  officialLayers: {
+    hikingTrails: boolean;
+    closures: boolean;
+    guardianDogs: boolean;
+    shootingRanges: boolean;
+    snowDepth: boolean;
+  };
 };
 
 
 export default function SwissMap({
   filters,
+  officialLayers,
 }: Props) {
 
   const [selectedNote, setSelectedNote] =
@@ -124,6 +133,10 @@ export default function SwissMap({
               onClick={handleMarkerClick}
             />
           ))}
+
+          <OfficialLayers
+            layers={officialLayers}
+          />
 
       </Map>
 
