@@ -3,6 +3,8 @@ export type GuideFilters = {
   hazard: boolean;
   hut: boolean;
   cafe: boolean;
+  toilet: boolean;
+  snow: boolean;
   information: boolean;
   sections: boolean;
 };

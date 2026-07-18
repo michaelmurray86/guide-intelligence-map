@@ -1,23 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import GuideNoteForm from "./GuideNoteForm";
+import { GuideNote, GuideNoteCategory } from "@/types/GuideNote";
 
 type Props = {
   open: boolean;
+  editingNote?: GuideNote | null;
   onSave: (
     title: string,
     description: string,
-    category: string
+    category: GuideNoteCategory
   ) => void;
+  onCancel: () => void;
 };
 
 export default function AddGuideNotePanel({
   open,
+  editingNote,
   onSave,
+  onCancel,
 }: Props) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("information");
+const [title, setTitle] = useState("");
+const [description, setDescription] = useState("");
+
+const [category, setCategory] =
+  useState<GuideNoteCategory>("information");
+
+
+useEffect(() => {
+
+  if (editingNote) {
+
+    setTitle(editingNote.title);
+    setDescription(editingNote.description);
+    setCategory(editingNote.category);
+
+  } else {
+
+    setTitle("");
+    setDescription("");
+    setCategory("information");
+
+  }
+
+}, [editingNote]);
 
   if (!open) return null;
 
@@ -38,62 +65,73 @@ export default function AddGuideNotePanel({
       "
     >
       <h2 className="text-2xl font-bold text-slate-900">
-        Add Guide Note
+        {editingNote ? "Edit Guide Note" : "Add Guide Note"}
       </h2>
 
       <p className="mt-2 mb-6 text-sm text-slate-600">
-        Clicked location has been selected. Enter the details below.
+          {editingNote
+            ? "Update the guide intelligence details below."
+            : "Clicked location has been selected. Enter the details below."
+          }
       </p>
 
-      <label className="block mb-2 text-sm font-semibold text-slate-700">
-        Category
-      </label>
-
-      <select
-        className="mb-5 w-full rounded-lg border border-slate-300 p-2 text-slate-800"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      >
-        <option value="water">💧 Water</option>
-        <option value="hazard">⚠️ Hazard</option>
-        <option value="hut">🛖 Hut</option>
-        <option value="cafe">☕ Café</option>
-        <option value="information">ℹ️ Information</option>
-      </select>
-
-      <label className="block mb-2 text-sm font-semibold text-slate-700">
-        Title
-      </label>
-
-      <input
-        className="mb-5 w-full rounded-lg border border-slate-300 p-2 text-slate-800"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+      <GuideNoteForm
+        title={title}
+        description={description}
+        category={category}
+        onTitleChange={setTitle}
+        onDescriptionChange={setDescription}
+        onCategoryChange={setCategory}
       />
 
-      <label className="block mb-2 text-sm font-semibold text-slate-700">
-        Description
-      </label>
+<div className="flex gap-3">
 
-      <textarea
-        rows={5}
-        className="mb-6 w-full rounded-lg border border-slate-300 p-2 text-slate-800"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+  <button
+    className="
+      flex-1
+      rounded-lg
+      bg-slate-200
+      py-3
+      font-semibold
+      text-slate-800
+      hover:bg-slate-300
+    "
+    onClick={onCancel}
+  >
+    Cancel
+  </button>
 
-      <button
-        className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
-        onClick={() => {
-          onSave(title, description, category);
 
-          setTitle("");
-          setDescription("");
-          setCategory("information");
-        }}
-      >
-        Save Guide Note
-      </button>
+  <button
+    className="
+      flex-1
+      rounded-lg
+      bg-blue-600
+      py-3
+      font-semibold
+      text-white
+      hover:bg-blue-700
+    "
+    onClick={() => {
+
+      onSave(
+        title,
+        description,
+        category
+      );
+
+      setTitle("");
+      setDescription("");
+      setCategory("information");
+
+    }}
+  >
+    {editingNote
+      ? "Save Changes"
+      : "Save Guide Note"}
+  </button>
+
+</div>
     </aside>
   );
 }

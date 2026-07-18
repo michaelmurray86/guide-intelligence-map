@@ -3,5 +3,7 @@ export const markerIcons = {
   hazard: "⚠️",
   hut: "🛖",
   cafe: "☕",
+  toilet: "🚻",
+  snow: "❄️",
   information: "ℹ️",
 };

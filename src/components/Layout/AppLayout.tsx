@@ -12,6 +12,8 @@ export default function AppLayout() {
     hazard: true,
     hut: true,
     cafe: true,
+    toilet: true,
+    snow: true,
     information: true,
     sections: true,
   });

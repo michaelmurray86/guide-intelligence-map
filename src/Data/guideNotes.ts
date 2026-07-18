@@ -8,7 +8,8 @@ export const guideNotes: GuideNote[] = [
     description: "Reliable drinking water throughout summer.",
     longitude: 7.062069,
     latitude: 46.236734,
-    updated: "July 2026",
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
   },
 
   {
@@ -18,7 +19,8 @@ export const guideNotes: GuideNote[] = [
     description: "Steep and exposed path, requires caution, avoid in wet conditions.",
     longitude: 7.088022,
     latitude: 46.262395,
-    updated: "July 2026",
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
   },
 
   {
@@ -28,7 +30,8 @@ export const guideNotes: GuideNote[] = [
     description: "Water not drinkable, requires buying bottled water. Picnic lunches available.",
     longitude: 7.061722,
     latitude: 46.214453,
-    updated: "June 2026",
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
   },
 
   {
@@ -38,7 +41,8 @@ export const guideNotes: GuideNote[] = [
     description: "Toilets and water fountain available.",
     longitude: 7.110500,
     latitude: 46.251983,
-    updated: "July 2026",
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
   },
 
   {
@@ -48,6 +52,7 @@ export const guideNotes: GuideNote[] = [
     description: "Some rockfall risk from cliff, possibly supervise less strong groups here.",
     longitude: 7.078989,
     latitude: 46.256444,
-    updated: "May 2026",
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
   },
 ];

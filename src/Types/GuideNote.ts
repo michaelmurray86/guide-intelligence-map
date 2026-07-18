@@ -1,9 +1,28 @@
+export type GuideNoteCategory =
+  | "water"
+  | "hazard"
+  | "hut"
+  | "cafe"
+  | "toilet"
+  | "snow"
+  | "information";
+
 export type GuideNote = {
   id: number;
-  category: "water" | "hazard" | "hut" | "cafe" | "information";
+
+  category: GuideNoteCategory;
+
   title: string;
- description: string;
- longitude: number;
- latitude: number;
- updated: string;
+
+  description: string;
+
+  longitude: number;
+
+  latitude: number;
+
+  severity?: "low" | "medium" | "high";
+
+  createdAt: string;
+
+  updatedAt: string;
 };

@@ -6,11 +6,15 @@ import { markerIcons } from "../map/markerIcons";
 type Props = {
   note: GuideNote | null;
   onClose: () => void;
+  onDelete: (id: number) => void;
+  onEdit: (note: GuideNote) => void;
 };
 
 export default function GuideNotePanel({
   note,
   onClose,
+  onDelete,
+  onEdit,
 }: Props) {
   if (!note) return null;
 
@@ -71,7 +75,7 @@ export default function GuideNotePanel({
         </h3>
 
         <p className="text-slate-700">
-          {note.updated}
+          {new Date(note.updatedAt).toLocaleDateString("en-GB")}
         </p>
 
         <div className="my-6 border-t border-slate-200" />
@@ -83,6 +87,52 @@ export default function GuideNotePanel({
         <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
           No photo attached
         </div>
+
+        <div className="mt-6 flex gap-3">
+
+            <button
+                className="
+                    flex-1
+                    rounded-lg
+                  bg-blue-600
+                    py-3
+                    font-semibold
+                  text-white
+                  hover:bg-blue-700
+                "
+                onClick={() => {
+                    onEdit(note);
+            }}
+            >
+                Edit Note
+            </button>
+
+
+            <button
+                className="
+                    flex-1
+                    rounded-lg
+                  bg-red-600
+                    py-3
+                    font-semibold
+                  text-white
+                  hover:bg-red-700
+                "
+                onClick={() => {
+                    if (
+                        confirm(
+                            "Delete this guide note?"
+                    )
+                ) {
+                    onDelete(note.id);
+                    onClose();
+                }
+            }}
+            >
+            Delete Note
+            </button>
+
+</div>
 
       </div>
 

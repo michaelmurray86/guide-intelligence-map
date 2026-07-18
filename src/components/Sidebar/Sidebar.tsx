@@ -69,6 +69,24 @@ export default function Sidebar({
         <label className="flex items-center gap-3 cursor-pointer text-slate-700">
           <input
             type="checkbox"
+            checked={filters.toilet}
+            onChange={() => toggle("toilet")}
+          />
+          🚻 Toilets
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+         <input
+            type="checkbox"
+            checked={filters.snow}
+            onChange={() => toggle("snow")}
+          />
+          ❄️ Snow Patches
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
+          <input
+            type="checkbox"
             checked={filters.information}
             onChange={() => toggle("information")}
           />
