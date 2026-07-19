@@ -5,6 +5,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import SwissMap from "../map/SwissMap";
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
+import { GPXRoute } from "@/types/GPXRoute";
 
 export default function AppLayout() {
 
@@ -27,6 +28,9 @@ const [officialLayers, setOfficialLayers] =
     shootingRanges: false,
   });
 
+const [gpxRoute, setGpxRoute] =
+  useState<GPXRoute | null>(null);
+
   return (
     <div className="flex h-screen">
 
@@ -35,12 +39,15 @@ const [officialLayers, setOfficialLayers] =
         setFilters={setFilters}
         officialLayers={officialLayers}
         setOfficialLayers={setOfficialLayers}
+        gpxRoute={gpxRoute}
+        setGpxRoute={setGpxRoute}
       />
 
       <main className="flex-1">
         <SwissMap
           filters={filters}
           officialLayers={officialLayers}
+          gpxRoute={gpxRoute}
         />
       </main>
 

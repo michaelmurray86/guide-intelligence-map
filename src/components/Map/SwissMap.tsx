@@ -16,6 +16,9 @@ import {
   saveGuideNotes,
 } from "@/lib/guideNoteStorage";
 import OfficialLayers from "../Layers/OfficialLayers";
+import { GPXRoute } from "@/types/GPXRoute";
+import GPXLayer from "../GPX/GPXLayer";
+import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 
 
 const mapStyle = {
@@ -42,19 +45,15 @@ const mapStyle = {
 
 type Props = {
   filters: GuideFilters;
-  officialLayers: {
-    hikingTrails: boolean;
-    closures: boolean;
-    guardianDogs: boolean;
-    shootingRanges: boolean;
-    snowDepth: boolean;
-  };
+  officialLayers: OfficialLayerFilters;
+  gpxRoute: GPXRoute | null;
 };
 
 
 export default function SwissMap({
   filters,
   officialLayers,
+  gpxRoute,
 }: Props) {
 
   const [selectedNote, setSelectedNote] =
@@ -136,6 +135,10 @@ export default function SwissMap({
 
           <OfficialLayers
             layers={officialLayers}
+          />
+
+          <GPXLayer
+            route={gpxRoute}
           />
 
       </Map>

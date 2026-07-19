@@ -39,3 +39,16 @@ Current Version: 0.5
 Status: Editable Guide Intelligence complete
 Next: Official SwissTopo Layers
 
+## Version 0.7 – GPX Route Reports
+
+### Goal
+
+Allow a user to import a GPX route, display it on the map and generate a report of Guide Intelligence notes that are relevant to the route.
+
+### Planned Features
+
+- GPX import
+- Display GPX on map
+- Route analysis
+- Route report
+- Future support for line-based guide notes

@@ -1,5 +1,7 @@
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
+import GPXImportButton from "../GPX/GPXImportButton";
+import { GPXRoute } from "@/types/GPXRoute";
 
 type Props = {
   filters: GuideFilters;
@@ -11,6 +13,13 @@ type Props = {
   setOfficialLayers: React.Dispatch<
     React.SetStateAction<OfficialLayerFilters>
   >;
+
+  gpxRoute: GPXRoute | null;
+
+  setGpxRoute:
+  React.Dispatch<
+    React.SetStateAction<GPXRoute | null>
+  >;
 };
 
 export default function Sidebar({
@@ -18,6 +27,8 @@ export default function Sidebar({
   setFilters,
   officialLayers,
   setOfficialLayers,
+  gpxRoute,
+  setGpxRoute,
 }: Props) {
 
   const toggle = (key: keyof GuideFilters) => {
@@ -169,6 +180,17 @@ export default function Sidebar({
 
 
       </div>
+
+      <div className="my-8 border-t border-slate-300" />
+
+      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
+        GPX Routes
+      </h2>
+
+      <GPXImportButton
+        gpxRoute={gpxRoute}
+        setGpxRoute={setGpxRoute}
+      />
 
     </aside>
   );
