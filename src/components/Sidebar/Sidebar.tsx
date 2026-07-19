@@ -1,7 +1,14 @@
+"use client";
+
+import Image from "next/image";
+
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
-import GPXImportButton from "../GPX/GPXImportButton";
 import { GPXRoute } from "@/types/GPXRoute";
+
+import GPXImportButton from "../GPX/GPXImportButton";
+import CollapsibleSection from "../UI/CollapsibleSection";
+import ToggleSwitch from "../UI/ToggleSwitch";
 
 type Props = {
   filters: GuideFilters;
@@ -16,8 +23,7 @@ type Props = {
 
   gpxRoute: GPXRoute | null;
 
-  setGpxRoute:
-  React.Dispatch<
+  setGpxRoute: React.Dispatch<
     React.SetStateAction<GPXRoute | null>
   >;
 };
@@ -31,12 +37,15 @@ export default function Sidebar({
   setGpxRoute,
 }: Props) {
 
-  const toggle = (key: keyof GuideFilters) => {
+  const toggle = (
+    key: keyof GuideFilters
+  ) => {
     setFilters({
       ...filters,
       [key]: !filters[key],
     });
   };
+
 
   const toggleOfficial = (
     key: keyof OfficialLayerFilters
@@ -47,151 +56,196 @@ export default function Sidebar({
     });
   };
 
+
   return (
-    <aside className="w-80 bg-slate-50 border-r border-slate-300 p-6 overflow-y-auto text-slate-800">
 
-      <h1 className="mb-8 text-2xl font-bold">
-        Guide Intelligence
-      </h1>
+    <aside
+      className="
+        w-80
+        bg-slate-50
+        border-r
+        border-slate-300
+        p-5
+        overflow-y-auto
+      "
+    >
 
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
-        Guide Intelligence Layers
-      </h2>
+      {/* Header */}
 
-      <div className="space-y-3">
+      <div className="mb-8 flex flex-col items-center">
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+        <Image
+          src="/nae-logo.png"
+          alt="Nord Anglia Education"
+          width={80}
+          height={80}
+          className="mb-3"
+        />
+
+        <h1
+          className="
+            text-center
+            text-xl
+            font-bold
+            leading-tight
+            text-slate-900
+          "
+        >
+          NAE Switzerland
+          <br />
+          Mountain Knowledge Hub
+        </h1>
+
+      </div>
+
+
+      {/* NAE Knowledge Layers */}
+
+      <CollapsibleSection
+        title="🧭 NAE Knowledge Layers"
+        defaultOpen
+      >
+
+        <div className="space-y-4">
+
+          <ToggleSwitch
             checked={filters.water}
             onChange={() => toggle("water")}
+            label="💧 Water"
           />
-          💧 Water
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.hazard}
             onChange={() => toggle("hazard")}
+            label="⚠️ Hazards"
           />
-          ⚠️ Hazards
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.hut}
             onChange={() => toggle("hut")}
+            label="🛖 Huts"
           />
-          🛖 Huts
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.cafe}
             onChange={() => toggle("cafe")}
+            label="☕ Cafés"
           />
-          ☕ Cafés
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.toilet}
             onChange={() => toggle("toilet")}
+            label="🚻 Toilets"
           />
-          🚻 Toilets
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.snow}
             onChange={() => toggle("snow")}
+            label="❄️ Snow"
           />
-          ❄️ Snow Patches
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.information}
             onChange={() => toggle("information")}
+            label="ℹ️ Information"
           />
-          ℹ️ Information
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+          <ToggleSwitch
             checked={filters.sections}
             onChange={() => toggle("sections")}
+            label="🟧 Knowledge Sections"
           />
-          🟧 Guide Intelligence Sections
-        </label>
 
-      </div>
+        </div>
 
-      <div className="my-8 border-t border-slate-300" />
+      </CollapsibleSection>
 
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
-        Official SwissTopo Layers
-      </h2>
 
-      <div className="space-y-3">
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+      {/* SwissTopo */}
+
+      <CollapsibleSection
+        title="🗺 SwissTopo Layers"
+      >
+
+        <div className="space-y-4">
+
+          <ToggleSwitch
             checked={officialLayers.hikingTrails}
-            onChange={() => toggleOfficial("hikingTrails")}
+            onChange={() =>
+              toggleOfficial("hikingTrails")
+            }
+            label="🥾 Hiking Trails"
           />
-          🥾 Hiking Trails
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+
+          <ToggleSwitch
             checked={officialLayers.closures}
-            onChange={() => toggleOfficial("closures")}
+            onChange={() =>
+              toggleOfficial("closures")
+            }
+            label="🚧 Closures & Diversions"
           />
-          🚧 Closures & Diversions
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+
+          <ToggleSwitch
             checked={officialLayers.guardianDogs}
-            onChange={() => toggleOfficial("guardianDogs")}
+            onChange={() =>
+              toggleOfficial("guardianDogs")
+            }
+            label="🐕 Guardian Dogs"
           />
-          🐕 Livestock Guardian Dogs
-        </label>
 
-        <label className="flex items-center gap-3 cursor-pointer text-slate-700">
-          <input
-            type="checkbox"
+
+          <ToggleSwitch
             checked={officialLayers.shootingRanges}
-            onChange={() => toggleOfficial("shootingRanges")}
+            onChange={() =>
+              toggleOfficial("shootingRanges")
+            }
+            label="🎯 Shooting Bulletins"
           />
-          🎯 Shooting Range Bulletins
-        </label>
 
+        </div>
+
+      </CollapsibleSection>
+
+
+
+      {/* Routes */}
+
+      <CollapsibleSection
+        title="🥾 Routes"
+      >
+
+        <GPXImportButton
+          gpxRoute={gpxRoute}
+          setGpxRoute={setGpxRoute}
+        />
+
+      </CollapsibleSection>
+
+
+
+      {/* Footer */}
+
+      <div
+        className="
+          mt-8
+          border-t
+          border-slate-300
+          pt-4
+          text-center
+          text-xs
+          text-slate-500
+        "
+      >
+
+        Version 0.7
 
       </div>
 
-      <div className="my-8 border-t border-slate-300" />
-
-      <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-slate-500">
-        GPX Routes
-      </h2>
-
-      <GPXImportButton
-        gpxRoute={gpxRoute}
-        setGpxRoute={setGpxRoute}
-      />
 
     </aside>
+
   );
 }
