@@ -10,13 +10,16 @@ import GPXImportButton from "../GPX/GPXImportButton";
 import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
 
+
 type Props = {
   filters: GuideFilters;
+
   setFilters: React.Dispatch<
     React.SetStateAction<GuideFilters>
   >;
 
   officialLayers: OfficialLayerFilters;
+
   setOfficialLayers: React.Dispatch<
     React.SetStateAction<OfficialLayerFilters>
   >;
@@ -28,6 +31,7 @@ type Props = {
   >;
 };
 
+
 export default function Sidebar({
   filters,
   setFilters,
@@ -37,42 +41,40 @@ export default function Sidebar({
   setGpxRoute,
 }: Props) {
 
+
   const toggle = (
     key: keyof GuideFilters
   ) => {
+
     setFilters({
       ...filters,
       [key]: !filters[key],
     });
+
   };
 
 
   const toggleOfficial = (
     key: keyof OfficialLayerFilters
   ) => {
+
     setOfficialLayers({
       ...officialLayers,
       [key]: !officialLayers[key],
     });
+
   };
 
 
   return (
 
-    <aside
-      className="
-        w-80
-        bg-slate-50
-        border-r
-        border-slate-300
-        p-5
-        overflow-y-auto
-      "
-    >
+    <aside className="w-80 bg-slate-50 border-r border-slate-300 p-5 overflow-y-auto">
+
 
       {/* Header */}
 
       <div className="mb-8 flex flex-col items-center">
+
 
         <Image
           src="/nae-logo.png"
@@ -82,24 +84,22 @@ export default function Sidebar({
           className="mb-3"
         />
 
-        <h1
-          className="
-            text-center
-            text-xl
-            font-bold
-            leading-tight
-            text-slate-900
-          "
-        >
+
+        <h1 className="text-center text-xl font-bold leading-tight text-slate-900">
+
           NAE Switzerland
           <br />
           Mountain Knowledge Hub
+
         </h1>
+
 
       </div>
 
 
+
       {/* NAE Knowledge Layers */}
+
 
       <CollapsibleSection
         title="🧭 NAE Knowledge Layers"
@@ -108,11 +108,13 @@ export default function Sidebar({
 
         <div className="space-y-4">
 
+
           <ToggleSwitch
             checked={filters.water}
             onChange={() => toggle("water")}
             label="💧 Water"
           />
+
 
           <ToggleSwitch
             checked={filters.hazard}
@@ -120,11 +122,13 @@ export default function Sidebar({
             label="⚠️ Hazards"
           />
 
+
           <ToggleSwitch
             checked={filters.hut}
             onChange={() => toggle("hut")}
             label="🛖 Huts"
           />
+
 
           <ToggleSwitch
             checked={filters.cafe}
@@ -132,11 +136,13 @@ export default function Sidebar({
             label="☕ Cafés"
           />
 
+
           <ToggleSwitch
             checked={filters.toilet}
             onChange={() => toggle("toilet")}
             label="🚻 Toilets"
           />
+
 
           <ToggleSwitch
             checked={filters.snow}
@@ -144,11 +150,13 @@ export default function Sidebar({
             label="❄️ Snow"
           />
 
+
           <ToggleSwitch
             checked={filters.information}
             onChange={() => toggle("information")}
             label="ℹ️ Information"
           />
+
 
           <ToggleSwitch
             checked={filters.sections}
@@ -156,19 +164,25 @@ export default function Sidebar({
             label="🟧 Knowledge Sections"
           />
 
+
         </div>
+
 
       </CollapsibleSection>
 
 
 
-      {/* SwissTopo */}
+
+
+      {/* SwissTopo Layers */}
+
 
       <CollapsibleSection
         title="🗺 SwissTopo Layers"
       >
 
         <div className="space-y-4">
+
 
           <ToggleSwitch
             checked={officialLayers.hikingTrails}
@@ -177,6 +191,7 @@ export default function Sidebar({
             }
             label="🥾 Hiking Trails"
           />
+
 
 
           <ToggleSwitch
@@ -188,6 +203,7 @@ export default function Sidebar({
           />
 
 
+
           <ToggleSwitch
             checked={officialLayers.guardianDogs}
             onChange={() =>
@@ -195,6 +211,7 @@ export default function Sidebar({
             }
             label="🐕 Guardian Dogs"
           />
+
 
 
           <ToggleSwitch
@@ -205,13 +222,18 @@ export default function Sidebar({
             label="🎯 Shooting Bulletins"
           />
 
+
         </div>
+
 
       </CollapsibleSection>
 
 
 
+
+
       {/* Routes */}
+
 
       <CollapsibleSection
         title="🥾 Routes"
@@ -222,23 +244,17 @@ export default function Sidebar({
           setGpxRoute={setGpxRoute}
         />
 
+
       </CollapsibleSection>
+
+
 
 
 
       {/* Footer */}
 
-      <div
-        className="
-          mt-8
-          border-t
-          border-slate-300
-          pt-4
-          text-center
-          text-xs
-          text-slate-500
-        "
-      >
+
+      <div className="mt-8 border-t border-slate-300 pt-4 text-center text-xs text-slate-500">
 
         Version 0.7
 
@@ -247,5 +263,7 @@ export default function Sidebar({
 
     </aside>
 
+
   );
+
 }
