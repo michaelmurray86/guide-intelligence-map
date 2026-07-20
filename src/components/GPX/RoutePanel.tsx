@@ -17,13 +17,19 @@ type Props = {
   route: GPXRoute | null;
   notes: GuideNote[];
   clearRoute: () => void;
+
+  onSelectNote?: (
+    note: RouteKnowledgeItem
+  ) => void;
 };
+
 
 
 export default function RoutePanel({
   route,
   notes,
   clearRoute,
+  onSelectNote,
 }: Props) {
 
 
@@ -184,7 +190,13 @@ export default function RoutePanel({
             >
 
               <GPXReport
+
                 notes={routeKnowledge}
+
+                onSelectNote={
+                  onSelectNote
+                }
+
               />
 
             </div>
