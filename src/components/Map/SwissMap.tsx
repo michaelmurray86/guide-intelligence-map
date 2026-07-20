@@ -17,11 +17,6 @@ import {
   saveGuideNotes,
 } from "@/lib/guideNoteStorage";
 
-import {
-  findNotesNearRoute,
-} from "@/lib/gpxAnalysis";
-
-
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
 import AddGuideNoteButton from "./AddGuideNoteButton";
@@ -33,7 +28,7 @@ import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 import OfficialLayers from "../Layers/OfficialLayers";
 
 import GPXLayer from "../GPX/GPXLayer";
-import GPXReport from "../GPX/GPXReport";
+import RoutePanel from "../GPX/RoutePanel";
 
 
 const mapStyle = {
@@ -72,6 +67,10 @@ type Props = {
   officialLayers: OfficialLayerFilters;
 
   gpxRoute: GPXRoute | null;
+
+  setGpxRoute: React.Dispatch<
+    React.SetStateAction<GPXRoute | null>
+  >;
 };
 
 
@@ -80,6 +79,7 @@ export default function SwissMap({
   filters,
   officialLayers,
   gpxRoute,
+  setGpxRoute,
 }: Props) {
 
 
@@ -116,15 +116,6 @@ export default function SwissMap({
   /*
     GPX route analysis
   */
-
-  const nearbyNotes =
-    gpxRoute
-      ? findNotesNearRoute(
-          gpxRoute,
-          guideNotesState
-        )
-      : [];
-
 
 
   const handleMarkerClick = (
@@ -286,11 +277,11 @@ export default function SwissMap({
 
         >
 
-          <GPXReport
-
-            notes={nearbyNotes}
-
-          />
+        <RoutePanel
+          route={gpxRoute}
+          notes={guideNotesState}
+          clearRoute={() => setGpxRoute(null)}
+        />
 
         </div>
 

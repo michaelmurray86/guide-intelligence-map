@@ -48,6 +48,7 @@ const [gpxRoute, setGpxRoute] =
           filters={filters}
           officialLayers={officialLayers}
           gpxRoute={gpxRoute}
+          setGpxRoute={setGpxRoute}
         />
       </main>
 
