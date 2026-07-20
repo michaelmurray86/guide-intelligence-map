@@ -1,5 +1,7 @@
 "use client";
 
+import { markerIcons } from "../map/markerIcons";
+
 import { useEffect, useState } from "react";
 
 import { GPXRoute } from "@/types/GPXRoute";
@@ -12,7 +14,6 @@ import {
 
 import GPXReport from "./GPXReport";
 
-
 type Props = {
   route: GPXRoute | null;
   notes: GuideNote[];
@@ -21,63 +22,108 @@ type Props = {
   onSelectNote?: (
     note: RouteKnowledgeItem
   ) => void;
+
+    onFocusNote?: (
+    note: RouteKnowledgeItem
+  ) => void;
 };
-
-
 
 export default function RoutePanel({
   route,
   notes,
   clearRoute,
   onSelectNote,
+  onFocusNote,
 }: Props) {
-
 
   const [routeKnowledge, setRouteKnowledge] =
     useState<RouteKnowledgeItem[]>([]);
 
-
   const [collapsed, setCollapsed] =
     useState(false);
 
-
+  const [selectedIndex, setSelectedIndex] =
+    useState(0);
 
   useEffect(() => {
 
-    if (!route) {
+  if (!route) {
 
-      setRouteKnowledge([]);
+    setRouteKnowledge([]);
+    setSelectedIndex(0);
 
-      return;
+    return;
 
-    }
+  }
+
+  const results =
+    findNotesNearRoute(
+      route,
+      notes
+    );
+
+  setRouteKnowledge(results);
+
+  setSelectedIndex(0);
 
 
-    const results =
-      findNotesNearRoute(
-        route,
-        notes
+}, [
+  route,
+  notes,
+  onSelectNote,
+]);
+
+
+  const previousNote = () => {
+
+    if (
+      !routeKnowledge.length ||
+      !onSelectNote
+    ) return;
+
+    const newIndex =
+      Math.max(
+        selectedIndex - 1,
+        0
       );
 
+    setSelectedIndex(newIndex);
 
-    setRouteKnowledge(results);
+onFocusNote?.(
+  routeKnowledge[newIndex]
+);
+
+  };
 
 
-  }, [
-    route,
-    notes,
-  ]);
+  const nextNote = () => {
 
+    if (
+      !routeKnowledge.length ||
+      !onSelectNote
+    ) return;
+
+    const newIndex =
+      Math.min(
+        selectedIndex + 1,
+        routeKnowledge.length - 1
+      );
+
+    setSelectedIndex(newIndex);
+
+onFocusNote?.(
+  routeKnowledge[newIndex]
+);
+
+  };
 
 
   if (!route) return null;
 
-
-
   return (
 
     <div
-    className={`
+      className={`
         fixed
         top-6
         left-[22rem]
@@ -92,9 +138,8 @@ export default function RoutePanel({
         border
         border-slate-300
         z-20
-    `}
+      `}
     >
-
 
       {/* Header */}
 
@@ -125,7 +170,6 @@ export default function RoutePanel({
             🥾 Route Overview
           </h2>
 
-
           <p
             className="
               mt-1
@@ -136,9 +180,7 @@ export default function RoutePanel({
             {route.name}
           </p>
 
-
         </div>
-
 
         <span
           className="
@@ -149,16 +191,12 @@ export default function RoutePanel({
           {collapsed ? "▲" : "▼"}
         </span>
 
-
       </div>
-
-
 
       {
         !collapsed && (
 
           <>
-
 
             {/* Summary */}
 
@@ -177,10 +215,7 @@ export default function RoutePanel({
               </span>{" "}
               knowledge items found
 
-
             </div>
-
-
 
             {/* Report */}
 
@@ -193,33 +228,142 @@ export default function RoutePanel({
             >
 
               <GPXReport
-
                 notes={routeKnowledge}
-
                 onSelectNote={
                   onSelectNote
                 }
-
               />
 
             </div>
 
-
-
-            {/* Clear button */}
+            {/* Footer */}
 
             <div
               className="
                 border-t
+                bg-white
                 p-3
               "
             >
+
+              {routeKnowledge.length > 0 && (
+
+  <div
+    className="
+      mb-3
+      rounded-lg
+      border
+      border-slate-200
+      bg-slate-50
+      p-3
+    "
+  >
+
+    <div
+      className="
+        flex
+        items-center
+        justify-between
+      "
+    >
+
+      <button
+        onClick={previousNote}
+        disabled={selectedIndex === 0}
+        className="
+          rounded-md
+          border
+          px-3
+          py-1
+          text-sm
+          hover:bg-white
+          disabled:cursor-not-allowed
+          disabled:opacity-40
+        "
+      >
+        ◀ Previous
+      </button>
+
+      <span
+        className="
+          text-sm
+          font-semibold
+          text-slate-700
+        "
+      >
+        {selectedIndex + 1}
+        {" / "}
+        {routeKnowledge.length}
+      </span>
+
+      <button
+        onClick={nextNote}
+        disabled={
+          selectedIndex ===
+          routeKnowledge.length - 1
+        }
+        className="
+          rounded-md
+          border
+          px-3
+          py-1
+          text-sm
+          hover:bg-white
+          disabled:cursor-not-allowed
+          disabled:opacity-40
+        "
+      >
+        Next ▶
+      </button>
+
+    </div>
+
+    <div className="mt-3">
+
+      <p className="text-xs text-slate-500">
+        Distance along route
+      </p>
+
+      <p className="font-medium text-slate-800">
+        {(
+          routeKnowledge[selectedIndex]
+            .distanceAlongRoute / 1000
+        ).toFixed(1)}
+        {" km"}
+      </p>
+
+<div className="mt-2 flex items-center gap-2">
+
+  <span className="text-xl">
+    {
+      markerIcons[
+        routeKnowledge[selectedIndex]
+          .note.category
+      ]
+    }
+  </span>
+
+  <p className="font-semibold text-slate-900">
+    {
+      routeKnowledge[selectedIndex]
+        .note.title
+    }
+  </p>
+
+</div>
+
+    </div>
+
+  </div>
+
+)}
 
               <button
 
                 onClick={clearRoute}
 
                 className="
+                  mt-3
                   w-full
                   rounded-md
                   bg-slate-700
@@ -238,15 +382,12 @@ export default function RoutePanel({
 
               </button>
 
-
             </div>
-
 
           </>
 
         )
       }
-
 
     </div>
 

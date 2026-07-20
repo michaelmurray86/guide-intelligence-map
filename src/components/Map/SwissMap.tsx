@@ -126,14 +126,11 @@ export default function SwissMap({
     GPX route analysis
   */
 
-    const handleRouteNoteSelect = (
+    const handleRouteNoteFocus = (
   item: RouteKnowledgeItem
 ) => {
 
   const note = item.note;
-
-
-  setSelectedNote(note);
 
 
   if (mapRef.current) {
@@ -145,13 +142,29 @@ export default function SwissMap({
         note.latitude,
       ],
 
-      zoom: 13.5,
+      zoom: 12.8,
 
       duration: 1200,
 
     });
 
   }
+
+};
+
+
+
+const handleRouteNoteSelect = (
+  item: RouteKnowledgeItem
+) => {
+
+  const note = item.note;
+
+
+  setSelectedNote(note);
+
+
+  handleRouteNoteFocus(item);
 
 };
 
@@ -318,8 +331,12 @@ export default function SwissMap({
         <RoutePanel
           route={gpxRoute}
           notes={guideNotesState}
-          clearRoute={() => setGpxRoute(null)}
+            clearRoute={() => {
+              setGpxRoute(null);
+              setSelectedNote(null);
+            }}
           onSelectNote={handleRouteNoteSelect}
+          onFocusNote={handleRouteNoteFocus}
         />
 
         </div>
