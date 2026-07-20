@@ -77,17 +77,18 @@ export default function Sidebar({
 
 
         <Image
-          src="/nae-logo.png"
+          src="/nae-logo-cropped.png"
           alt="Nord Anglia Education"
-          width={80}
-          height={80}
+          width={319}
+          height={70}
           className="mb-3"
+          loading="eager"
         />
 
 
         <h1 className="text-center text-xl font-bold leading-tight text-slate-900">
 
-          NAE Switzerland
+          Switzerland
           <br />
           Mountain Knowledge Hub
 
@@ -103,7 +104,7 @@ export default function Sidebar({
 
       <CollapsibleSection
         title="🧭 NAE Knowledge Layers"
-        defaultOpen
+        // defaultOpen
       >
 
         <div className="space-y-4">

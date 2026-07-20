@@ -77,12 +77,14 @@ export default function RoutePanel({
   return (
 
     <div
-      className="
-        absolute
-        top-4
-        right-4
-        w-96
-        max-h-[70vh]
+    className={`
+        fixed
+        top-6
+        left-[22rem]
+        w-80
+        ${collapsed ? "" : "h-[75vh]"}
+        flex
+        flex-col
         overflow-hidden
         rounded-xl
         bg-white
@@ -90,7 +92,7 @@ export default function RoutePanel({
         border
         border-slate-300
         z-20
-      "
+    `}
     >
 
 
@@ -184,8 +186,9 @@ export default function RoutePanel({
 
             <div
               className="
+                flex-1
+                min-h-0
                 overflow-y-auto
-                max-h-[45vh]
               "
             >
 

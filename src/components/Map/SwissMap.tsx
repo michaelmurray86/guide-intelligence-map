@@ -145,7 +145,7 @@ export default function SwissMap({
         note.latitude,
       ],
 
-      zoom: 15,
+      zoom: 13.5,
 
       duration: 1200,
 
