@@ -78,6 +78,23 @@ export default function OfficialLayers({
           />
         </Source>
       )}
+
+      {layers.transportStops && (
+        <Source
+          id="swisstopo-transport-stops"
+          type="raster"
+          tiles={officialSwissTopoLayers.transportStops.tiles}
+          tileSize={256}
+        >
+          <Layer
+            id="swisstopo-transport-stops-layer"
+            type="raster"
+            paint={{
+              "raster-opacity": 0.8,
+            }}
+          />
+        </Source>
+      )}
     </>
   );
 }

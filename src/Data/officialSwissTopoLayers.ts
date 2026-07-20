@@ -30,4 +30,12 @@ export const officialSwissTopoLayers = {
       "https://wms.geo.admin.ch/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=ch.vbs.schiessanzeigen&STYLES=&FORMAT=image/png&TRANSPARENT=true&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256",
     ],
   },
+
+  transportStops: {
+    provider: "BAV",
+    service: "WMS",
+    tiles: [
+      "https://wms.geo.admin.ch/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=ch.bav.haltestellen-oev&STYLES=&FORMAT=image/png&TRANSPARENT=true&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256",
+    ],
+  },
 };

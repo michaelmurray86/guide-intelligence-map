@@ -224,6 +224,17 @@ export default function Sidebar({
           />
 
 
+
+          <ToggleSwitch
+            checked={officialLayers.transportStops}
+            onChange={() =>
+              toggleOfficial("transportStops")
+            }
+            label="🚉 Transport Stops"
+          />
+
+
+
         </div>
 
 

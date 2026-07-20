@@ -26,6 +26,7 @@ const [officialLayers, setOfficialLayers] =
     closures: false,
     guardianDogs: false,
     shootingRanges: false,
+    transportStops: false,
   });
 
 const [gpxRoute, setGpxRoute] =
