@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 
@@ -28,6 +32,9 @@ import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 import OfficialLayers from "../Layers/OfficialLayers";
 
 import GPXLayer from "../GPX/GPXLayer";
+import {
+  RouteKnowledgeItem,
+} from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
 
 
@@ -82,6 +89,8 @@ export default function SwissMap({
   setGpxRoute,
 }: Props) {
 
+  const mapRef = useRef<any>(null);
+
 
   const [selectedNote, setSelectedNote] =
     useState<GuideNote | null>(null);
@@ -117,6 +126,34 @@ export default function SwissMap({
     GPX route analysis
   */
 
+    const handleRouteNoteSelect = (
+  item: RouteKnowledgeItem
+) => {
+
+  const note = item.note;
+
+
+  setSelectedNote(note);
+
+
+  if (mapRef.current) {
+
+    mapRef.current.flyTo({
+
+      center: [
+        note.longitude,
+        note.latitude,
+      ],
+
+      zoom: 15,
+
+      duration: 1200,
+
+    });
+
+  }
+
+};
 
   const handleMarkerClick = (
     note:GuideNote
@@ -143,6 +180,7 @@ export default function SwissMap({
 
       <Map
 
+        ref={mapRef}
         initialViewState={{
           longitude:7.092,
           latitude:46.248,
@@ -281,6 +319,7 @@ export default function SwissMap({
           route={gpxRoute}
           notes={guideNotesState}
           clearRoute={() => setGpxRoute(null)}
+          onSelectNote={handleRouteNoteSelect}
         />
 
         </div>
