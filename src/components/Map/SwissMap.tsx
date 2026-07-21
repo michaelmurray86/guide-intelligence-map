@@ -120,7 +120,75 @@ export default function SwissMap({
       longitude:number;
     } | null>(null);
 
+useEffect(() => {
 
+  if (!gpxRoute || !mapRef.current)
+    return;
+
+
+  const coordinates =
+    gpxRoute.geojson.features.flatMap(
+      feature => {
+
+        if (
+          feature.geometry.type === "LineString"
+        ) {
+          return feature.geometry.coordinates;
+        }
+
+
+        if (
+          feature.geometry.type === "MultiLineString"
+        ) {
+          return feature.geometry.coordinates.flat();
+        }
+
+
+        return [];
+
+      }
+    );
+
+
+  if (coordinates.length === 0)
+    return;
+
+
+  let minLng = coordinates[0][0];
+  let maxLng = coordinates[0][0];
+  let minLat = coordinates[0][1];
+  let maxLat = coordinates[0][1];
+
+
+  coordinates.forEach(([lng, lat]) => {
+
+    minLng = Math.min(minLng, lng);
+    maxLng = Math.max(maxLng, lng);
+
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+
+  });
+
+
+  mapRef.current.fitBounds(
+    [
+      [minLng, minLat],
+      [maxLng, maxLat],
+    ],
+    {
+      padding: {
+        top: 80,
+        bottom: 80,
+        left: 420,
+        right: 80,
+      },
+      duration: 1200,
+    }
+  );
+
+
+}, [gpxRoute]);
 
   /*
     GPX route analysis
