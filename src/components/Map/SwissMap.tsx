@@ -120,7 +120,9 @@ export default function SwissMap({
       longitude:number;
     } | null>(null);
 
-useEffect(() => {
+const handleRouteOverview = () => {
+
+  setSelectedNote(null);
 
   if (!gpxRoute || !mapRef.current)
     return;
@@ -187,6 +189,13 @@ useEffect(() => {
     }
   );
 
+};
+
+
+
+useEffect(() => {
+
+  handleRouteOverview();
 
 }, [gpxRoute]);
 
@@ -405,6 +414,7 @@ const handleRouteNoteSelect = (
             }}
           onSelectNote={handleRouteNoteSelect}
           onFocusNote={handleRouteNoteFocus}
+          onOverview={handleRouteOverview}
         />
 
         </div>

@@ -19,6 +19,8 @@ type Props = {
   notes: GuideNote[];
   clearRoute: () => void;
 
+  onOverview?: () => void;
+
   onSelectNote?: (
     note: RouteKnowledgeItem
   ) => void;
@@ -32,6 +34,7 @@ export default function RoutePanel({
   route,
   notes,
   clearRoute,
+  onOverview,
   onSelectNote,
   onFocusNote,
 }: Props) {
@@ -355,6 +358,31 @@ onFocusNote?.(
     </div>
 
   </div>
+
+)}
+
+{onOverview && (
+
+  <button
+    onClick={onOverview}
+    className="
+      mt-3
+      w-full
+      rounded-md
+      border
+      border-slate-300
+      bg-white
+      px-3
+      py-2
+      text-sm
+      font-medium
+      text-slate-700
+      hover:bg-slate-50
+      transition
+    "
+  >
+    🗺 Show Full Route
+  </button>
 
 )}
 
