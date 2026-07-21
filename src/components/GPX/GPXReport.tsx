@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { RouteKnowledgeItem } from "@/lib/gpxAnalysis";
 
@@ -31,19 +31,24 @@ export default function GPXReport({
   const [selectedIndex, setSelectedIndex] =
     useState(0);
 
-
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const selectItem = (
-    index:number
-  ) => {
+  index:number
+) => {
 
-    setSelectedIndex(index);
+  setSelectedIndex(index);
 
-    onFocusNote?.(
+  onFocusNote?.(
     notes[index]
-    );
+  );
 
-  };
+  itemRefs.current[index]?.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+
+};
 
 
 
@@ -85,6 +90,10 @@ export default function GPXReport({
         border-slate-200
         shadow-md
         p-5
+        flex
+        flex-col
+        h-full
+        min-h-0
       "
     >
 
@@ -93,7 +102,7 @@ export default function GPXReport({
         className="
           font-bold
           text-lg
-          mb-4
+          mb-5
           text-slate-800
         "
       >
@@ -194,7 +203,11 @@ export default function GPXReport({
 
           <div
             className="
+              flex-1
+              min-h-0
+              overflow-y-auto
               space-y-3
+              pr-1
             "
           >
 
@@ -204,15 +217,19 @@ export default function GPXReport({
 
               <div
 
-                key={item.note.id}
+  key={item.note.id}
 
-                onClick={() => {
+  ref={(el) => {
+    itemRefs.current[index] = el;
+  }}
 
-                  setSelectedIndex(index);
+  onClick={() => {
 
-                  onSelectNote?.(item);
+    setSelectedIndex(index);
 
-                }}
+    onSelectNote?.(item);
+
+  }}
 
 
                 className={`
