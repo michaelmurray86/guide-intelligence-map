@@ -203,11 +203,17 @@ useEffect(() => {
     GPX route analysis
   */
 
-    const handleRouteNoteFocus = (
+const handleRouteNoteFocus = (
   item: RouteKnowledgeItem
 ) => {
 
   const note = item.note;
+
+
+  // Update the open panel if it is already showing
+  if (selectedNote) {
+    setSelectedNote(note);
+  }
 
 
   if (mapRef.current) {

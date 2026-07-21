@@ -1,7 +1,5 @@
 "use client";
 
-import { markerIcons } from "../map/markerIcons";
-
 import { useEffect, useState } from "react";
 
 import { GPXRoute } from "@/types/GPXRoute";
@@ -25,9 +23,10 @@ type Props = {
     note: RouteKnowledgeItem
   ) => void;
 
-    onFocusNote?: (
+onFocusNote?: (
     note: RouteKnowledgeItem
   ) => void;
+
 };
 
 export default function RoutePanel({
@@ -45,15 +44,11 @@ export default function RoutePanel({
   const [collapsed, setCollapsed] =
     useState(false);
 
-  const [selectedIndex, setSelectedIndex] =
-    useState(0);
-
-  useEffect(() => {
+useEffect(() => {
 
   if (!route) {
 
     setRouteKnowledge([]);
-    setSelectedIndex(0);
 
     return;
 
@@ -67,58 +62,11 @@ export default function RoutePanel({
 
   setRouteKnowledge(results);
 
-  setSelectedIndex(0);
-
 
 }, [
   route,
   notes,
-  onSelectNote,
 ]);
-
-
-  const previousNote = () => {
-
-    if (
-      !routeKnowledge.length ||
-      !onSelectNote
-    ) return;
-
-    const newIndex =
-      Math.max(
-        selectedIndex - 1,
-        0
-      );
-
-    setSelectedIndex(newIndex);
-
-onFocusNote?.(
-  routeKnowledge[newIndex]
-);
-
-  };
-
-
-  const nextNote = () => {
-
-    if (
-      !routeKnowledge.length ||
-      !onSelectNote
-    ) return;
-
-    const newIndex =
-      Math.min(
-        selectedIndex + 1,
-        routeKnowledge.length - 1
-      );
-
-    setSelectedIndex(newIndex);
-
-onFocusNote?.(
-  routeKnowledge[newIndex]
-);
-
-  };
 
 
   if (!route) return null;
@@ -232,9 +180,8 @@ onFocusNote?.(
 
               <GPXReport
                 notes={routeKnowledge}
-                onSelectNote={
-                  onSelectNote
-                }
+                onSelectNote={onSelectNote}
+                onFocusNote={onFocusNote}
               />
 
             </div>
@@ -249,117 +196,6 @@ onFocusNote?.(
               "
             >
 
-              {routeKnowledge.length > 0 && (
-
-  <div
-    className="
-      mb-3
-      rounded-lg
-      border
-      border-slate-200
-      bg-slate-50
-      p-3
-    "
-  >
-
-    <div
-      className="
-        flex
-        items-center
-        justify-between
-      "
-    >
-
-      <button
-        onClick={previousNote}
-        disabled={selectedIndex === 0}
-        className="
-          rounded-md
-          border
-          px-3
-          py-1
-          text-sm
-          hover:bg-white
-          disabled:cursor-not-allowed
-          disabled:opacity-40
-        "
-      >
-        ◀ Previous
-      </button>
-
-      <span
-        className="
-          text-sm
-          font-semibold
-          text-slate-700
-        "
-      >
-        {selectedIndex + 1}
-        {" / "}
-        {routeKnowledge.length}
-      </span>
-
-      <button
-        onClick={nextNote}
-        disabled={
-          selectedIndex ===
-          routeKnowledge.length - 1
-        }
-        className="
-          rounded-md
-          border
-          px-3
-          py-1
-          text-sm
-          hover:bg-white
-          disabled:cursor-not-allowed
-          disabled:opacity-40
-        "
-      >
-        Next ▶
-      </button>
-
-    </div>
-
-    <div className="mt-3">
-
-      <p className="text-xs text-slate-500">
-        Distance along route
-      </p>
-
-      <p className="font-medium text-slate-800">
-        {(
-          routeKnowledge[selectedIndex]
-            .distanceAlongRoute / 1000
-        ).toFixed(1)}
-        {" km"}
-      </p>
-
-<div className="mt-2 flex items-center gap-2">
-
-  <span className="text-xl">
-    {
-      markerIcons[
-        routeKnowledge[selectedIndex]
-          .note.category
-      ]
-    }
-  </span>
-
-  <p className="font-semibold text-slate-900">
-    {
-      routeKnowledge[selectedIndex]
-        .note.title
-    }
-  </p>
-
-</div>
-
-    </div>
-
-  </div>
-
-)}
 
 {onOverview && (
 
