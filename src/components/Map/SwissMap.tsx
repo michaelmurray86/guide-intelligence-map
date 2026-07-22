@@ -100,6 +100,9 @@ export default function SwissMap({
   const [selectedSection, setSelectedSection] =
     useState<GuideSection | null>(null);
 
+    const [hoveredSectionId, setHoveredSectionId] =
+  useState<number | null>(null);
+
   const [editingNote, setEditingNote] =
     useState<GuideNote | null>(null);
 
@@ -188,6 +191,7 @@ const handleRouteOverview = () => {
         left: 420,
         right: 80,
       },
+      maxZoom: 14,
       duration: 1200,
     }
   );
@@ -381,6 +385,30 @@ const handleSectionClick = (
           position:"relative",
         }}
 
+        onMouseMove={(event) => {
+
+  if(event.features?.length){
+
+    const layerId = event.features[0].layer.id;
+
+    if(layerId.startsWith("hit-")){
+
+      const sectionId =
+        Number(
+          layerId.replace("hit-", "")
+        );
+
+      setHoveredSectionId(sectionId);
+
+      return;
+
+    }
+
+  }
+
+  setHoveredSectionId(null);
+
+}}
 
         onClick={(event)=>{
 
@@ -454,6 +482,10 @@ const handleSectionClick = (
               key={section.id}
 
               section={section}
+
+                hovered={
+    hoveredSectionId === section.id
+                }
 
             />
 

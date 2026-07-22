@@ -18,7 +18,7 @@ export default function GuideMarker({
       longitude={note.longitude}
       latitude={note.latitude}
     >
-      <div
+  <div
   onClick={() => onClick(note)}
   title={note.title}
   style={{
@@ -33,14 +33,18 @@ export default function GuideMarker({
     cursor: "pointer",
     fontSize: "20px",
     boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
-    transition: "all 0.15s ease",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
   }}
-  onMouseEnter={(e) =>
-    (e.currentTarget.style.transform = "scale(1.2)")
-  }
-  onMouseLeave={(e) =>
-    (e.currentTarget.style.transform = "scale(1)")
-  }
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = "scale(1.35)";
+    e.currentTarget.style.boxShadow =
+      "0 0 0 8px rgba(255,255,255,0.7), 0 6px 20px rgba(0,0,0,0.45)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = "scale(1)";
+    e.currentTarget.style.boxShadow =
+      "0 4px 12px rgba(0,0,0,0.35)";
+  }}
 >
   {markerIcons[note.category]}
 </div>
