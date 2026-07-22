@@ -36,6 +36,8 @@ import {
   RouteKnowledgeItem,
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
+import { GuideSection } from "@/types/GuideSection";
+
 
 
 const mapStyle = {
@@ -95,7 +97,8 @@ export default function SwissMap({
   const [selectedNote, setSelectedNote] =
     useState<GuideNote | null>(null);
 
-
+  const [selectedSection, setSelectedSection] =
+    useState<GuideSection | null>(null);
 
   const [editingNote, setEditingNote] =
     useState<GuideNote | null>(null);
@@ -267,7 +270,62 @@ const handleRouteNoteSelect = (
 
   };
 
+const handleSectionClick = (
+  section: GuideSection
+) => {
 
+
+  const firstPoint =
+    section.coordinates[0];
+
+
+  const fakeNote: GuideNote = {
+
+    id: section.id,
+
+    category: "hazard",
+
+    title: section.title,
+
+    description: section.description,
+
+    longitude:
+      firstPoint[0],
+
+    latitude:
+      firstPoint[1],
+
+    createdAt:
+      section.updated,
+
+    updatedAt:
+      section.updated,
+
+  };
+
+
+  setSelectedNote(fakeNote);
+
+
+  if(mapRef.current){
+
+    mapRef.current.flyTo({
+
+      center:[
+        firstPoint[0],
+        firstPoint[1],
+      ],
+
+      zoom:13.5,
+
+      duration:1200,
+
+    });
+
+  }
+
+
+};
 
   return (
 
@@ -277,6 +335,13 @@ const handleRouteNoteSelect = (
       <Map
 
         ref={mapRef}
+
+        interactiveLayerIds={
+          guideSections.map(
+            section => `hit-${section.id}`
+          )
+        }
+
         initialViewState={{
           longitude:7.092,
           latitude:46.248,
@@ -297,25 +362,54 @@ const handleRouteNoteSelect = (
         onClick={(event)=>{
 
 
-          if(!addingNote)
-            return;
+  // Clicked a guide section
+  if(event.features?.length){
+
+    const sectionId =
+      Number(
+        event.features[0].layer.id
+          .replace("hit-", "")
+      );
+
+
+    const section =
+      guideSections.find(
+        section =>
+          section.id === sectionId
+      );
+
+
+    if(section){
+
+      handleSectionClick(section);
+
+      return;
+
+    }
+
+  }
 
 
 
-          setNewLocation({
+  // Normal add note behaviour
 
-            latitude:event.lngLat.lat,
-
-            longitude:event.lngLat.lng,
-
-          });
+  if(!addingNote)
+    return;
 
 
+  setNewLocation({
 
-          setAddingNote(false);
+    latitude:event.lngLat.lat,
+
+    longitude:event.lngLat.lng,
+
+  });
 
 
-        }}
+  setAddingNote(false);
+
+
+}}
 
       >
 
