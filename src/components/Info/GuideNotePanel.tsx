@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { GuideNote } from "@/types/GuideNote";
 import { markerIcons } from "../map/markerIcons";
@@ -20,6 +20,9 @@ export default function GuideNotePanel({
   onDelete,
   onEdit,
 }: Props) {
+
+    const [selectedPhoto, setSelectedPhoto] =
+  useState<string | null>(null);
 
 
   useEffect(() => {
@@ -66,6 +69,8 @@ export default function GuideNotePanel({
 
 
   return (
+
+    <>
 
     <aside
       className="
@@ -269,41 +274,72 @@ export default function GuideNotePanel({
 
         <div className="my-6 border-t border-slate-200" />
 
+<h3
+  className="
+    mb-2
+    text-xs
+    font-bold
+    uppercase
+    tracking-wider
+    text-slate-500
+  "
+>
+  Photos
+</h3>
 
 
-        <h3
-          className="
-            mb-2
-            text-xs
-            font-bold
-            uppercase
-            tracking-wider
-            text-slate-500
-          "
-        >
-          Photo
-        </h3>
+{
+  note.photos &&
+  note.photos.length > 0 ? (
 
+    <div className="space-y-3">
 
-        <div
-          className="
-            flex
-            h-32
-            items-center
-            justify-center
-            rounded-lg
-            border
-            border-dashed
-            border-slate-300
-            bg-slate-50
-            text-slate-500
-          "
-        >
+      {
+        note.photos.map(photo => (
 
-          No photo attached
+          <img
+            key={photo}
+            src={photo}
+              onClick={() =>
+                 setSelectedPhoto(photo)
+                }
+            className="
+              w-full
+              rounded-lg
+              cursor-pointer
+              hover:opacity-90
+              transition
+            "
+          />
 
-        </div>
+        ))
+      }
 
+    </div>
+
+  ) : (
+
+    <div
+      className="
+        flex
+        h-32
+        items-center
+        justify-center
+        rounded-lg
+        border
+        border-dashed
+        border-slate-300
+        bg-slate-50
+        text-slate-500
+      "
+    >
+
+      No photo attached
+
+    </div>
+
+  )
+}
 
       </div>
 
@@ -385,6 +421,42 @@ export default function GuideNotePanel({
 
     </aside>
 
+ {
+      selectedPhoto && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-50
+            flex
+            items-center
+            justify-center
+            bg-black/70
+            p-8
+          "
+          onClick={() =>
+            setSelectedPhoto(null)
+          }
+        >
+
+          <img
+            src={selectedPhoto}
+            className="
+              max-w-full
+              max-h-full
+              rounded-xl
+              shadow-2xl
+            "
+          />
+
+        </div>
+
+      )
+    }
+
+    </>
+
   );
+
 
 }

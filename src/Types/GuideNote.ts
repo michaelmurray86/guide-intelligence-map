@@ -22,6 +22,8 @@ export type GuideNote = {
 
   severity?: "low" | "medium" | "high";
 
+  photos?: string[];
+
   createdAt: string;
 
   updatedAt: string;

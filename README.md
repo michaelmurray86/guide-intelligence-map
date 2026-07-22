@@ -52,3 +52,78 @@ Allow a user to import a GPX route, display it on the map and generate a report 
 - Route analysis
 - Route report
 - Future support for line-based guide notes
+```
+guide-intelligence-map-v2
+├─ AGENTS.md
+├─ CLAUDE.md
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ images
+│  │  └─ demo-route
+│  │     ├─ 20260706_114111.jpg
+│  │     ├─ chain.jpg
+│  │     ├─ exposed_path_1.jpg
+│  │     ├─ snow_patch_1.jpg
+│  │     └─ snow_patch_2.jpg
+│  ├─ nae-logo-cropped.png
+│  ├─ nae-logo.png
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  └─ page.tsx
+│  ├─ components
+│  │  ├─ GPX
+│  │  │  ├─ GPXImportButton.tsx
+│  │  │  ├─ GPXLayer.tsx
+│  │  │  ├─ GPXReport.tsx
+│  │  │  └─ RoutePanel.tsx
+│  │  ├─ Info
+│  │  │  ├─ AddGuideNotePanel.tsx
+│  │  │  ├─ GuideNoteForm.tsx
+│  │  │  └─ GuideNotePanel.tsx
+│  │  ├─ Layers
+│  │  │  └─ OfficialLayers.tsx
+│  │  ├─ Layout
+│  │  │  ├─ AppLayout.tsx
+│  │  │  └─ Header.tsx
+│  │  ├─ Map
+│  │  │  ├─ AddGuideNoteButton.tsx
+│  │  │  ├─ GuideMarker.tsx
+│  │  │  ├─ GuideSectionLayer.tsx
+│  │  │  ├─ markerColours.ts
+│  │  │  ├─ markerIcons.ts
+│  │  │  └─ SwissMap.tsx
+│  │  ├─ Sidebar
+│  │  │  └─ Sidebar.tsx
+│  │  └─ UI
+│  │     ├─ CollapsibleSection.tsx
+│  │     └─ ToggleSwitch.tsx
+│  ├─ Data
+│  │  ├─ guideNotes.ts
+│  │  ├─ guideSections.ts
+│  │  └─ officialSwissTopoLayers.ts
+│  ├─ lib
+│  │  ├─ gpxAnalysis.ts
+│  │  ├─ guideNoteStorage.ts
+│  │  └─ parseGPX.ts
+│  └─ Types
+│     ├─ GPXRoute.ts
+│     ├─ GuideFilters.ts
+│     ├─ GuideNote.ts
+│     ├─ GuideSection.ts
+│     └─ OfficialLayerFilters.ts
+└─ tsconfig.json
+
+```

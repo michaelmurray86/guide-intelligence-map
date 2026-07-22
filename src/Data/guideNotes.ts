@@ -19,6 +19,7 @@ export const guideNotes: GuideNote[] = [
     description: "Steep and exposed path, requires caution, avoid in wet conditions.",
     longitude: 7.088022,
     latitude: 46.262395,
+    photos: ["/images/demo-route/chain.jpg"],
     createdAt: "01-07-2026",
     updatedAt: "01-07-2026",
   },
