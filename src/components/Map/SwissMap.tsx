@@ -274,9 +274,7 @@ const handleSectionClick = (
   section: GuideSection
 ) => {
 
-
-  const firstPoint =
-    section.coordinates[0];
+  const coordinates = section.coordinates;
 
 
   const fakeNote: GuideNote = {
@@ -289,17 +287,13 @@ const handleSectionClick = (
 
     description: section.description,
 
-    longitude:
-      firstPoint[0],
+    longitude: coordinates[0][0],
 
-    latitude:
-      firstPoint[1],
+    latitude: coordinates[0][1],
 
-    createdAt:
-      section.updated,
+    createdAt: section.updated,
 
-    updatedAt:
-      section.updated,
+    updatedAt: section.updated,
 
   };
 
@@ -307,25 +301,54 @@ const handleSectionClick = (
   setSelectedNote(fakeNote);
 
 
-  if(mapRef.current){
 
-    mapRef.current.flyTo({
+  if (!mapRef.current)
+    return;
 
-      center:[
-        firstPoint[0],
-        firstPoint[1],
-      ],
 
-      zoom:13.5,
 
-      duration:1200,
+  let minLng = coordinates[0][0];
+  let maxLng = coordinates[0][0];
+  let minLat = coordinates[0][1];
+  let maxLat = coordinates[0][1];
 
-    });
 
-  }
 
+  coordinates.forEach(([lng, lat]) => {
+
+    minLng = Math.min(minLng, lng);
+    maxLng = Math.max(maxLng, lng);
+
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+
+  });
+
+
+
+  mapRef.current.fitBounds(
+
+    [
+      [minLng, minLat],
+      [maxLng, maxLat],
+    ],
+
+    {
+      padding: {
+        top: 120,
+        bottom: 120,
+        left: 450,
+        right: 120,
+      },
+
+      duration: 1200,
+
+    }
+
+  );
 
 };
+
 
   return (
 
