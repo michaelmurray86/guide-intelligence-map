@@ -14,7 +14,7 @@ export default function AddGuideNoteButton({
       onClick={onClick}
       className={`
         absolute
-        bottom-6
+        bottom-8
         right-6
         z-20
         rounded-lg
@@ -30,7 +30,7 @@ export default function AddGuideNoteButton({
         }
       `}
     >
-      + Add Guide Note
+      + Add Knowledge Point
     </button>
   );
 }

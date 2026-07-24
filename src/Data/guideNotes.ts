@@ -14,18 +14,6 @@ export const guideNotes: GuideNote[] = [
 
   {
     id: 2,
-    category: "hazard",
-    title: "Steep exposed path",
-    description: "Steep and exposed path, requires caution, avoid in wet conditions.",
-    longitude: 7.088022,
-    latitude: 46.262395,
-    photos: ["/images/demo-route/chain.jpg"],
-    createdAt: "01-07-2026",
-    updatedAt: "01-07-2026",
-  },
-
-  {
-    id: 3,
     category: "hut",
     title: "Cabane de la Tourche",
     description: "Water not drinkable, requires buying bottled water. Picnic lunches available.",
@@ -36,7 +24,7 @@ export const guideNotes: GuideNote[] = [
   },
 
   {
-    id: 4,
+    id: 3,
     category: "cafe",
     title: "Pont du Nant Café and ice cream",
     description: "Toilets and water fountain available.",
@@ -47,7 +35,7 @@ export const guideNotes: GuideNote[] = [
   },
 
   {
-    id: 5,
+    id: 4,
     category: "information",
     title: "Steep and loose path under cliff",
     description: "Some rockfall risk from cliff, possibly supervise less strong groups here.",
@@ -56,4 +44,162 @@ export const guideNotes: GuideNote[] = [
     createdAt: "01-07-2026",
     updatedAt: "01-07-2026",
   },
+
+  {
+    id: 5,
+    category: "water",
+    title: "Chamosentse",
+    description: "Fountain. Running as at 10/07/2026",
+    longitude: 7.163809,
+    latitude: 46.225250,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 6,
+    category: "water",
+    title: "Chalet Neuf",
+    description: "Tap in back left corner of fenced area",
+    longitude: 7.068539,
+    latitude: 46.181983,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 7,
+    category: "water",
+    title: "L'Au d'Arbignon",
+    description: "Trough between buildings, on left hand side as you take path between buildings",
+    longitude: 7.057646,
+    latitude: 46.188324,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 8,
+    category: "water",
+    title: "Rionda",
+    description: "Drinking water and panoramic seating area. If heading from here to La Touche advise to fill up here as La Tourche only has bottled water",
+    longitude: 7.058435,
+    latitude: 46.203564,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 9,
+    category: "snow",
+    title: "Large snow patch on 21/7/2026",
+    description: "Large unavoidable snow patch but low angle",
+    longitude: 7.147605,
+    latitude: 46.230568,
+    photos: ["/images/demo-route/snow_patch_1.jpg"],
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 10,
+    category: "snow",
+    title: "Small snow patch on 21/7/2026",
+    description: "Small remaining snow patch. Flat and not problematic to cross.",
+    longitude: 7.136781,
+    latitude: 46.228908,
+    photos: ["/images/demo-route/snow_patch_2.jpg"],
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+{
+    id: 11,
+    category: "cafe",
+    title: "Jorasse Restaurant",
+    description: "Generally open 9am-4pm when Ovrannaz lift running. Good toilets and can fill water in bathroom.",
+    longitude: 7.141799,
+    latitude: 46.203656,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+   {
+    id: 12,
+    category: "information",
+    title: "Bunkers",
+    description: "Interesting underground defence bunkers to explore with group. Take headtorch",
+    longitude: 7.056162,
+    latitude: 46.226092,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+    {
+    id: 13,
+    category: "hazard",
+    title: "Chain section",
+    description: "Initial step needs spotting, then chains across low angle slab",
+    longitude: 7.138526,
+    latitude: 46.211483,
+    photos: ["/images/demo-route/chain.jpg"],
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+   {
+    id: 14,
+    category: "hut",
+    title: "Cabane Rambert",
+    description: "Water not drinkable, requires buying bottled water. Picnic lunches available. Offers guide rate for IMLs",
+    longitude: 7.134248,
+    latitude: 46.230217,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+   {
+    id: 15,
+    category: "hut",
+    title: "Cabane Fenestral",
+    description: "Water not drinkable, requires buying bottled water. Picnic lunches available.",
+    longitude: 7.100562,
+    latitude: 46.188956,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+   {
+    id: 16,
+    category: "hut",
+    title: "Cabane du Demècre",
+    description: "Water not drinkable, requires buying bottled water. Picnic lunches available.",
+    longitude: 7.082286,
+    latitude: 46.174102,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+  {
+    id: 17,
+    category: "hazard",
+    title: "Hole (cave)",
+    description: "Sometimes fenced but not in early season. Approx 15m on 40 degree bearing from Col des Essets signpost",
+    longitude: 7.164335,
+    latitude: 46.276682,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
+{
+    id: 18,
+    category: "toilet",
+    title: "Cinglo",
+    description: "Basic toilet behind building at Cinglo",
+    longitude: 7.098965,
+    latitude: 46.247063,
+    createdAt: "01-07-2026",
+    updatedAt: "01-07-2026",
+  },
+
 ];

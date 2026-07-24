@@ -8,7 +8,7 @@ import {
 
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 
-import { GuideNote } from "@/types/GuideNote";
+import { loadGuideNotesFromSupabase } from "@/lib/loadGuideNotes";
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 import { GPXRoute } from "@/types/GPXRoute";
@@ -109,9 +109,7 @@ export default function SwissMap({
 
 
   const [guideNotesState, setGuideNotesState] =
-    useState(() =>
-      loadGuideNotes(guideNotes)
-    );
+    useState<GuideNote[]>([]);
 
 
 
@@ -205,6 +203,21 @@ useEffect(() => {
   handleRouteOverview();
 
 }, [gpxRoute]);
+
+useEffect(() => {
+
+  async function loadNotes(){
+
+    const notes =
+      await loadGuideNotesFromSupabase();
+
+    setGuideNotesState(notes);
+
+  }
+
+  loadNotes();
+
+}, []);
 
   /*
     GPX route analysis
@@ -370,9 +383,9 @@ const handleSectionClick = (
         }
 
         initialViewState={{
-          longitude:7.092,
-          latitude:46.248,
-          zoom:12,
+          longitude:7.091656,
+          latitude:46.256420,
+          zoom:12.5,
         }}
 
 
