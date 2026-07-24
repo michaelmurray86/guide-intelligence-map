@@ -9,13 +9,10 @@ import {
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 
 import {
-  getGuideNotes,
   createGuideNote,
   updateGuideNote,
   deleteGuideNote,
 } from "@/lib/guideNoteDatabase";
-
-import { getGuideSections } from "@/lib/guideSectionDatabase";
 
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
@@ -38,7 +35,8 @@ import {
 import RoutePanel from "../GPX/RoutePanel";
 import { GuideSection } from "@/types/GuideSection";
 
-
+import { useGuideNotes } from "@/hooks/useGuideNotes";
+import { useGuideSections } from "@/hooks/useGuideSections";
 
 const mapStyle = {
   version: 8,
@@ -105,11 +103,15 @@ export default function SwissMap({
 
 
 
-  const [guideNotesState, setGuideNotesState] =
-    useState<GuideNote[]>([]);
+  const {
+    notes: guideNotesState,
+    setNotes: setGuideNotesState,
+  } = useGuideNotes();
 
-  const [guideSectionsState, setGuideSectionsState] =
-    useState<GuideSection[]>([]);
+  const {
+    sections: guideSectionsState,
+    setSections: setGuideSectionsState,
+  } = useGuideSections();
 
 
 
@@ -204,26 +206,6 @@ useEffect(() => {
 
 }, [gpxRoute]);
 
-useEffect(() => {
-
-  async function loadData(){
-
-    const notes =
-      await getGuideNotes();
-
-    setGuideNotesState(notes);
-
-
-    const sections =
-      await getGuideSections();
-
-    setGuideSectionsState(sections);
-
-  }
-
-  loadData();
-
-}, []);
 
   /*
     GPX route analysis
