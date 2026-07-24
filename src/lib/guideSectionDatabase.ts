@@ -23,16 +23,30 @@ export async function getGuideSections(): Promise<GuideSection[]> {
   }
 
 
-  return data.map(section => ({
+return data.map(section => ({
+  ...section,
 
-    ...section,
+  createdAt:
+    section.created_at,
 
-    createdAt:
-      section.created_at,
+  updatedAt:
+    section.updated_at,
 
-    updatedAt:
-      section.updated_at,
+  createdBy:
+    section.created_by,
 
-  })) as GuideSection[];
+  updatedBy:
+    section.updated_by,
+
+  approvedBy:
+    section.approved_by,
+
+  approvedAt:
+    section.approved_at,
+
+  status:
+    section.status,
+
+})) as GuideSection[];
 
 }

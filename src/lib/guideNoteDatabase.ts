@@ -22,11 +22,19 @@ export async function getGuideNotes(): Promise<GuideNote[]> {
   }
 
 
-  return data.map(note => ({
-    ...note,
-    createdAt: note.created_at,
-    updatedAt: note.updated_at,
-  })) as GuideNote[];
+return data.map(note => ({
+  ...note,
+
+  createdAt: note.created_at,
+  updatedAt: note.updated_at,
+
+  createdBy: note.created_by,
+  updatedBy: note.updated_by,
+  approvedBy: note.approved_by,
+  approvedAt: note.approved_at,
+  status: note.status,
+
+})) as GuideNote[];
 
 }
 

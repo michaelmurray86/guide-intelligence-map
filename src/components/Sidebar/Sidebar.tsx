@@ -1,5 +1,8 @@
 "use client";
 
+import {useRouter} from "next/navigation";
+import {useAuth} from "@/hooks/useAuth";
+
 import Image from "next/image";
 
 import { GuideFilters } from "@/types/GuideFilters";
@@ -32,6 +35,7 @@ type Props = {
 };
 
 
+
 export default function Sidebar({
   filters,
   setFilters,
@@ -41,17 +45,29 @@ export default function Sidebar({
   setGpxRoute,
 }: Props) {
 
+  const router = useRouter();
+
+  const {
+  user,
+  logout
+} = useAuth();
+
+
 
   const toggle = (
     key: keyof GuideFilters
   ) => {
 
     setFilters({
+
       ...filters,
+
       [key]: !filters[key],
+
     });
 
   };
+
 
 
   const toggleOfficial = (
@@ -59,16 +75,32 @@ export default function Sidebar({
   ) => {
 
     setOfficialLayers({
+
       ...officialLayers,
+
       [key]: !officialLayers[key],
+
     });
 
   };
 
 
+
   return (
 
-    <aside className="w-80 bg-slate-50 border-r border-slate-300 p-5 overflow-y-auto">
+    <aside
+      className="
+        w-80
+        bg-slate-50
+        border-r
+        border-slate-300
+        p-5
+        overflow-y-auto
+        flex
+        flex-col
+        h-full
+      "
+    >
 
 
       {/* Header */}
@@ -77,16 +109,29 @@ export default function Sidebar({
 
 
         <Image
+
           src="/nae-logo-cropped.png"
+
           alt="Nord Anglia Education"
+
           width={319}
+
           height={70}
+
           className="mb-3"
+
           loading="eager"
+
         />
 
 
-        <h1 className="text-center text-xl font-bold leading-tight text-slate-900">
+        <h1 className="
+          text-center
+          text-xl
+          font-bold
+          leading-tight
+          text-slate-900
+        ">
 
           Switzerland
           <br />
@@ -99,12 +144,11 @@ export default function Sidebar({
 
 
 
-      {/* NAE Knowledge Layers */}
 
+      {/* NAE Knowledge Layers */}
 
       <CollapsibleSection
         title="🧭 NAE Knowledge Layers"
-        // defaultOpen
       >
 
         <div className="space-y-4">
@@ -177,7 +221,6 @@ export default function Sidebar({
 
       {/* SwissTopo Layers */}
 
-
       <CollapsibleSection
         title="🗺 SwissTopo Layers"
       >
@@ -194,7 +237,6 @@ export default function Sidebar({
           />
 
 
-
           <ToggleSwitch
             checked={officialLayers.closures}
             onChange={() =>
@@ -202,7 +244,6 @@ export default function Sidebar({
             }
             label="🚧 Closures & Diversions"
           />
-
 
 
           <ToggleSwitch
@@ -214,7 +255,6 @@ export default function Sidebar({
           />
 
 
-
           <ToggleSwitch
             checked={officialLayers.shootingRanges}
             onChange={() =>
@@ -224,7 +264,6 @@ export default function Sidebar({
           />
 
 
-
           <ToggleSwitch
             checked={officialLayers.transportStops}
             onChange={() =>
@@ -232,7 +271,6 @@ export default function Sidebar({
             }
             label="🚉 Transport Stops"
           />
-
 
 
         </div>
@@ -245,7 +283,6 @@ export default function Sidebar({
 
 
       {/* Routes */}
-
 
       <CollapsibleSection
         title="🥾 Routes"
@@ -263,18 +300,73 @@ export default function Sidebar({
 
 
 
-      {/* Footer */}
+      {/* Bottom account area */}
 
 
-      <div className="mt-8 border-t border-slate-300 pt-4 text-center text-xs text-slate-500">
+      <div className="
+        mt-auto
+        border-t
+        border-slate-300
+        pt-4
+        space-y-3
+      ">
 
-        Version 0.7
+<div className="
+  text-center
+  text-sm
+  text-slate-700
+">
+
+  {user?.email}
+
+</div>
+
+        <button
+
+          onClick={async () => {
+
+  await logout();
+
+  router.push("/login");
+
+}}
+
+          className="
+            w-full
+            bg-white
+            text-slate-800
+            border
+            border-slate-300
+            rounded
+            px-3
+            py-2
+            font-medium
+            hover:bg-slate-100
+          "
+
+        >
+
+          Logout
+
+        </button>
+
+
+
+        <div className="
+          text-center
+          text-xs
+          text-slate-500
+        ">
+
+          Version 0.7
+
+        </div>
+
 
       </div>
 
 
     </aside>
-
 
   );
 

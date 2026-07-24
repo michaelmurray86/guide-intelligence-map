@@ -1,5 +1,17 @@
+import AuthGuard from "@/components/auth/AuthGuard";
 import AppLayout from "@/components/layout/AppLayout";
 
+
 export default function Home() {
-  return <AppLayout />;
+
+  return (
+
+    <AuthGuard>
+
+      <AppLayout />
+
+    </AuthGuard>
+
+  );
+
 }
