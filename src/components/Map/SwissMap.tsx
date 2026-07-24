@@ -110,7 +110,6 @@ export default function SwissMap({
 
   const {
     sections: guideSectionsState,
-    setSections: setGuideSectionsState,
   } = useGuideSections();
 
 
