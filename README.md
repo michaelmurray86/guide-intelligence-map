@@ -218,3 +218,102 @@ guide-intelligence-map-v2
 └─ tsconfig.json
 
 ```
+```
+guide-intelligence-map-v2
+├─ AGENTS.md
+├─ CLAUDE.md
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ images
+│  │  └─ demo-route
+│  │     ├─ 20260706_114111.jpg
+│  │     ├─ chain.jpg
+│  │     ├─ exposed_path_1.jpg
+│  │     ├─ snow_patch_1.jpg
+│  │     └─ snow_patch_2.jpg
+│  ├─ nae-logo-cropped.png
+│  ├─ nae-logo.png
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ scripts
+│  ├─ importGuideNotes.ts
+│  └─ importGuideSections.ts
+├─ src
+│  ├─ app
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  ├─ login
+│  │  │  └─ page.tsx
+│  │  ├─ page.tsx
+│  │  └─ test-supabase
+│  │     └─ page.tsx
+│  ├─ components
+│  │  ├─ auth
+│  │  │  └─ AuthGuard.tsx
+│  │  ├─ GPX
+│  │  │  ├─ GPXImportButton.tsx
+│  │  │  ├─ GPXLayer.tsx
+│  │  │  ├─ GPXReport.tsx
+│  │  │  └─ RoutePanel.tsx
+│  │  ├─ Info
+│  │  │  ├─ AddGuideNotePanel.tsx
+│  │  │  ├─ GuideNoteForm.tsx
+│  │  │  └─ GuideNotePanel.tsx
+│  │  ├─ Layers
+│  │  │  └─ OfficialLayers.tsx
+│  │  ├─ Layout
+│  │  │  ├─ AppLayout.tsx
+│  │  │  └─ Header.tsx
+│  │  ├─ Map
+│  │  │  ├─ AddGuideNoteButton.tsx
+│  │  │  ├─ GuideMarker.tsx
+│  │  │  ├─ GuideSectionLayer.tsx
+│  │  │  ├─ markerColours.ts
+│  │  │  ├─ markerIcons.ts
+│  │  │  └─ SwissMap.tsx
+│  │  ├─ Sidebar
+│  │  │  └─ Sidebar.tsx
+│  │  └─ UI
+│  │     ├─ CollapsibleSection.tsx
+│  │     ├─ DataSources.tsx
+│  │     └─ ToggleSwitch.tsx
+│  ├─ context
+│  │  └─ ProfileContext.tsx
+│  ├─ Data
+│  │  ├─ guideNotes.backup.ts
+│  │  ├─ guideSections.backup.ts
+│  │  └─ officialSwissTopoLayers.ts
+│  ├─ hooks
+│  │  ├─ useAuth.ts
+│  │  ├─ useGuideNotes.ts
+│  │  ├─ useGuideSections.ts
+│  │  └─ useProfile.ts
+│  ├─ lib
+│  │  ├─ auth.ts
+│  │  ├─ gpxAnalysis.ts
+│  │  ├─ guideNoteDatabase.ts
+│  │  ├─ guideNoteStorage.ts
+│  │  ├─ guideSectionDatabase.ts
+│  │  ├─ loadGuideNotes.ts
+│  │  ├─ parseGPX.ts
+│  │  ├─ permissions.ts
+│  │  ├─ supabase.ts
+│  │  └─ testSupabase.ts
+│  └─ Types
+│     ├─ GPXRoute.ts
+│     ├─ GuideFilters.ts
+│     ├─ GuideNote.ts
+│     ├─ GuideSection.ts
+│     └─ OfficialLayerFilters.ts
+└─ tsconfig.json
+
+```

@@ -1,5 +1,5 @@
 import AuthGuard from "@/components/auth/AuthGuard";
-import AppLayout from "@/components/layout/AppLayout";
+import AppLayout from "@/components/Layout/AppLayout";
 
 
 export default function Home() {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import GuideNoteForm from "./GuideNoteForm";
-import { GuideNote, GuideNoteCategory } from "@/types/GuideNote";
+import { GuideNote, GuideNoteCategory } from "@/Types/GuideNote";
 
 type Props = {
   open: boolean;

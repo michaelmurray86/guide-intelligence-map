@@ -1,4 +1,4 @@
-import { GuideNote } from "@/types/GuideNote";
+import { GuideNote } from "@/Types/GuideNote";
 
 export const guideNotes: GuideNote[] = [
   {

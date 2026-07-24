@@ -1,7 +1,7 @@
 "use client";
 
 import { Marker } from "react-map-gl/maplibre";
-import { GuideNote } from "@/types/GuideNote";
+import { GuideNote } from "@/Types/GuideNote";
 import { markerIcons } from "./markerIcons";
 
 type Props = {

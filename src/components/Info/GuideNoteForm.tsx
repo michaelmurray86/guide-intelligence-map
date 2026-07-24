@@ -1,6 +1,6 @@
 "use client";
 
-import { GuideNoteCategory } from "@/types/GuideNote";
+import { GuideNoteCategory } from "@/Types/GuideNote";
 
 type Props = {
   title: string;

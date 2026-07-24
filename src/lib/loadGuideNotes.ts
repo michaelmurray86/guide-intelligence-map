@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { GuideNote } from "@/types/GuideNote";
+import { GuideNote } from "@/Types/GuideNote";
 
 export async function loadGuideNotesFromSupabase(): Promise<GuideNote[]> {
 

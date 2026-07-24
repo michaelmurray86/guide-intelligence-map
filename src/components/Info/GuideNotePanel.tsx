@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { GuideNote } from "@/types/GuideNote";
+import { GuideNote } from "@/Types/GuideNote";
 import { markerIcons } from "../map/markerIcons";
 
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { GPXRoute } from "@/types/GPXRoute";
-import { GuideNote } from "@/types/GuideNote";
+import { GPXRoute } from "@/Types/GPXRoute";
+import { GuideNote } from "@/Types/GuideNote";
 
 import {
   findNotesNearRoute,

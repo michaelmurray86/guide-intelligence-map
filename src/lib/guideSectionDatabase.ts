@@ -13,14 +13,14 @@ export async function getGuideSections(): Promise<GuideSection[]> {
 
   if(error){
 
-    console.error(
-      "Error loading guide sections:",
-      error
-    );
+  console.error(
+    "Error loading guide sections:",
+    JSON.stringify(error, null, 2)
+  );
 
-    return [];
+  return [];
 
-  }
+}
 
 
 return data.map(section => ({
