@@ -8,7 +8,7 @@ import {
 
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 
-import { loadGuideNotesFromSupabase } from "@/lib/loadGuideNotes";
+import { getGuideNotes } from "@/lib/guideNoteDatabase";
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 import { GPXRoute } from "@/types/GPXRoute";
@@ -200,7 +200,7 @@ useEffect(() => {
   async function loadNotes(){
 
     const notes =
-      await loadGuideNotesFromSupabase();
+      await getGuideNotes();
 
     setGuideNotesState(notes);
 
