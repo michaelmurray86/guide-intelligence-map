@@ -1,11 +1,17 @@
 export type GuideSection = {
-    id:number;
 
-    title:string;
+  id: number;
 
-    description:string;
+  title: string;
 
-    coordinates:[number,number][];
+  description: string;
 
-    updated:string;
+  coordinates: [number, number][];
+
+  color?: string;
+
+  createdAt: string;
+
+  updatedAt: string;
+
 };

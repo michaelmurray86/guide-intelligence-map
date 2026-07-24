@@ -15,11 +15,11 @@ import {
   deleteGuideNote,
 } from "@/lib/guideNoteDatabase";
 
+import { getGuideSections } from "@/lib/guideSectionDatabase";
+
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 import { GPXRoute } from "@/types/GPXRoute";
-
-import { guideSections } from "@/data/guideSections";
 
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
@@ -107,6 +107,9 @@ export default function SwissMap({
 
   const [guideNotesState, setGuideNotesState] =
     useState<GuideNote[]>([]);
+
+  const [guideSectionsState, setGuideSectionsState] =
+    useState<GuideSection[]>([]);
 
 
 
@@ -203,16 +206,22 @@ useEffect(() => {
 
 useEffect(() => {
 
-  async function loadNotes(){
+  async function loadData(){
 
     const notes =
       await getGuideNotes();
 
     setGuideNotesState(notes);
 
+
+    const sections =
+      await getGuideSections();
+
+    setGuideSectionsState(sections);
+
   }
 
-  loadNotes();
+  loadData();
 
 }, []);
 
@@ -305,9 +314,9 @@ const handleSectionClick = (
 
     latitude: coordinates[0][1],
 
-    createdAt: section.updated,
+    createdAt: section.updatedAt,
 
-    updatedAt: section.updated,
+    updatedAt: section.updatedAt,
 
   };
 
@@ -374,7 +383,7 @@ const handleSectionClick = (
         ref={mapRef}
 
         interactiveLayerIds={
-          guideSections.map(
+          guideSectionsState.map(
             section => `hit-${section.id}`
           )
         }
@@ -434,7 +443,7 @@ const handleSectionClick = (
 
 
     const section =
-      guideSections.find(
+      guideSectionsState.find(
         section =>
           section.id === sectionId
       );
@@ -485,7 +494,7 @@ const handleSectionClick = (
         {
           filters.sections &&
 
-          guideSections.map(section => (
+          guideSectionsState.map(section => (
 
             <GuideSectionLayer
 
