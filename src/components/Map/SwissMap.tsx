@@ -39,6 +39,8 @@ import {
 import RoutePanel from "../GPX/RoutePanel";
 import { GuideSection } from "@/Types/GuideSection";
 
+import { GuideNote } from "@/Types/GuideNote";
+
 import { useGuideNotes } from "@/hooks/useGuideNotes";
 import { useGuideSections } from "@/hooks/useGuideSections";
 
