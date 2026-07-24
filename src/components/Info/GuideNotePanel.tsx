@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { GuideNote } from "@/Types/GuideNote";
-import { markerIcons } from "../map/markerIcons";
+import { markerIcons } from "../Map/markerIcons";
 
 
 type Props = {

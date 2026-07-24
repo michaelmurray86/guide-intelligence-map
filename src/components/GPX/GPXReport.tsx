@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 
 import { RouteKnowledgeItem } from "@/lib/gpxAnalysis";
 
-import { markerIcons } from "../map/markerIcons";
+import { markerIcons } from "../Map/markerIcons";
 
 
 type Props = {
