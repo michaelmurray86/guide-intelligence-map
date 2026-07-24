@@ -8,7 +8,12 @@ import {
 
 import Map, { NavigationControl } from "react-map-gl/maplibre";
 
-import { getGuideNotes } from "@/lib/guideNoteDatabase";
+import {
+  getGuideNotes,
+  createGuideNote,
+  updateGuideNote,
+} from "@/lib/guideNoteDatabase";
+
 import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 import { GPXRoute } from "@/types/GPXRoute";
@@ -656,11 +661,11 @@ const handleSectionClick = (
 
 
         onSave={
-          (
-            title,
-            description,
-            category
-          )=>{
+  async (
+    title,
+    description,
+    category
+  )=>{
 
 
             /*
@@ -670,54 +675,36 @@ const handleSectionClick = (
 
             if(editingNote){
 
-
-              const updatedNotes =
-                guideNotesState.map(note =>
-
-
-                  note.id === editingNote.id
-
-                  ?
-
-                  {
-
-                    ...note,
-
-                    title,
-
-                    description,
-
-                    category,
-
-                    updatedAt:
-                      new Date()
-                      .toISOString(),
-
-                  }
+  const updatedNote =
+    await updateGuideNote(
+      editingNote.id,
+      {
+        title,
+        description,
+        category,
+      }
+    );
 
 
-                  :
+  if(updatedNote){
 
-                  note
+    setGuideNotesState(
+      guideNotesState.map(note =>
+        note.id === updatedNote.id
+          ? updatedNote
+          : note
+      )
+    );
 
-                );
-
-
-
-              setGuideNotesState(
-                updatedNotes
-              );
-
-
-              saveGuideNotes(
-                updatedNotes
-              );
+  }
 
 
-              setEditingNote(null);
+  setEditingNote(null);
 
 
-              return;
+  return;
+
+
 
             }
 
@@ -735,56 +722,42 @@ const handleSectionClick = (
 
 
 
-            const updatedNotes = [
+            const newNote = await createGuideNote({
 
-              ...guideNotesState,
+  title,
 
+  description,
 
-              {
+  category,
 
-                id:Date.now(),
+  latitude:
+    newLocation.latitude,
 
-                title,
+  longitude:
+    newLocation.longitude,
 
-                description,
+  createdAt:
+    new Date()
+    .toISOString(),
 
-                category,
+  updatedAt:
+    new Date()
+    .toISOString(),
 
-
-                latitude:
-                  newLocation.latitude,
-
-
-                longitude:
-                  newLocation.longitude,
-
-
-                createdAt:
-                  new Date()
-                  .toISOString(),
+});
 
 
-                updatedAt:
-                  new Date()
-                  .toISOString(),
+if(newNote){
 
-              }
+  setGuideNotesState([
+    ...guideNotesState,
+    newNote,
+  ]);
 
-            ];
-
-
-
-            setGuideNotesState(
-              updatedNotes
-            );
+}
 
 
-            saveGuideNotes(
-              updatedNotes
-            );
-
-
-            setNewLocation(null);
+setNewLocation(null);
 
 
           }
