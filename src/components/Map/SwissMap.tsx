@@ -722,7 +722,7 @@ const handleSectionClick = (
             if(!newLocation)
               return;
 
-
+console.log("Profile when creating note:", profile);
 
             const newNote = await createGuideNote({
 
