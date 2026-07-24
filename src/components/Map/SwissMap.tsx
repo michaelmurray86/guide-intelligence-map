@@ -13,13 +13,7 @@ import { GuideFilters } from "@/types/GuideFilters";
 import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
 import { GPXRoute } from "@/types/GPXRoute";
 
-import { guideNotes } from "@/data/guideNotes";
 import { guideSections } from "@/data/guideSections";
-
-import {
-  loadGuideNotes,
-  saveGuideNotes,
-} from "@/lib/guideNoteStorage";
 
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
@@ -97,11 +91,8 @@ export default function SwissMap({
   const [selectedNote, setSelectedNote] =
     useState<GuideNote | null>(null);
 
-  const [selectedSection, setSelectedSection] =
-    useState<GuideSection | null>(null);
-
-    const [hoveredSectionId, setHoveredSectionId] =
-  useState<number | null>(null);
+  const [hoveredSectionId, setHoveredSectionId] =
+    useState<number | null>(null);
 
   const [editingNote, setEditingNote] =
     useState<GuideNote | null>(null);
