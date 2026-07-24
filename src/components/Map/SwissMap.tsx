@@ -12,6 +12,7 @@ import {
   getGuideNotes,
   createGuideNote,
   updateGuideNote,
+  deleteGuideNote,
 } from "@/lib/guideNoteDatabase";
 
 import { GuideFilters } from "@/types/GuideFilters";
@@ -607,27 +608,28 @@ const handleSectionClick = (
         }}
 
 
-        onDelete={(id)=>{
+        onDelete={async (id)=>{
 
 
-          const updatedNotes =
-            guideNotesState.filter(
-              note =>
-                note.id !== id
-            );
+  const success =
+    await deleteGuideNote(id);
 
 
-          setGuideNotesState(
-            updatedNotes
-          );
+  if(success){
+
+    setGuideNotesState(
+      guideNotesState.filter(
+        note =>
+          note.id !== id
+      )
+    );
+
+    setSelectedNote(null);
+
+  }
 
 
-          saveGuideNotes(
-            updatedNotes
-          );
-
-
-        }}
+}}
 
       />
 

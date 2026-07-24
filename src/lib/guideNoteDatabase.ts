@@ -134,3 +134,31 @@ export async function updateGuideNote(
   } as GuideNote;
 
 }
+
+export async function deleteGuideNote(
+  id: number
+): Promise<boolean> {
+
+
+  const { error } =
+    await supabase
+      .from("guide_notes")
+      .delete()
+      .eq("id", id);
+
+
+  if (error) {
+
+    console.error(
+      "Error deleting guide note:",
+      JSON.stringify(error, null, 2)
+    );
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
