@@ -47,20 +47,28 @@ export async function createGuideNote(
   const { data, error } =
     await supabase
       .from("guide_notes")
-      .insert({
+        .insert({
 
-        category: note.category,
-        title: note.title,
-        description: note.description,
-        longitude: note.longitude,
-        latitude: note.latitude,
-        severity: note.severity,
-        photos: note.photos ?? [],
+  category: note.category,
+  title: note.title,
+  description: note.description,
+  longitude: note.longitude,
+  latitude: note.latitude,
+  severity: note.severity,
+  photos: note.photos ?? [],
 
-        created_at: note.createdAt,
-        updated_at: note.updatedAt,
+  created_at: note.createdAt,
+  updated_at: note.updatedAt,
 
-      })
+  created_by: note.createdBy ?? null,
+  updated_by: note.updatedBy ?? null,
+
+  approved_by: note.approvedBy ?? null,
+  approved_at: note.approvedAt ?? null,
+
+  status: note.status ?? "approved",
+
+})
       .select()
       .single();
 
@@ -92,7 +100,8 @@ export async function createGuideNote(
 
 export async function updateGuideNote(
   id: number,
-  updates: Partial<GuideNote>
+  updates: Partial<GuideNote>,
+  updatedBy?: string
 ): Promise<GuideNote | null> {
 
 
@@ -101,18 +110,21 @@ export async function updateGuideNote(
       .from("guide_notes")
       .update({
 
-        title: updates.title,
-        description: updates.description,
-        category: updates.category,
-        longitude: updates.longitude,
-        latitude: updates.latitude,
-        severity: updates.severity,
-        photos: updates.photos,
+  title: updates.title,
+  description: updates.description,
+  category: updates.category,
+  longitude: updates.longitude,
+  latitude: updates.latitude,
+  severity: updates.severity,
+  photos: updates.photos,
 
-        updated_at:
-          new Date().toISOString(),
+  updated_at:
+    new Date().toISOString(),
 
-      })
+  updated_by:
+    updatedBy ?? null,
+
+})
       .eq("id", id)
       .select()
       .single();

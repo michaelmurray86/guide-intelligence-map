@@ -2,6 +2,7 @@
 
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/hooks/useAuth";
+import {useProfile} from "@/hooks/useProfile";
 
 import Image from "next/image";
 
@@ -12,6 +13,8 @@ import { GPXRoute } from "@/types/GPXRoute";
 import GPXImportButton from "../GPX/GPXImportButton";
 import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
+
+import DataSources from "../UI/DataSources";
 
 
 type Props = {
@@ -52,7 +55,9 @@ export default function Sidebar({
   logout
 } = useAuth();
 
-
+const {
+  profile
+} = useProfile();
 
   const toggle = (
     key: keyof GuideFilters
@@ -317,7 +322,13 @@ export default function Sidebar({
   text-slate-700
 ">
 
-  {user?.email}
+  <div className="font-medium">
+    {profile?.name}
+  </div>
+
+  <div className="text-xs text-slate-500 capitalize">
+    {profile?.role}
+  </div>
 
 </div>
 
@@ -352,15 +363,18 @@ export default function Sidebar({
 
 
 
-        <div className="
-          text-center
-          text-xs
-          text-slate-500
-        ">
+<DataSources />
 
-          Version 0.7
 
-        </div>
+<div className="
+  text-center
+  text-xs
+  text-slate-500
+">
+
+  Version 0.8
+
+</div>
 
 
       </div>

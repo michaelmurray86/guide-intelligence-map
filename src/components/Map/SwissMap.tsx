@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  useProfile
+} from "@/context/ProfileContext";
+
+import {
   useState,
   useEffect,
   useRef,
@@ -89,6 +93,10 @@ export default function SwissMap({
   setGpxRoute,
 }: Props) {
 
+  const {
+  profile
+} = useProfile();
+  
   const mapRef = useRef<any>(null);
 
 
@@ -668,15 +676,15 @@ const handleSectionClick = (
             if(editingNote){
 
   const updatedNote =
-    await updateGuideNote(
-      editingNote.id,
-      {
-        title,
-        description,
-        category,
-      }
-    );
-
+  await updateGuideNote(
+    editingNote.id,
+    {
+      title,
+      description,
+      category,
+    },
+    profile?.name
+  );
 
   if(updatedNote){
 
@@ -735,6 +743,20 @@ const handleSectionClick = (
   updatedAt:
     new Date()
     .toISOString(),
+
+
+  createdBy:
+    profile?.name ?? "Unknown",
+
+
+  updatedBy:
+    profile?.name ?? "Unknown",
+
+
+  status:
+    profile?.role === "admin"
+      ? "approved"
+      : "pending",
 
 });
 
