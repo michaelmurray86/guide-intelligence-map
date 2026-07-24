@@ -1,4 +1,4 @@
-import { GuideNote } from "@/types/GuideNote";
+import { GuideNote } from "@/Types/GuideNote";
 
 const STORAGE_KEY = "guide-intelligence-notes";
 

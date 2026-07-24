@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { GPXRoute } from "@/types/GPXRoute";
+import { GPXRoute } from "@/Types/GPXRoute";
 import { parseGPX } from "@/lib/parseGPX";
 
 type Props = {

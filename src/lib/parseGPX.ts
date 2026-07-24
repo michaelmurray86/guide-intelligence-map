@@ -1,6 +1,6 @@
 import { DOMParser } from "xmldom";
 import { gpx } from "@tmcw/togeojson";
-import { GPXRoute } from "@/types/GPXRoute";
+import { GPXRoute } from "@/Types/GPXRoute";
 
 export async function parseGPX(file: File): Promise<GPXRoute> {
   const text = await file.text();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { GuideSection } from "@/types/GuideSection";
+import { GuideSection } from "@/Types/GuideSection";
 import { getGuideSections } from "@/lib/guideSectionDatabase";
 
 

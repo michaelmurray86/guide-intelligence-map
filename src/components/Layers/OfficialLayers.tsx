@@ -1,8 +1,8 @@
 "use client";
 
 import { Source, Layer } from "react-map-gl/maplibre";
-import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
-import { officialSwissTopoLayers } from "@/data/officialSwissTopoLayers";
+import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
+import { officialSwissTopoLayers } from "@/Data/officialSwissTopoLayers";
 
 type Props = {
   layers: OfficialLayerFilters;

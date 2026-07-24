@@ -18,9 +18,9 @@ import {
   deleteGuideNote,
 } from "@/lib/guideNoteDatabase";
 
-import { GuideFilters } from "@/types/GuideFilters";
-import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
-import { GPXRoute } from "@/types/GPXRoute";
+import { GuideFilters } from "@/Types/GuideFilters";
+import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
+import { GPXRoute } from "@/Types/GPXRoute";
 
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
@@ -37,7 +37,7 @@ import {
   RouteKnowledgeItem,
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
-import { GuideSection } from "@/types/GuideSection";
+import { GuideSection } from "@/Types/GuideSection";
 
 import { useGuideNotes } from "@/hooks/useGuideNotes";
 import { useGuideSections } from "@/hooks/useGuideSections";

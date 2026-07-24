@@ -6,9 +6,9 @@ import {useProfile} from "@/hooks/useProfile";
 
 import Image from "next/image";
 
-import { GuideFilters } from "@/types/GuideFilters";
-import { OfficialLayerFilters } from "@/types/OfficialLayerFilters";
-import { GPXRoute } from "@/types/GPXRoute";
+import { GuideFilters } from "@/Types/GuideFilters";
+import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
+import { GPXRoute } from "@/Types/GPXRoute";
 
 import GPXImportButton from "../GPX/GPXImportButton";
 import CollapsibleSection from "../UI/CollapsibleSection";

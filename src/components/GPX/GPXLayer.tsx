@@ -1,7 +1,7 @@
 "use client";
 
 import { Source, Layer } from "react-map-gl/maplibre";
-import { GPXRoute } from "@/types/GPXRoute";
+import { GPXRoute } from "@/Types/GPXRoute";
 
 
 type Props = {

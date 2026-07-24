@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { GuideSection } from "@/types/GuideSection";
+import { GuideSection } from "@/Types/GuideSection";
 
 
 export async function getGuideSections(): Promise<GuideSection[]> {

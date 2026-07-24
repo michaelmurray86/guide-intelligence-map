@@ -1,7 +1,7 @@
 "use client";
 
 import { Source, Layer } from "react-map-gl/maplibre";
-import { GuideSection } from "@/types/GuideSection";
+import { GuideSection } from "@/Types/GuideSection";
 
 
 type Props = {

@@ -5,19 +5,19 @@ import {
 } from "react";
 
 import Sidebar from "../Sidebar/Sidebar";
-import SwissMap from "../map/SwissMap";
+import SwissMap from "../Map/SwissMap";
 
 import {
   GuideFilters
-} from "@/types/GuideFilters";
+} from "@/Types/GuideFilters";
 
 import {
   OfficialLayerFilters
-} from "@/types/OfficialLayerFilters";
+} from "@/Types/OfficialLayerFilters";
 
 import {
   GPXRoute
-} from "@/types/GPXRoute";
+} from "@/Types/GPXRoute";
 
 
 export default function AppLayout() {
