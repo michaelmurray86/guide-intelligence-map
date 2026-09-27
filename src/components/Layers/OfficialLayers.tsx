@@ -39,7 +39,7 @@ export default function OfficialLayers({
             id="swisstopo-closures-layer"
             type="raster"
             paint={{
-                "raster-opacity": 0.75,
+              "raster-opacity": 0.75,
             }}
           />
         </Source>
@@ -56,7 +56,7 @@ export default function OfficialLayers({
             id="swisstopo-guardian-dogs-layer"
             type="raster"
             paint={{
-                "raster-opacity": 0.4,
+              "raster-opacity": 0.4,
             }}
           />
         </Source>
@@ -73,7 +73,7 @@ export default function OfficialLayers({
             id="swisstopo-shooting-ranges-layer"
             type="raster"
             paint={{
-                "raster-opacity": 0.4,
+              "raster-opacity": 0.4,
             }}
           />
         </Source>
@@ -107,7 +107,7 @@ export default function OfficialLayers({
             id="swisstopo-slope-angle-layer"
             type="raster"
             paint={{
-              "raster-opacity": 0.55,
+              "raster-opacity": 0.4,
             }}
           />
         </Source>
