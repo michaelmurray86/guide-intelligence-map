@@ -46,6 +46,7 @@ export default function AppLayout() {
       guardianDogs: false,
       shootingRanges: false,
       transportStops: false,
+      slopeAngle: false,
 
     });
 
