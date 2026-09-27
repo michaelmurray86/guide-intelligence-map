@@ -277,6 +277,14 @@ const {
             label="🚉 Transport Stops"
           />
 
+          <ToggleSwitch
+            checked={officialLayers.slopeAngle}
+            onChange={() =>
+              toggleOfficial("slopeAngle")
+            }
+            label="⛰️ Slope angle >30°"
+          />
+
 
         </div>
 
