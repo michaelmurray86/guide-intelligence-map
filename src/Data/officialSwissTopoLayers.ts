@@ -38,4 +38,12 @@ export const officialSwissTopoLayers = {
       "https://wms.geo.admin.ch/?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=ch.bav.haltestellen-oev&STYLES=&FORMAT=image/png&TRANSPARENT=true&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&WIDTH=256&HEIGHT=256",
     ],
   },
+
+  slopeAngle: {
+    provider: "SwissTopo",
+    service: "WMTS",
+    tiles: [
+      "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.hangneigung-ueber_30/default/current/3857/{z}/{x}/{y}.png",
+    ],
+  },
 };
