@@ -95,6 +95,23 @@ export default function OfficialLayers({
           />
         </Source>
       )}
+
+      {layers.slopeAngle && (
+        <Source
+          id="swisstopo-slope-angle"
+          type="raster"
+          tiles={officialSwissTopoLayers.slopeAngle.tiles}
+          tileSize={256}
+        >
+          <Layer
+            id="swisstopo-slope-angle-layer"
+            type="raster"
+            paint={{
+              "raster-opacity": 0.55,
+            }}
+          />
+        </Source>
+      )}
     </>
   );
 }
