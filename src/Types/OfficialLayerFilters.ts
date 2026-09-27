@@ -4,4 +4,5 @@ export type OfficialLayerFilters = {
   guardianDogs: boolean;
   shootingRanges: boolean;
   transportStops: boolean;
+  slopeAngle: boolean;
 };
