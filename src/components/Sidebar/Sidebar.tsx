@@ -212,7 +212,11 @@ export default function Sidebar({
                                   : "#dc2626",
                           }}
                         />
-                        <button\n                          type="button"\n                          onClick={() => onRouteSectionFocus(section.id)}\n                          className="min-w-0 flex-1 text-left"\n                        >
+                        <button
+                          type="button"
+                          onClick={() => onRouteSectionFocus(section.id)}
+                          className="min-w-0 flex-1 text-left"
+                        >
                           <div className="text-sm font-semibold text-slate-800">
                             {section.title}
                           </div>
