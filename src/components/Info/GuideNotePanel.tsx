@@ -398,7 +398,7 @@ export default function GuideNotePanel({
 
             if (
               confirm(
-                "Delete this knowledge item?"
+                "Request deletion of this knowledge item?"
               )
             ) {
 
@@ -411,7 +411,7 @@ export default function GuideNotePanel({
 
         >
 
-          Delete
+          Request deletion
 
         </button>
 
