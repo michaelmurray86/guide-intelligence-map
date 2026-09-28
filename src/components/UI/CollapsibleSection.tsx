@@ -22,7 +22,7 @@ export default function CollapsibleSection({
 
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-5 py-4 text-left font-semibold text-slate-800"
+        className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-slate-800"
       >
 
         {title}
