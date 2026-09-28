@@ -61,7 +61,7 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen">
       <div
-        className={`shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out ${
+        className={`shrink-0 overflow-hidden transition-[width] duration-500 ease-in-out ${
           sidebarCollapsed ? "w-12" : "w-80"
         }`}
       >
