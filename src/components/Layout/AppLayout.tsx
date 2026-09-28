@@ -33,16 +33,26 @@ export default function AppLayout() {
       slopeAngle: false,
     });
 
-  const [gpxRoute, setGpxRoute] =
-    useState<GPXRoute | null>(null);
-
+  const [gpxRoute, setGpxRoute] = useState<GPXRoute | null>(null);
   const [routeSectionDraft, setRouteSectionDraft] =
     useState<GPXRoute | null>(null);
 
-  const {
-    sections,
-    setSections,
-  } = useGuideSections();
+  const { sections, setSections } = useGuideSections();
+
+  const updateSection = (updated: GuideSection | null) => {
+    if (!updated) return;
+    setSections(current =>
+      current.map(section =>
+        section.id === updated.id ? updated : section
+      )
+    );
+  };
+
+  const removeSection = (id: number) => {
+    setSections(current =>
+      current.filter(section => section.id !== id)
+    );
+  };
 
   return (
     <div className="flex h-screen">
@@ -55,10 +65,13 @@ export default function AppLayout() {
         setGpxRoute={setGpxRoute}
         routeSectionDraft={routeSectionDraft}
         setRouteSectionDraft={setRouteSectionDraft}
+        guideSections={sections}
         onRouteSectionCreated={(section) => {
           if (!section) return;
           setSections(current => [...current, section]);
         }}
+        onRouteSectionUpdated={updateSection}
+        onRouteSectionDeleted={removeSection}
       />
 
       <main className="flex-1">
