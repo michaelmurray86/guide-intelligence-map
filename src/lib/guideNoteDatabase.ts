@@ -155,29 +155,31 @@ export async function updateGuideNote(
 
 }
 
-export async function deleteGuideNote(
-  id: number
-): Promise<boolean> {
 
+export async function deleteGuideNote(
+  id: number,
+  reason?: string
+): Promise<boolean> {
 
   const { error } =
     await supabase
-      .from("guide_notes")
-      .delete()
-      .eq("id", id);
-
+      .from("guide_note_deletion_requests")
+      .insert({
+        guide_note_id: id,
+        reason: reason ?? null,
+        status: "pending",
+      });
 
   if (error) {
 
     console.error(
-      "Error deleting guide note:",
+      "Error requesting guide note deletion:",
       JSON.stringify(error, null, 2)
     );
 
     return false;
 
   }
-
 
   return true;
 
