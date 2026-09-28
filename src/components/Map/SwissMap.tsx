@@ -42,7 +42,6 @@ import { GuideSection } from "@/Types/GuideSection";
 import { GuideNote } from "@/Types/GuideNote";
 
 import { useGuideNotes } from "@/hooks/useGuideNotes";
-import { useGuideSections } from "@/hooks/useGuideSections";
 
 const mapStyle = {
   version: 8,
@@ -84,6 +83,9 @@ type Props = {
   setGpxRoute: React.Dispatch<
     React.SetStateAction<GPXRoute | null>
   >;
+
+  guideSections: GuideSection[];
+  routeSectionDraft: GPXRoute | null;
 };
 
 
@@ -93,6 +95,8 @@ export default function SwissMap({
   officialLayers,
   gpxRoute,
   setGpxRoute,
+  guideSections,
+  routeSectionDraft,
 }: Props) {
 
   const {
@@ -117,10 +121,6 @@ export default function SwissMap({
     notes: guideNotesState,
     setNotes: setGuideNotesState,
   } = useGuideNotes();
-
-  const {
-    sections: guideSectionsState,
-  } = useGuideSections();
 
 
 
@@ -374,7 +374,7 @@ const handleSectionClick = (
         ref={mapRef}
 
         interactiveLayerIds={
-          guideSectionsState.map(
+          guideSections.map(
             section => `hit-${section.id}`
           )
         }
@@ -434,7 +434,7 @@ const handleSectionClick = (
 
 
     const section =
-      guideSectionsState.find(
+      guideSections.find(
         section =>
           section.id === sectionId
       );
@@ -485,7 +485,7 @@ const handleSectionClick = (
         {
           filters.sections &&
 
-          guideSectionsState.map(section => (
+          guideSections.map(section => (
 
             <GuideSectionLayer
 
@@ -548,6 +548,16 @@ const handleSectionClick = (
           />
 
         }
+
+
+        {routeSectionDraft && (
+          <GPXLayer
+            route={routeSectionDraft}
+            idPrefix="route-section-preview"
+            color="#ea580c"
+            showArrows={false}
+          />
+        )}
 
 
 
