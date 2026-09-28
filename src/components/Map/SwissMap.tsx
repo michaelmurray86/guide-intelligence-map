@@ -608,16 +608,18 @@ const handleSectionDelete = async (section: GuideSection) => {
       />
 
       {editingSection && (
-        <RouteSectionEditor
-          existingSection={editingSection}
-          onCancel={() => setEditingSection(null)}
-          onPreview={() => {}}
-          onUpdated={(section) => {
-            onRouteSectionUpdated?.(section);
-            setEditingSection(null);
-          }}
-          createdBy={profile?.name}
-        />
+        <div className="fixed right-15 top-6 z-40 w-96">
+          <RouteSectionEditor
+            existingSection={editingSection}
+            onCancel={() => setEditingSection(null)}
+            onPreview={() => {}}
+            onUpdated={(section) => {
+              onRouteSectionUpdated?.(section);
+              setEditingSection(null);
+            }}
+            createdBy={profile?.name}
+          />
+        </div>
       )}
 
       <GuideNotePanel
