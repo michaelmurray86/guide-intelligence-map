@@ -22,6 +22,8 @@ import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
 import { deleteGuideSection, GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 
 type Props = {
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
   filters: GuideFilters;
   setFilters: React.Dispatch<React.SetStateAction<GuideFilters>>;
   officialLayers: OfficialLayerFilters;
@@ -104,6 +106,22 @@ export default function Sidebar({
     onRouteSectionDeleted(section.id);
   };
 
+  if (collapsed) {
+    return (
+      <aside className="w-12 shrink-0 bg-slate-50 border-r border-slate-300 flex items-start justify-center pt-4 h-full">
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label="Expand sidebar"
+          title="Expand sidebar"
+          className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-lg text-slate-700 shadow-sm hover:bg-slate-100"
+        >
+          ›
+        </button>
+      </aside>
+    );
+  }
+
   return (
     <aside
       className="
@@ -118,6 +136,18 @@ export default function Sidebar({
         h-full
       "
     >
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-label="Collapse sidebar"
+          title="Collapse sidebar"
+          className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-lg text-slate-700 shadow-sm hover:bg-slate-100"
+        >
+          ‹
+        </button>
+      </div>
+
       <div className="mb-8 flex flex-col items-center">
         <Image
           src="/nae-logo-cropped.png"
