@@ -108,9 +108,15 @@ export default function Sidebar({
     onRouteSectionDeleted(section.id);
   };
 
-  if (collapsed) {
-    return (
-      <aside className="w-12 shrink-0 bg-slate-50 border-r border-slate-300 flex items-start justify-center pt-4 h-full overflow-hidden transition-[width] duration-300 ease-in-out">
+  return (
+    <aside
+      className={
+        collapsed
+          ? "w-12 shrink-0 bg-slate-50 border-r border-slate-300 flex items-start justify-center pt-4 h-full overflow-hidden transition-[width] duration-300 ease-in-out"
+          : "w-80 shrink-0 bg-slate-50 border-r border-slate-300 p-5 overflow-y-auto flex flex-col h-full overflow-x-hidden transition-[width] duration-300 ease-in-out"
+      }
+    >
+      {collapsed ? (
         <button
           type="button"
           onClick={onToggleCollapsed}
@@ -120,27 +126,8 @@ export default function Sidebar({
         >
           ›
         </button>
-      </aside>
-    );
-  }
+      ) : (
 
-  return (
-    <aside
-      className="
-        w-80
-        shrink-0
-        bg-slate-50
-        border-r
-        border-slate-300
-        p-5
-        overflow-y-auto
-        flex
-        flex-col
-        h-full
-        overflow-hidden
-        transition-[width] duration-300 ease-in-out
-      "
-    >
       <div className="mb-4 flex justify-end">
         <button
           type="button"
@@ -346,6 +333,7 @@ export default function Sidebar({
           Version 0.8
         </div>
       </div>
+      )}
     </aside>
   );
 }
