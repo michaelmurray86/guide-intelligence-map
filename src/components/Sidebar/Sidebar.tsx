@@ -34,6 +34,7 @@ type Props = {
   onRouteSectionCreated: (section: GuideSection | null) => void;
   onRouteSectionUpdated: (section: GuideSection | null) => void;
   onRouteSectionDeleted: (id: number) => void;
+  onRouteSectionFocus: (id: number) => void;
 };
 
 export default function Sidebar({
@@ -49,6 +50,7 @@ export default function Sidebar({
   onRouteSectionCreated,
   onRouteSectionUpdated,
   onRouteSectionDeleted,
+  onRouteSectionFocus,
 }: Props) {
   const router = useRouter();
   const { logout } = useAuth();
@@ -210,7 +212,7 @@ export default function Sidebar({
                                   : "#dc2626",
                           }}
                         />
-                        <div className="min-w-0 flex-1">
+                        <button\n                          type="button"\n                          onClick={() => onRouteSectionFocus(section.id)}\n                          className="min-w-0 flex-1 text-left"\n                        >
                           <div className="text-sm font-semibold text-slate-800">
                             {section.title}
                           </div>
