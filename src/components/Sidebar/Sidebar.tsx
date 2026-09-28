@@ -15,6 +15,7 @@ import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
 
 import DataSources from "../UI/DataSources";
+import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
 
 
 type Props = {
@@ -293,6 +294,16 @@ const {
 
 
 
+
+      {/* Deletion requests */}
+
+      {(profile?.role === "approver" || profile?.role === "admin") && (
+        <CollapsibleSection
+          title="🗑️ Deletion Requests"
+        >
+          <DeletionRequestsPanel />
+        </CollapsibleSection>
+      )}
 
 
       {/* Routes */}
