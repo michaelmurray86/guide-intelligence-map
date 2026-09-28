@@ -1,5 +1,6 @@
 export const markerIcons = {
   water: "💧",
+  cattle: "🐄",
   hazard: "⚠️",
   hut: "🛖",
   cafe: "☕",
