@@ -332,7 +332,6 @@ export default function Sidebar({
         <div className="text-center text-xs text-slate-500">
           Version 0.8
         </div>
-          </div>
         </>
       )}
     </aside>
