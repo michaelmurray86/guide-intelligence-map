@@ -1,6 +1,6 @@
 export type GuideNoteDeletionRequest = {
   id: number;
-  guideNoteId: number;
+  guideNoteId: number | null;
   requestedBy: string;
   requestedAt: string;
   reason?: string | null;
