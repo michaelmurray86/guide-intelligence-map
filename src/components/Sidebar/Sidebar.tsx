@@ -165,18 +165,16 @@ export default function Sidebar({
         </div>
       </CollapsibleSection>
 
-      {canReviewDeletions && (
-        <CollapsibleSection title="🗑️ Deletion Requests">
-          <DeletionRequestsPanel />
-        </CollapsibleSection>
-      )}
-
       <CollapsibleSection title="🥾 Routes">
         <GPXImportButton gpxRoute={gpxRoute} setGpxRoute={setGpxRoute} />
       </CollapsibleSection>
 
-      {canManageRouteSections && (
-        <CollapsibleSection title="🧭 Route Section Management">
+      {(canManageRouteSections || canReviewDeletions) && (
+        <>
+          <div className="my-4 border-t border-slate-300" />
+
+          {canManageRouteSections && (
+            <CollapsibleSection title="🧭 Route Section Management">
           {!addingRouteSection && !editingRouteSection && (
             <>
               <button
@@ -211,7 +209,7 @@ export default function Sidebar({
                         <button
                           type="button"
                           onClick={() => onRouteSectionFocus(section.id)}
-                          className="min-w-0 flex-1 text-left"
+                          className="min-w-0 flex-1 rounded px-1 py-0.5 text-left transition-colors hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none"
                         >
                           <div className="text-sm font-semibold text-slate-800">
                             {section.title}
@@ -279,7 +277,15 @@ export default function Sidebar({
               createdBy={profile?.name}
             />
           )}
-        </CollapsibleSection>
+            </CollapsibleSection>
+          )}
+
+          {canReviewDeletions && (
+            <CollapsibleSection title="🗑️ Deletion Requests">
+              <DeletionRequestsPanel />
+            </CollapsibleSection>
+          )}
+        </>
       )}
 
       <div className="mt-auto border-t border-slate-300 pt-4 space-y-3">
