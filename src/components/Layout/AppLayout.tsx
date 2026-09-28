@@ -60,7 +60,12 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen">
-      <Sidebar
+      <div
+        className={`shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out ${
+          sidebarCollapsed ? "w-12" : "w-80"
+        }`}
+      >
+        <Sidebar
         collapsed={sidebarCollapsed}
         onToggleCollapsed={() => setSidebarCollapsed(current => !current)}
         filters={filters}
@@ -79,7 +84,8 @@ export default function AppLayout() {
         onRouteSectionUpdated={updateSection}
         onRouteSectionDeleted={removeSection}
         onRouteSectionFocus={setFocusedRouteSectionId}
-      />
+        />
+      </div>
 
       <main className="flex-1">
         <SwissMap
