@@ -205,7 +205,7 @@ export default function RouteSectionEditor({
       </div>
 
       {!isEditing && (
-        <label className="block text-sm font-medium text-slate-700">
+        <div className="block text-sm font-medium text-slate-700">
           GPX file
           <div className="mt-2">
             <input
@@ -226,7 +226,7 @@ export default function RouteSectionEditor({
               Click the button to select a .gpx file from your computer.
             </p>
           </div>
-        </label>
+        </div>
       )}
 
       {route && (
