@@ -67,10 +67,10 @@ export default function GuideSectionLayer({
 
 {/* Glow effect */}
 <Layer
-  id={`glow-${section.id}`}
+  id={`glow-highlight-${section.id}`}
   type="line"
   paint={{
-    "line-color": section.color,
+    "line-color": color,
     "line-width": hovered ? 22 : 10,
     "line-opacity": hovered ? 0.25 : 0,
   }}
