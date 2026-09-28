@@ -3,87 +3,55 @@
 import { Source, Layer } from "react-map-gl/maplibre";
 import { GPXRoute } from "@/Types/GPXRoute";
 
-
 type Props = {
   route: GPXRoute | null;
+  idPrefix?: string;
+  color?: string;
+  showArrows?: boolean;
 };
-
 
 export default function GPXLayer({
   route,
+  idPrefix = "gpx",
+  color = "#2563eb",
+  showArrows = true,
 }: Props) {
-
   if (!route) return null;
 
-
   return (
-
     <Source
-      id="gpx-route"
+      id={`${idPrefix}-route`}
       type="geojson"
       data={route.geojson}
     >
-
-
-      {/* Route line */}
-
       <Layer
-
-        id="gpx-line"
-
+        id={`${idPrefix}-line`}
         type="line"
-
         paint={{
-
-          "line-color": "#2563eb",
-
+          "line-color": color,
           "line-width": 4,
-
         }}
-
       />
 
-
-
-      {/* Direction arrows */}
-
-      <Layer
-
-        id="gpx-direction-arrows"
-
-        type="symbol"
-
-        layout={{
-
-          "symbol-placement": "line",
-
-          "symbol-spacing": 100,
-
-          "text-field": "➤",
-
-          "text-size": 16,
-
-          "text-keep-upright": false,
-
-          "text-rotation-alignment": "map",
-
-        }}
-
-        paint={{
-
-          "text-color": "#1d4ed8",
-
-          "text-halo-color": "#ffffff",
-
-          "text-halo-width": 2,
-
-        }}
-
-      />
-
-
+      {showArrows && (
+        <Layer
+          id={`${idPrefix}-direction-arrows`}
+          type="symbol"
+          layout={{
+            "symbol-placement": "line",
+            "symbol-spacing": 100,
+            "text-field": "➤",
+            "text-size": 16,
+            "text-keep-upright": false,
+            "text-rotation-alignment": "map",
+          }}
+          paint={{
+            "text-color": color,
+            "text-halo-color": "#ffffff",
+            "text-halo-width": 2,
+          }}
+        />
+      )}
     </Source>
-
   );
-
 }
