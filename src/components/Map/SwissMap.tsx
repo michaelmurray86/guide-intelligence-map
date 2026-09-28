@@ -554,7 +554,7 @@ const handleSectionClick = (
           <GPXLayer
             route={routeSectionDraft}
             idPrefix="route-section-preview"
-            color="#ea580c"
+            color={routeSectionDraft.previewColor ?? "#ea580c"}
             showArrows={false}
           />
         )}
