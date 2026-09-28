@@ -110,7 +110,7 @@ export default function Sidebar({
 
   if (collapsed) {
     return (
-      <aside className="w-12 shrink-0 bg-slate-50 border-r border-slate-300 flex items-start justify-center pt-4 h-full">
+      <aside className="w-12 shrink-0 bg-slate-50 border-r border-slate-300 flex items-start justify-center pt-4 h-full overflow-hidden transition-[width] duration-300 ease-in-out">
         <button
           type="button"
           onClick={onToggleCollapsed}
@@ -128,6 +128,7 @@ export default function Sidebar({
     <aside
       className="
         w-80
+        shrink-0
         bg-slate-50
         border-r
         border-slate-300
@@ -136,6 +137,8 @@ export default function Sidebar({
         flex
         flex-col
         h-full
+        overflow-hidden
+        transition-[width] duration-300 ease-in-out
       "
     >
       <div className="mb-4 flex justify-end">
