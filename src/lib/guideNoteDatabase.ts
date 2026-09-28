@@ -161,11 +161,25 @@ export async function deleteGuideNote(
   reason?: string
 ): Promise<boolean> {
 
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error(
+      "Unable to identify the signed-in user for deletion request:",
+      userError
+    );
+    return false;
+  }
+
   const { error } =
     await supabase
       .from("guide_note_deletion_requests")
       .insert({
         guide_note_id: id,
+        requested_by: user.id,
         reason: reason ?? null,
         status: "pending",
       });
