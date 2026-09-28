@@ -36,6 +36,8 @@ export default function AppLayout() {
   const [gpxRoute, setGpxRoute] = useState<GPXRoute | null>(null);
   const [routeSectionDraft, setRouteSectionDraft] =
     useState<GPXRoute | null>(null);
+  const [focusedRouteSectionId, setFocusedRouteSectionId] =
+    useState<number | null>(null);
 
   const { sections, setSections } = useGuideSections();
 
@@ -72,6 +74,7 @@ export default function AppLayout() {
         }}
         onRouteSectionUpdated={updateSection}
         onRouteSectionDeleted={removeSection}
+        onRouteSectionFocus={setFocusedRouteSectionId}
       />
 
       <main className="flex-1">
@@ -82,6 +85,9 @@ export default function AppLayout() {
           setGpxRoute={setGpxRoute}
           guideSections={sections}
           routeSectionDraft={routeSectionDraft}
+          focusedRouteSectionId={focusedRouteSectionId}
+          onRouteSectionUpdated={updateSection}
+          onRouteSectionDeleted={removeSection}
         />
       </main>
     </div>
