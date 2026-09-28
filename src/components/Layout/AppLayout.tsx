@@ -14,6 +14,7 @@ import { useGuideSections } from "@/hooks/useGuideSections";
 export default function AppLayout() {
   const [filters, setFilters] = useState<GuideFilters>({
     water: true,
+    cattle: true,
     hazard: true,
     hut: true,
     cafe: true,
