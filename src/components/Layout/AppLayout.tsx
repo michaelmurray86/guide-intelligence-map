@@ -34,7 +34,7 @@ export default function AppLayout() {
       slopeAngle: false,
     });
 
-  const [gpxRoute, setGpxRoute] = useState<GPXRoute | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);\n  const [gpxRoute, setGpxRoute] = useState<GPXRoute | null>(null);
   const [routeSectionDraft, setRouteSectionDraft] =
     useState<GPXRoute | null>(null);
   const [focusedRouteSectionId, setFocusedRouteSectionId] =
