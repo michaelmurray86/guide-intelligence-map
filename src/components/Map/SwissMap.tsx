@@ -610,24 +610,18 @@ const handleSectionClick = (
 
         onDelete={async (id)=>{
 
-
   const success =
     await deleteGuideNote(id);
 
-
   if(success){
 
-    setGuideNotesState(
-      guideNotesState.filter(
-        note =>
-          note.id !== id
-      )
+    alert(
+      "Deletion request submitted. An approver or admin will review it."
     );
 
     setSelectedNote(null);
 
   }
-
 
 }}
 
