@@ -23,6 +23,22 @@ export function useGuideNotes() {
 
     loadNotes();
 
+    const handleNotesChanged = () => {
+      loadNotes();
+    };
+
+    window.addEventListener(
+      "guide-notes-changed",
+      handleNotesChanged
+    );
+
+    return () => {
+      window.removeEventListener(
+        "guide-notes-changed",
+        handleNotesChanged
+      );
+    };
+
   }, []);
 
 
