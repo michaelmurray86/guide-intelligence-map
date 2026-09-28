@@ -298,9 +298,7 @@ export default function GuideNotePanel({
 
         <p className="text-slate-700">
 
-          {new Date(
-            note.updatedAt
-          ).toLocaleDateString("en-GB")}
+          {new Date(note.updatedAt).toLocaleDateString("en-GB")} · {note.updatedBy || "Unknown"}
 
         </p>
 
