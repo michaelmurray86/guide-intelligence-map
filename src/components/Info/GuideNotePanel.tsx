@@ -83,15 +83,15 @@ export default function GuideNotePanel({
       return;
     }
 
-    async function loadDeletionStatus() {
-      const pending = await hasPendingGuideNoteDeletionRequest(noteId);
+    async function loadDeletionStatus(id: number) {
+      const pending = await hasPendingGuideNoteDeletionRequest(id);
 
       if (!cancelled) {
         setDeletionRequested(pending);
       }
     }
 
-    loadDeletionStatus();
+    loadDeletionStatus(noteId);
 
     return () => {
       cancelled = true;
