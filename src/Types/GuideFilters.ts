@@ -1,5 +1,6 @@
 export type GuideFilters = {
   water: boolean;
+  cattle: boolean;
   hazard: boolean;
   hut: boolean;
   cafe: boolean;
