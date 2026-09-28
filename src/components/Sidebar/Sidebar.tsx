@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
@@ -48,7 +49,7 @@ export default function Sidebar({
   const { profile } = useProfile();
 
   const [addingRouteSection, setAddingRouteSection] =
-    React.useState(false);
+    useState(false);
 
   const toggle = (key: keyof GuideFilters) => {
     setFilters({
