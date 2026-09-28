@@ -60,6 +60,8 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen">
       <Sidebar
+        collapsed={sidebarCollapsed}
+        onToggleCollapsed={() => setSidebarCollapsed(current => !current)}
         filters={filters}
         setFilters={setFilters}
         officialLayers={officialLayers}
