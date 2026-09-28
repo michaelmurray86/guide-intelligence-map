@@ -19,7 +19,7 @@ import ToggleSwitch from "../UI/ToggleSwitch";
 
 import DataSources from "../UI/DataSources";
 import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
-import { deleteGuideSection } from "@/lib/guideSectionDatabase";
+import { deleteGuideSection, GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 
 type Props = {
   filters: GuideFilters;
@@ -205,11 +205,7 @@ export default function Sidebar({
                           className="mt-1 h-3 w-3 shrink-0 rounded-full"
                           style={{
                             backgroundColor:
-                              section.guidanceLevel === "suitable"
-                                ? "#16a34a"
-                                : section.guidanceLevel === "caution"
-                                  ? "#ea580c"
-                                  : "#dc2626",
+                              GUIDE_SECTION_COLORS[section.guidanceLevel],
                           }}
                         />
                         <button
@@ -227,7 +223,7 @@ export default function Sidebar({
                                 ? "Caution"
                                 : "Do not take groups"}
                           </div>
-                        </div>
+                        </button>
                       </div>
 
                       <div className="mt-2 flex gap-2">
