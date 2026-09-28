@@ -92,6 +92,12 @@ export async function createGuideNote(
     createdAt: data.created_at,
     updatedAt: data.updated_at,
 
+    createdBy: data.created_by,
+    updatedBy: data.updated_by,
+    approvedBy: data.approved_by,
+    approvedAt: data.approved_at,
+    status: data.status,
+
   } as GuideNote;
 
 }
@@ -150,6 +156,12 @@ export async function updateGuideNote(
 
     createdAt: data.created_at,
     updatedAt: data.updated_at,
+
+    createdBy: data.created_by,
+    updatedBy: data.updated_by,
+    approvedBy: data.approved_by,
+    approvedAt: data.approved_at,
+    status: data.status,
 
   } as GuideNote;
 
