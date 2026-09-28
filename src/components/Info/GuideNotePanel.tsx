@@ -9,7 +9,7 @@ import { markerIcons } from "../Map/markerIcons";
 type Props = {
   note: GuideNote | null;
   onClose: () => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => Promise<boolean>;
   onEdit: (note: GuideNote) => void;
 };
 
@@ -23,6 +23,12 @@ export default function GuideNotePanel({
 
     const [selectedPhoto, setSelectedPhoto] =
   useState<string | null>(null);
+
+    const [deletionRequested, setDeletionRequested] =
+      useState(false);
+
+    const [deletionWorking, setDeletionWorking] =
+      useState(false);
 
 
   useEffect(() => {
@@ -63,6 +69,11 @@ export default function GuideNotePanel({
   ]);
 
 
+
+  useEffect(() => {
+    setDeletionRequested(false);
+    setDeletionWorking(false);
+  }, [note?.id]);
 
   if (!note) return null;
 
@@ -394,30 +405,47 @@ export default function GuideNotePanel({
             hover:bg-red-700
           "
 
-          onClick={() => {
+          disabled={deletionRequested || deletionWorking}
+          onClick={async () => {
 
             if (
-              confirm(
+              !confirm(
                 "Request deletion of this knowledge item?"
               )
             ) {
+              return;
+            }
 
-              onDelete(note.id);
-              onClose();
+            setDeletionWorking(true);
 
+            const success = await onDelete(note.id);
+
+            setDeletionWorking(false);
+
+            if (success) {
+              setDeletionRequested(true);
             }
 
           }}
 
         >
 
-          Request deletion
+          {deletionWorking
+            ? "Submitting..."
+            : deletionRequested
+              ? "Deletion requested"
+              : "Request deletion"}
 
         </button>
 
 
       </div>
 
+      {deletionRequested && (
+        <div className="border-t border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          Deletion requested. An approver or admin will review this knowledge item.
+        </div>
+      )}
 
     </aside>
 
