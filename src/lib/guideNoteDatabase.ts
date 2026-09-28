@@ -174,6 +174,27 @@ export async function deleteGuideNote(
     return false;
   }
 
+  const { data: existingRequest, error: existingRequestError } =
+    await supabase
+      .from("guide_note_deletion_requests")
+      .select("id")
+      .eq("guide_note_id", id)
+      .eq("requested_by", user.id)
+      .eq("status", "pending")
+      .maybeSingle();
+
+  if (existingRequestError) {
+    console.error(
+      "Unable to check for an existing deletion request:",
+      JSON.stringify(existingRequestError, null, 2)
+    );
+    return false;
+  }
+
+  if (existingRequest) {
+    return true;
+  }
+
   const { data: note, error: noteError } = await supabase
     .from("guide_notes")
     .select("title")
@@ -212,6 +233,39 @@ export async function deleteGuideNote(
 
   return true;
 
+}
+
+
+export async function hasPendingGuideNoteDeletionRequest(
+  id: number
+): Promise<boolean> {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("guide_note_deletion_requests")
+    .select("id")
+    .eq("guide_note_id", id)
+    .eq("requested_by", user.id)
+    .eq("status", "pending")
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error(
+      "Error checking guide note deletion request:",
+      JSON.stringify(error, null, 2)
+    );
+    return false;
+  }
+
+  return !!data;
 }
 
 
