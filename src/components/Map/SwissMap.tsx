@@ -619,9 +619,9 @@ const handleSectionClick = (
       "Deletion request submitted. An approver or admin will review it."
     );
 
-    setSelectedNote(null);
-
   }
+
+  return success;
 
 }}
 
