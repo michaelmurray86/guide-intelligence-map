@@ -65,9 +65,13 @@ export default function RouteSectionEditor({
 
     try {
       const parsed = await parseGPX(file);
-      setRoute(parsed);
+      const previewRoute = {
+        ...parsed,
+        previewColor: GUIDE_SECTION_COLORS[guidanceLevel],
+      };
+      setRoute(previewRoute);
       setTitle(parsed.name);
-      onPreview(parsed);
+      onPreview(previewRoute);
     } catch (err) {
       setRoute(null);
       onPreview(null);
@@ -78,6 +82,21 @@ export default function RouteSectionEditor({
       );
     } finally {
       setWorking(false);
+    }
+  };
+
+  const handleGuidanceChange = (
+    level: GuideSectionGuidanceLevel
+  ) => {
+    setGuidanceLevel(level);
+
+    if (route) {
+      const updatedRoute = {
+        ...route,
+        previewColor: GUIDE_SECTION_COLORS[level],
+      };
+      setRoute(updatedRoute);
+      onPreview(updatedRoute);
     }
   };
 
@@ -165,7 +184,7 @@ export default function RouteSectionEditor({
         <select
           value={guidanceLevel}
           onChange={event =>
-            setGuidanceLevel(
+            handleGuidanceChange(
               event.target.value as GuideSectionGuidanceLevel
             )
           }
