@@ -4,7 +4,6 @@ import { Source, Layer } from "react-map-gl/maplibre";
 import { GuideSection } from "@/Types/GuideSection";
 import { GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 
-
 type Props = {
   section: GuideSection;
   hovered: boolean;
@@ -14,12 +13,7 @@ export default function GuideSectionLayer({
   section,
   hovered,
 }: Props) {
-
-
-
-  const color =
-    section.color ??
-    GUIDE_SECTION_COLORS[section.guidanceLevel];
+  const color = GUIDE_SECTION_COLORS[section.guidanceLevel];
 
   const data = {
     type: "Feature",
@@ -36,65 +30,57 @@ export default function GuideSectionLayer({
       type="geojson"
       data={data as any}
     >
+      <Layer
+        id={`hit-${section.id}`}
+        type="line"
+        paint={{
+          "line-color": "#000000",
+          "line-width": 25,
+          "line-opacity": 0,
+        }}
+      />
 
-      {/* Invisible interaction area */}
-<Layer
-  id={`hit-${section.id}`}
-  type="line"
-  paint={{
-    "line-color": "#000000",
-    "line-width": 25,
-    "line-opacity": 0,
-  }}
-/>
+      <Layer
+        id={`glow-${section.id}`}
+        type="line"
+        paint={{
+          "line-color": color,
+          "line-width": hovered ? 22 : 10,
+          "line-opacity": hovered ? 0.25 : 0,
+        }}
+        layout={{
+          "line-cap": "round",
+          "line-join": "round",
+        }}
+      />
 
+      <Layer
+        id={`glow-highlight-${section.id}`}
+        type="line"
+        paint={{
+          "line-color": color,
+          "line-width": hovered ? 22 : 10,
+          "line-opacity": hovered ? 0.25 : 0,
+        }}
+        layout={{
+          "line-cap": "round",
+          "line-join": "round",
+        }}
+      />
 
-{/* Glow underneath on hover */}
-<Layer
-  id={`glow-${section.id}`}
-  type="line"
-  paint={{
-    "line-color": color,
-    "line-width": hovered ? 22 : 10,
-    "line-opacity": hovered ? 0.25 : 0,
-  }}
-  layout={{
-    "line-cap": "round",
-    "line-join": "round",
-  }}
-/>
-
-
-{/* Glow effect */}
-<Layer
-  id={`glow-highlight-${section.id}`}
-  type="line"
-  paint={{
-    "line-color": color,
-    "line-width": hovered ? 22 : 10,
-    "line-opacity": hovered ? 0.25 : 0,
-  }}
-  layout={{
-    "line-cap": "round",
-    "line-join": "round",
-  }}
-/>
-
-
-{/* Visible section */}
-<Layer
-  id={`line-${section.id}`}
-  type="line"
-  paint={{
-    "line-color": section.color,
-    "line-width": hovered ? 14 : 10,
-    "line-opacity": hovered ? 0.9 : 0.5,
-  }}
-  layout={{
-    "line-cap": "round",
-    "line-join": "round",
-  }}
-/>
+      <Layer
+        id={`line-${section.id}`}
+        type="line"
+        paint={{
+          "line-color": color,
+          "line-width": hovered ? 14 : 10,
+          "line-opacity": hovered ? 0.9 : 0.5,
+        }}
+        layout={{
+          "line-cap": "round",
+          "line-join": "round",
+        }}
+      />
     </Source>
   );
 }
