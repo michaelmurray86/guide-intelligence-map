@@ -144,6 +144,7 @@ export default function Sidebar({
       <CollapsibleSection title="🧭 NAE Knowledge Layers">
         <div className="space-y-4">
           <ToggleSwitch checked={filters.water} onChange={() => toggle("water")} label="💧 Water" />
+          <ToggleSwitch checked={filters.cattle} onChange={() => toggle("cattle")} label="🐄 Cattle" />
           <ToggleSwitch checked={filters.hazard} onChange={() => toggle("hazard")} label="⚠️ Hazards" />
           <ToggleSwitch checked={filters.hut} onChange={() => toggle("hut")} label="🛖 Huts" />
           <ToggleSwitch checked={filters.cafe} onChange={() => toggle("cafe")} label="☕ Cafés" />
@@ -175,108 +176,108 @@ export default function Sidebar({
 
           {canManageRouteSections && (
             <CollapsibleSection title="🧭 Route Section Management">
-          {!addingRouteSection && !editingRouteSection && (
-            <>
-              <button
-                type="button"
-                onClick={() => setAddingRouteSection(true)}
-                className="w-full rounded bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-              >
-                + Add Route Section
-              </button>
+              {!addingRouteSection && !editingRouteSection && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setAddingRouteSection(true)}
+                    className="w-full rounded bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  >
+                    + Add Route Section
+                  </button>
 
-              <div className="mt-4 space-y-2">
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Existing sections
-                </div>
-
-                {guideSections.length === 0 ? (
-                  <p className="text-xs text-slate-500">No Route Sections yet.</p>
-                ) : (
-                  guideSections.map(section => (
-                    <div
-                      key={section.id}
-                      className="rounded border border-slate-200 bg-white p-3"
-                    >
-                      <div className="flex items-start gap-2">
-                        <span
-                          className="mt-1 h-3 w-3 shrink-0 rounded-full"
-                          style={{
-                            backgroundColor:
-                              GUIDE_SECTION_COLORS[section.guidanceLevel],
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => onRouteSectionFocus(section.id)}
-                          className="min-w-0 flex-1 rounded px-1 py-0.5 text-left transition-colors hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none"
-                        >
-                          <div className="text-sm font-semibold text-slate-800">
-                            {section.title}
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            {section.guidanceLevel === "suitable"
-                              ? "Suitable"
-                              : section.guidanceLevel === "caution"
-                                ? "Caution"
-                                : "Do not take groups"}
-                          </div>
-                        </button>
-                      </div>
-
-                      <div className="mt-2 flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setEditingRouteSection(section)}
-                          className="flex-1 rounded border border-slate-300 px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteRouteSection(section)}
-                          disabled={deletingRouteSectionId === section.id}
-                          className="flex-1 rounded border border-red-200 px-2 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
-                        >
-                          {deletingRouteSectionId === section.id ? "Deleting..." : "Delete"}
-                        </button>
-                      </div>
+                  <div className="mt-4 space-y-2">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Existing sections
                     </div>
-                  ))
-                )}
-              </div>
-            </>
-          )}
 
-          {addingRouteSection && (
-            <RouteSectionEditor
-              onCancel={() => {
-                setAddingRouteSection(false);
-                setRouteSectionDraft(null);
-              }}
-              onPreview={setRouteSectionDraft}
-              onCreated={(section) => {
-                onRouteSectionCreated(section);
-                setAddingRouteSection(false);
-                setRouteSectionDraft(null);
-              }}
-              createdBy={profile?.name}
-            />
-          )}
+                    {guideSections.length === 0 ? (
+                      <p className="text-xs text-slate-500">No Route Sections yet.</p>
+                    ) : (
+                      guideSections.map(section => (
+                        <div
+                          key={section.id}
+                          className="rounded border border-slate-200 bg-white p-3"
+                        >
+                          <div className="flex items-start gap-2">
+                            <span
+                              className="mt-1 h-3 w-3 shrink-0 rounded-full"
+                              style={{
+                                backgroundColor:
+                                  GUIDE_SECTION_COLORS[section.guidanceLevel],
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => onRouteSectionFocus(section.id)}
+                              className="min-w-0 flex-1 rounded px-1 py-0.5 text-left transition-colors hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none"
+                            >
+                              <div className="text-sm font-semibold text-slate-800">
+                                {section.title}
+                              </div>
+                              <div className="text-xs text-slate-500">
+                                {section.guidanceLevel === "suitable"
+                                  ? "Suitable"
+                                  : section.guidanceLevel === "caution"
+                                    ? "Caution"
+                                    : "Do not take groups"}
+                              </div>
+                            </button>
+                          </div>
 
-          {editingRouteSection && (
-            <RouteSectionEditor
-              existingSection={editingRouteSection}
-              onCancel={() => setEditingRouteSection(null)}
-              onPreview={setRouteSectionDraft}
-              onUpdated={(section) => {
-                onRouteSectionUpdated(section);
-                setEditingRouteSection(null);
-                setRouteSectionDraft(null);
-              }}
-              createdBy={profile?.name}
-            />
-          )}
+                          <div className="mt-2 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setEditingRouteSection(section)}
+                              className="flex-1 rounded border border-slate-300 px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteRouteSection(section)}
+                              disabled={deletingRouteSectionId === section.id}
+                              className="flex-1 rounded border border-red-200 px-2 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                            >
+                              {deletingRouteSectionId === section.id ? "Deleting..." : "Delete"}
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
+
+              {addingRouteSection && (
+                <RouteSectionEditor
+                  onCancel={() => {
+                    setAddingRouteSection(false);
+                    setRouteSectionDraft(null);
+                  }}
+                  onPreview={setRouteSectionDraft}
+                  onCreated={(section) => {
+                    onRouteSectionCreated(section);
+                    setAddingRouteSection(false);
+                    setRouteSectionDraft(null);
+                  }}
+                  createdBy={profile?.name}
+                />
+              )}
+
+              {editingRouteSection && (
+                <RouteSectionEditor
+                  existingSection={editingRouteSection}
+                  onCancel={() => setEditingRouteSection(null)}
+                  onPreview={setRouteSectionDraft}
+                  onUpdated={(section) => {
+                    onRouteSectionUpdated(section);
+                    setEditingRouteSection(null);
+                    setRouteSectionDraft(null);
+                  }}
+                  createdBy={profile?.name}
+                />
+              )}
             </CollapsibleSection>
           )}
 
