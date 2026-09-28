@@ -34,7 +34,10 @@ export default function RouteSectionPanel({
         : "#dc2626";
 
   return (
-    <aside\n      className="pointer-events-auto fixed top-6 right-15 z-50 flex h-auto max-h-[70vh] w-96 flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl"\n      onClick={event => event.stopPropagation()}\n    >
+    <aside
+      className="pointer-events-auto fixed top-6 right-15 z-50 flex h-auto max-h-[70vh] w-96 flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl"
+      onClick={(event) => event.stopPropagation()}
+    >
       <div className="flex items-start justify-between gap-4 border-b border-slate-200 p-6">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -52,7 +55,11 @@ export default function RouteSectionPanel({
         </div>
 
         <button
-          onClick={onClose}
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onClose();
+          }}
           className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100 hover:text-slate-800"
           aria-label="Close"
         >
@@ -81,14 +88,22 @@ export default function RouteSectionPanel({
       {canManage && (
         <div className="flex gap-3 border-t border-slate-200 p-4">
           <button
-            className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
-            onClick={() => onEdit(section)}
+            type="button"
+            className="pointer-events-auto flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700"
+            onClick={(event) => {
+              event.stopPropagation();
+              onEdit(section);
+            }}
           >
             Edit Section
           </button>
           <button
-            className="flex-1 rounded-lg bg-red-600 py-3 font-semibold text-white hover:bg-red-700"
-            onClick={() => onDelete(section)}
+            type="button"
+            className="pointer-events-auto flex-1 rounded-lg bg-red-600 py-3 font-semibold text-white hover:bg-red-700"
+            onClick={(event) => {
+              event.stopPropagation();
+              onDelete(section);
+            }}
           >
             Delete Section
           </button>
