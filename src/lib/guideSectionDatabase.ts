@@ -1,52 +1,100 @@
 import { supabase } from "@/lib/supabase";
-import { GuideSection } from "@/Types/GuideSection";
+import {
+  GuideSection,
+  GuideSectionGuidanceLevel,
+} from "@/Types/GuideSection";
 
+export const GUIDE_SECTION_COLORS: Record<
+  GuideSectionGuidanceLevel,
+  string
+> = {
+  suitable: "#16a34a",
+  caution: "#ea580c",
+  do_not_take: "#dc2626",
+};
 
 export async function getGuideSections(): Promise<GuideSection[]> {
+  const { data, error } = await supabase
+    .from("guide_sections")
+    .select("*")
+    .order("id");
 
+  if (error) {
+    console.error(
+      "Error loading guide sections:",
+      JSON.stringify(error, null, 2)
+    );
+    return [];
+  }
 
-  const { data, error } =
-    await supabase
-      .from("guide_sections")
-      .select("*");
-
-
-  if(error){
-
-  console.error(
-    "Error loading guide sections:",
-    JSON.stringify(error, null, 2)
-  );
-
-  return [];
-
+  return data.map(section => ({
+    ...section,
+    createdAt: section.created_at,
+    updatedAt: section.updated_at,
+    createdBy: section.created_by,
+    updatedBy: section.updated_by,
+    approvedBy: section.approved_by,
+    approvedAt: section.approved_at,
+    status: section.status,
+    guidanceLevel:
+      section.guidance_level as GuideSectionGuidanceLevel,
+    color:
+      section.color ??
+      GUIDE_SECTION_COLORS[
+        section.guidance_level as GuideSectionGuidanceLevel
+      ],
+  })) as GuideSection[];
 }
 
+export async function createGuideSection(input: {
+  title: string;
+  description: string;
+  coordinates: [number, number][];
+  guidanceLevel: GuideSectionGuidanceLevel;
+  createdBy?: string;
+}): Promise<GuideSection | null> {
+  const now = new Date().toISOString();
 
-return data.map(section => ({
-  ...section,
+  const { data: section, error } = await supabase
+    .from("guide_sections")
+    .insert({
+      title: input.title,
+      description: input.description,
+      coordinates: input.coordinates,
+      guidance_level: input.guidanceLevel,
+      color: GUIDE_SECTION_COLORS[input.guidanceLevel],
+      created_at: now,
+      updated_at: now,
+      created_by: input.createdBy ?? null,
+      updated_by: input.createdBy ?? null,
+      status: "approved",
+    })
+    .select("*")
+    .single();
 
-  createdAt:
-    section.created_at,
+  if (error || !section) {
+    console.error(
+      "Error creating guide section:",
+      JSON.stringify(error, null, 2)
+    );
+    return null;
+  }
 
-  updatedAt:
-    section.updated_at,
-
-  createdBy:
-    section.created_by,
-
-  updatedBy:
-    section.updated_by,
-
-  approvedBy:
-    section.approved_by,
-
-  approvedAt:
-    section.approved_at,
-
-  status:
-    section.status,
-
-})) as GuideSection[];
-
+  return {
+    ...section,
+    createdAt: section.created_at,
+    updatedAt: section.updated_at,
+    createdBy: section.created_by,
+    updatedBy: section.updated_by,
+    approvedBy: section.approved_by,
+    approvedAt: section.approved_at,
+    status: section.status,
+    guidanceLevel:
+      section.guidance_level as GuideSectionGuidanceLevel,
+    color:
+      section.color ??
+      GUIDE_SECTION_COLORS[
+        section.guidance_level as GuideSectionGuidanceLevel
+      ],
+  } as GuideSection;
 }
