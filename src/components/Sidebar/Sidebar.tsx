@@ -40,6 +40,8 @@ type Props = {
 };
 
 export default function Sidebar({
+  collapsed,
+  onToggleCollapsed,
   filters,
   setFilters,
   officialLayers,
