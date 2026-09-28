@@ -28,6 +28,9 @@ import AddGuideNoteButton from "./AddGuideNoteButton";
 
 
 import GuideNotePanel from "../Info/GuideNotePanel";
+import RouteSectionPanel from "../Info/RouteSectionPanel";
+import RouteSectionEditor from "../Info/RouteSectionEditor";
+import { deleteGuideSection } from "@/lib/guideSectionDatabase";
 import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 
 import OfficialLayers from "../Layers/OfficialLayers";
@@ -86,6 +89,9 @@ type Props = {
 
   guideSections: GuideSection[];
   routeSectionDraft: GPXRoute | null;
+  focusedRouteSectionId?: number | null;
+  onRouteSectionUpdated?: (section: GuideSection | null) => void;
+  onRouteSectionDeleted?: (id: number) => void;
 };
 
 
@@ -97,6 +103,9 @@ export default function SwissMap({
   setGpxRoute,
   guideSections,
   routeSectionDraft,
+  focusedRouteSectionId,
+  onRouteSectionUpdated,
+  onRouteSectionDeleted,
 }: Props) {
 
   const {
@@ -114,6 +123,12 @@ export default function SwissMap({
 
   const [editingNote, setEditingNote] =
     useState<GuideNote | null>(null);
+
+  const [selectedSection, setSelectedSection] =
+    useState<GuideSection | null>(null);
+
+  const [editingSection, setEditingSection] =
+    useState<GuideSection | null>(null);
 
 
 
@@ -284,85 +299,67 @@ const handleRouteNoteSelect = (
 
   };
 
-const handleSectionClick = (
-  section: GuideSection
-) => {
-
+const focusSection = (section: GuideSection) => {
   const coordinates = section.coordinates;
-
-
-  const fakeNote: GuideNote = {
-
-    id: section.id,
-
-    category: "hazard",
-
-    title: section.title,
-
-    description: section.description,
-
-    longitude: coordinates[0][0],
-
-    latitude: coordinates[0][1],
-
-    createdAt: section.updatedAt,
-
-    updatedAt: section.updatedAt,
-
-  };
-
-
-  setSelectedNote(fakeNote);
-
-
-
-  if (!mapRef.current)
-    return;
-
-
+  if (!mapRef.current || coordinates.length === 0) return;
 
   let minLng = coordinates[0][0];
   let maxLng = coordinates[0][0];
   let minLat = coordinates[0][1];
   let maxLat = coordinates[0][1];
 
-
-
   coordinates.forEach(([lng, lat]) => {
-
     minLng = Math.min(minLng, lng);
     maxLng = Math.max(maxLng, lng);
-
     minLat = Math.min(minLat, lat);
     maxLat = Math.max(maxLat, lat);
-
   });
 
-
-
   mapRef.current.fitBounds(
-
-    [
-      [minLng, minLat],
-      [maxLng, maxLat],
-    ],
-
+    [[minLng, minLat], [maxLng, maxLat]],
     {
-      padding: {
-        top: 120,
-        bottom: 120,
-        left: 450,
-        right: 120,
-      },
-
+      padding: { top: 120, bottom: 120, left: 450, right: 120 },
       duration: 1200,
-
     }
-
   );
-
 };
 
+const handleSectionClick = (section: GuideSection) => {
+  setSelectedNote(null);
+  setSelectedSection(section);
+  focusSection(section);
+};
+
+useEffect(() => {
+  if (!focusedRouteSectionId) return;
+  const section = guideSections.find(
+    item => item.id === focusedRouteSectionId
+  );
+  if (section) {
+    setSelectedNote(null);
+    setSelectedSection(section);
+    focusSection(section);
+  }
+}, [focusedRouteSectionId, guideSections]);
+
+const canManageRouteSections =
+  profile?.role === "admin" ||
+  profile?.role === "superadmin";
+
+const handleSectionDelete = async (section: GuideSection) => {
+  if (!window.confirm(
+    `Delete the Route Section "${section.title}"? This cannot be undone.`
+  )) return;
+
+  const success = await deleteGuideSection(section.id);
+  if (!success) {
+    window.alert("The Route Section could not be deleted.");
+    return;
+  }
+
+  setSelectedSection(null);
+  onRouteSectionDeleted?.(section.id);
+};
 
   return (
 
@@ -598,6 +595,30 @@ const handleSectionClick = (
 
 
 
+
+      <RouteSectionPanel
+        section={selectedSection}
+        canManage={canManageRouteSections}
+        onClose={() => setSelectedSection(null)}
+        onEdit={(section) => {
+          setEditingSection(section);
+          setSelectedSection(null);
+        }}
+        onDelete={handleSectionDelete}
+      />
+
+      {editingSection && (
+        <RouteSectionEditor
+          existingSection={editingSection}
+          onCancel={() => setEditingSection(null)}
+          onPreview={() => {}}
+          onUpdated={(section) => {
+            onRouteSectionUpdated?.(section);
+            setEditingSection(null);
+          }}
+          createdBy={profile?.name}
+        />
+      )}
 
       <GuideNotePanel
 
