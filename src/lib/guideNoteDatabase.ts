@@ -174,11 +174,26 @@ export async function deleteGuideNote(
     return false;
   }
 
+  const { data: note, error: noteError } = await supabase
+    .from("guide_notes")
+    .select("title")
+    .eq("id", id)
+    .single();
+
+  if (noteError || !note) {
+    console.error(
+      "Unable to load guide note for deletion request:",
+      JSON.stringify(noteError, null, 2)
+    );
+    return false;
+  }
+
   const { error } =
     await supabase
       .from("guide_note_deletion_requests")
       .insert({
         guide_note_id: id,
+        guide_note_title: note.title,
         requested_by: user.id,
         reason: reason ?? null,
         status: "pending",
@@ -203,7 +218,7 @@ export async function deleteGuideNote(
 export async function getPendingGuideNoteDeletionRequests() {
   const { data, error } = await supabase
     .from("guide_note_deletion_requests")
-    .select("id, guide_note_id, requested_by, requested_at, reason, status")
+.select("id, guide_note_id, guide_note_title, requested_by, requested_at, reason, status")
     .eq("status", "pending")
     .order("requested_at", { ascending: true });
 
@@ -219,25 +234,6 @@ export async function getPendingGuideNoteDeletionRequests() {
     return [];
   }
 
-  const noteIds = data.map(request => request.guide_note_id);
-
-  const { data: notes, error: notesError } = await supabase
-    .from("guide_notes")
-    .select("id, title")
-    .in("id", noteIds);
-
-  if (notesError) {
-    console.error(
-      "Error loading guide notes for deletion requests:",
-      JSON.stringify(notesError, null, 2)
-    );
-    return [];
-  }
-
-  const titleById = new Map(
-    (notes ?? []).map(note => [note.id, note.title])
-  );
-
   return data.map(request => ({
     id: request.id,
     guideNoteId: request.guide_note_id,
@@ -245,7 +241,7 @@ export async function getPendingGuideNoteDeletionRequests() {
     requestedAt: request.requested_at,
     reason: request.reason,
     status: request.status,
-    noteTitle: titleById.get(request.guide_note_id) ?? "Unknown knowledge item",
+    noteTitle: request.guide_note_title ?? "Unknown knowledge item",
   }));
 }
 
