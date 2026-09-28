@@ -34,6 +34,7 @@ export default function GuideNoteForm({
         }
       >
         <option value="water">💧 Water</option>
+        <option value="cattle">🐄 Cattle</option>
         <option value="hazard">⚠️ Hazard</option>
         <option value="hut">🛖 Hut</option>
         <option value="cafe">☕ Café</option>
