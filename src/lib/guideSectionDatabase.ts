@@ -13,6 +13,25 @@ export const GUIDE_SECTION_COLORS: Record<
   do_not_take: "#dc2626",
 };
 
+function normalizeSection(section: any): GuideSection {
+  const guidanceLevel =
+    section.guidance_level as GuideSectionGuidanceLevel;
+
+  return {
+    ...section,
+    createdAt: section.created_at,
+    updatedAt: section.updated_at,
+    createdBy: section.created_by,
+    updatedBy: section.updated_by,
+    approvedBy: section.approved_by,
+    approvedAt: section.approved_at,
+    status: section.status,
+    guidanceLevel,
+    // Guidance level is the source of truth for Route Section colour.
+    color: GUIDE_SECTION_COLORS[guidanceLevel],
+  } as GuideSection;
+}
+
 export async function getGuideSections(): Promise<GuideSection[]> {
   const { data, error } = await supabase
     .from("guide_sections")
@@ -27,23 +46,7 @@ export async function getGuideSections(): Promise<GuideSection[]> {
     return [];
   }
 
-  return data.map(section => ({
-    ...section,
-    createdAt: section.created_at,
-    updatedAt: section.updated_at,
-    createdBy: section.created_by,
-    updatedBy: section.updated_by,
-    approvedBy: section.approved_by,
-    approvedAt: section.approved_at,
-    status: section.status,
-    guidanceLevel:
-      section.guidance_level as GuideSectionGuidanceLevel,
-    color:
-      section.color ??
-      GUIDE_SECTION_COLORS[
-        section.guidance_level as GuideSectionGuidanceLevel
-      ],
-  })) as GuideSection[];
+  return (data ?? []).map(normalizeSection);
 }
 
 export async function createGuideSection(input: {
@@ -80,21 +83,59 @@ export async function createGuideSection(input: {
     return null;
   }
 
-  return {
-    ...section,
-    createdAt: section.created_at,
-    updatedAt: section.updated_at,
-    createdBy: section.created_by,
-    updatedBy: section.updated_by,
-    approvedBy: section.approved_by,
-    approvedAt: section.approved_at,
-    status: section.status,
-    guidanceLevel:
-      section.guidance_level as GuideSectionGuidanceLevel,
-    color:
-      section.color ??
-      GUIDE_SECTION_COLORS[
-        section.guidance_level as GuideSectionGuidanceLevel
-      ],
-  } as GuideSection;
+  return normalizeSection(section);
+}
+
+export async function updateGuideSection(
+  id: number,
+  input: {
+    title: string;
+    description: string;
+    guidanceLevel: GuideSectionGuidanceLevel;
+    updatedBy?: string;
+  }
+): Promise<GuideSection | null> {
+  const now = new Date().toISOString();
+
+  const { data: section, error } = await supabase
+    .from("guide_sections")
+    .update({
+      title: input.title,
+      description: input.description,
+      guidance_level: input.guidanceLevel,
+      // Keep the stored colour aligned with the guidance level.
+      color: GUIDE_SECTION_COLORS[input.guidanceLevel],
+      updated_at: now,
+      updated_by: input.updatedBy ?? null,
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
+
+  if (error || !section) {
+    console.error(
+      "Error updating guide section:",
+      JSON.stringify(error, null, 2)
+    );
+    return null;
+  }
+
+  return normalizeSection(section);
+}
+
+export async function deleteGuideSection(id: number): Promise<boolean> {
+  const { error } = await supabase
+    .from("guide_sections")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error(
+      "Error deleting guide section:",
+      JSON.stringify(error, null, 2)
+    );
+    return false;
+  }
+
+  return true;
 }
