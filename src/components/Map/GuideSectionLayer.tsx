@@ -2,6 +2,7 @@
 
 import { Source, Layer } from "react-map-gl/maplibre";
 import { GuideSection } from "@/Types/GuideSection";
+import { GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 
 
 type Props = {
@@ -15,6 +16,10 @@ export default function GuideSectionLayer({
 }: Props) {
 
 
+
+  const color =
+    section.color ??
+    GUIDE_SECTION_COLORS[section.guidanceLevel];
 
   const data = {
     type: "Feature",
@@ -49,7 +54,7 @@ export default function GuideSectionLayer({
   id={`glow-${section.id}`}
   type="line"
   paint={{
-    "line-color": section.color,
+    "line-color": color,
     "line-width": hovered ? 22 : 10,
     "line-opacity": hovered ? 0.25 : 0,
   }}
