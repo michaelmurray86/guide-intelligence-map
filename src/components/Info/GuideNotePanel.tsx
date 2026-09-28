@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { GuideNote } from "@/Types/GuideNote";
+import { hasPendingGuideNoteDeletionRequest } from "@/lib/guideNoteDatabase";
 import { markerIcons } from "../Map/markerIcons";
 
 
@@ -71,8 +72,28 @@ export default function GuideNotePanel({
 
 
   useEffect(() => {
+    let cancelled = false;
+
     setDeletionRequested(false);
     setDeletionWorking(false);
+
+    if (!note) {
+      return;
+    }
+
+    async function loadDeletionStatus() {
+      const pending = await hasPendingGuideNoteDeletionRequest(note.id);
+
+      if (!cancelled) {
+        setDeletionRequested(pending);
+      }
+    }
+
+    loadDeletionStatus();
+
+    return () => {
+      cancelled = true;
+    };
   }, [note?.id]);
 
   if (!note) return null;
