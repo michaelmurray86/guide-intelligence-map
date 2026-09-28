@@ -81,7 +81,7 @@ export default function RouteSectionPanel({
           Last Updated
         </h3>
         <p className="text-slate-700">
-          {new Date(section.updatedAt).toLocaleDateString("en-GB")}
+          {new Date(section.updatedAt).toLocaleDateString("en-GB")} · {section.updatedBy || "Unknown"}
         </p>
       </div>
 
