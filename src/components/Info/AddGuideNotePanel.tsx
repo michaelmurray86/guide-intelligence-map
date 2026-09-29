@@ -156,7 +156,7 @@ export default function AddGuideNotePanel({
       <p className="mt-2 mb-6 text-sm text-slate-600">
         {editingNote
           ? "Update the guide intelligence details below."
-          : "Clicked location has been selected. Enter the details below."}
+          : "The location has been selected. Enter the details below."}
       </p>
 
       <GuideNoteForm
