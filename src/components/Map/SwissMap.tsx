@@ -166,6 +166,7 @@ export default function SwissMap({
     useState<"idle" | "locating" | "available" | "error">("idle");
 
   const locationWatchId = useRef<number | null>(null);
+  const hasCenteredOnLocation = useRef(false);
 
 
   const handleLocateMe = () => {
@@ -175,6 +176,7 @@ export default function SwissMap({
     }
 
     setLocationStatus("locating");
+    hasCenteredOnLocation.current = false;
 
     if (locationWatchId.current !== null) {
       navigator.geolocation.clearWatch(locationWatchId.current);
@@ -190,12 +192,13 @@ export default function SwissMap({
         setCurrentLocation(location);
         setLocationStatus("available");
 
-        if (mapRef.current) {
+        if (mapRef.current && !hasCenteredOnLocation.current) {
           mapRef.current.flyTo({
             center: [location.longitude, location.latitude],
             zoom: Math.max(mapRef.current.getZoom(), 14),
             duration: 800,
           });
+          hasCenteredOnLocation.current = true;
         }
       },
       () => {
@@ -650,7 +653,7 @@ const handleSectionDelete = async (section: GuideSection) => {
         }
         className="absolute right-2 top-20 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
       >
-        {locationStatus === "locating" ? "…" : "●"}
+        {locationStatus === "locating" ? "…" : "⌖"}
       </button>
 
       {locationStatus === "error" && (
