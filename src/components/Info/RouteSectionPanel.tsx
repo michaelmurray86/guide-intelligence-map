@@ -35,7 +35,7 @@ export default function RouteSectionPanel({
 
   return (
     <aside
-      className="pointer-events-auto fixed left-3 right-3 top-3 z-50 flex h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] w-auto flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl md:left-auto md:right-15 md:top-6 md:h-auto md:max-h-[70vh] md:w-96"
+      className="pointer-events-auto fixed left-4 right-4 top-4 bottom-4 z-50 flex w-auto flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl md:left-auto md:right-15 md:top-6 md:bottom-auto md:h-auto md:max-h-[70vh] md:w-96"
       onClick={(event) => event.stopPropagation()}
     >
       <div className="flex items-start justify-between gap-4 border-b border-slate-200 p-6">
@@ -67,7 +67,7 @@ export default function RouteSectionPanel({
         </button>
       </div>
 
-      <div className="overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto p-6">
         <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
           Description
         </h3>
