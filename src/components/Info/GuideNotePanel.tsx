@@ -22,8 +22,8 @@ export default function GuideNotePanel({
   onEdit,
 }: Props) {
 
-  const [selectedPhoto, setSelectedPhoto] =
-    useState<string | null>(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] =
+    useState<number | null>(null);
 
   const [deletionRequested, setDeletionRequested] =
     useState(false);
@@ -332,7 +332,7 @@ export default function GuideNotePanel({
                     src={photo}
                     alt=""
                     onClick={() =>
-                      setSelectedPhoto(photo)
+                      setSelectedPhotoIndex(photos.indexOf(photo))
                     }
                     className="
                       aspect-square
@@ -472,7 +472,7 @@ export default function GuideNotePanel({
     </aside>
 
     {
-      selectedPhoto && (
+      selectedPhotoIndex !== null && (
         <div
           className="
             fixed
@@ -485,13 +485,32 @@ export default function GuideNotePanel({
             p-8
           "
           onClick={() =>
-            setSelectedPhoto(null)
+            setSelectedPhotoIndex(null)
           }
         >
+          {photos.length > 1 && (
+            <button
+              type="button"
+              aria-label="Previous photo"
+              onClick={event => {
+                event.stopPropagation();
+                setSelectedPhotoIndex(
+                  current =>
+                    current === null
+                      ? null
+                      : (current - 1 + photos.length) % photos.length
+                );
+              }}
+              className="absolute left-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+            >
+              ‹
+            </button>
+          )}
 
           <img
-            src={selectedPhoto}
+            src={photos[selectedPhotoIndex]}
             alt=""
+            onClick={event => event.stopPropagation()}
             className="
               max-w-full
               max-h-full
@@ -500,8 +519,25 @@ export default function GuideNotePanel({
             "
           />
 
+          {photos.length > 1 && (
+            <button
+              type="button"
+              aria-label="Next photo"
+              onClick={event => {
+                event.stopPropagation();
+                setSelectedPhotoIndex(
+                  current =>
+                    current === null
+                      ? null
+                      : (current + 1) % photos.length
+                );
+              }}
+              className="absolute right-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+            >
+              ›
+            </button>
+          )}
         </div>
-
       )
     }
 
