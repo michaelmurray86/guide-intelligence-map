@@ -63,7 +63,7 @@ export default function AppLayout() {
   return (
     <div className="flex h-screen">
       <div
-        className={`shrink-0 overflow-hidden transition-[width] duration-500 ease-in-out ${
+        className={`hidden md:block shrink-0 overflow-hidden transition-[width] duration-500 ease-in-out ${
           sidebarCollapsed ? "w-12" : "w-80"
         }`}
       >
@@ -91,7 +91,7 @@ export default function AppLayout() {
         />
       </div>
 
-      <main className="flex-1">
+      <main className="min-w-0 flex-1">
         <SwissMap
           filters={filters}
           officialLayers={officialLayers}
