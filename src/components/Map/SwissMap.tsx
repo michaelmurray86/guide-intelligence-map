@@ -30,6 +30,7 @@ import { GPXRoute } from "@/Types/GPXRoute";
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
 import AddGuideNoteButton from "./AddGuideNoteButton";
+import ToggleSwitch from "../UI/ToggleSwitch";
 import CurrentLocationMarker from "./CurrentLocationMarker";
 
 
@@ -164,6 +165,9 @@ export default function SwissMap({
 
   const [locationStatus, setLocationStatus] =
     useState<"idle" | "locating" | "available" | "error">("idle");
+
+  const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
+  const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
@@ -651,13 +655,13 @@ const handleSectionDelete = async (section: GuideSection) => {
             ? "Location unavailable"
             : "Show my current location"
         }
-        className="absolute right-2 top-24 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+        className="absolute right-2 top-28 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
       >
         {locationStatus === "locating" ? "…" : "⌖"}
       </button>
 
       {locationStatus === "error" && (
-        <div className="absolute right-2 top-36 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
+        <div className="absolute right-2 top-40 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
           Location could not be accessed. Please check your browser location permission.
         </div>
       )}
@@ -1030,26 +1034,123 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
 
+      <button
+        type="button"
+        onClick={() => setMobileLayersOpen(current => !current)}
+        aria-label="Open map layers"
+        title="Map layers"
+        className="absolute bottom-4 left-4 z-20 flex h-11 w-11 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl shadow-lg transition hover:bg-slate-100 md:hidden"
+      >
+        ☰
+      </button>
+
+      <div
+        className={`fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-slate-300 bg-white p-5 shadow-2xl transition-transform duration-300 md:hidden ${mobileLayersOpen ? "translate-y-0" : "translate-y-full"}`}
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900">Map Layers</h2>
+          <button
+            type="button"
+            onClick={() => setMobileLayersOpen(false)}
+            aria-label="Close map layers"
+            className="flex h-8 w-8 items-center justify-center rounded border border-slate-300 text-lg text-slate-700"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="space-y-5">
+          <div>
+            <div className="mb-3 text-sm font-bold text-slate-900">🧭 NAE Knowledge</div>
+            <div className="space-y-3">
+              <ToggleSwitch
+                checked={Object.values(filters).every(Boolean)}
+                onChange={() => {
+                  const nextValue = !Object.values(filters).every(Boolean);
+                  setFilters(
+                    Object.fromEntries(
+                      Object.keys(filters).map(key => [key, nextValue])
+                    ) as GuideFilters
+                  );
+                }}
+                label="All NAE Knowledge"
+              />
+              <ToggleSwitch checked={filters.sections} onChange={() => setFilters(current => ({ ...current, sections: !current.sections }))} label="🟧 Route Sections" />
+              <ToggleSwitch checked={filters.water} onChange={() => setFilters(current => ({ ...current, water: !current.water }))} label="💧 Water" />
+              <ToggleSwitch checked={filters.cattle} onChange={() => setFilters(current => ({ ...current, cattle: !current.cattle }))} label="🐄 Cattle" />
+              <ToggleSwitch checked={filters.hazard} onChange={() => setFilters(current => ({ ...current, hazard: !current.hazard }))} label="⚠️ Hazards" />
+              <ToggleSwitch checked={filters.hut} onChange={() => setFilters(current => ({ ...current, hut: !current.hut }))} label="🛖 Huts" />
+              <ToggleSwitch checked={filters.cafe} onChange={() => setFilters(current => ({ ...current, cafe: !current.cafe }))} label="☕ Cafés" />
+              <ToggleSwitch checked={filters.toilet} onChange={() => setFilters(current => ({ ...current, toilet: !current.toilet }))} label="🚻 Toilets" />
+              <ToggleSwitch checked={filters.snow} onChange={() => setFilters(current => ({ ...current, snow: !current.snow }))} label="❄️ Snow" />
+              <ToggleSwitch checked={filters.information} onChange={() => setFilters(current => ({ ...current, information: !current.information }))} label="ℹ️ Information" />
+            </div>
+          </div>
+
+          <div className="border-t border-slate-200 pt-5">
+            <div className="mb-3 text-sm font-bold text-slate-900">🗺 SwissTopo</div>
+            <div className="space-y-3">
+              <ToggleSwitch checked={officialLayers.hikingTrails} onChange={() => setOfficialLayers(current => ({ ...current, hikingTrails: !current.hikingTrails }))} label="🥾 Hiking Trails" />
+              <ToggleSwitch checked={officialLayers.closures} onChange={() => setOfficialLayers(current => ({ ...current, closures: !current.closures }))} label="🚧 Closures & Diversions" />
+              <ToggleSwitch checked={officialLayers.guardianDogs} onChange={() => setOfficialLayers(current => ({ ...current, guardianDogs: !current.guardianDogs }))} label="🐕 Guardian Dogs" />
+              <ToggleSwitch checked={officialLayers.shootingRanges} onChange={() => setOfficialLayers(current => ({ ...current, shootingRanges: !current.shootingRanges }))} label="🎯 Shooting Bulletins" />
+              <ToggleSwitch checked={officialLayers.transportStops} onChange={() => setOfficialLayers(current => ({ ...current, transportStops: !current.transportStops }))} label="🚉 Transport Stops" />
+              <ToggleSwitch checked={officialLayers.slopeAngle} onChange={() => setOfficialLayers(current => ({ ...current, slopeAngle: !current.slopeAngle }))} label="⛰️ Slope angle >30°" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {mobileLocationChoiceOpen && (
+        <div className="fixed inset-0 z-50 flex items-end bg-black/30 md:hidden">
+          <div className="w-full rounded-t-2xl bg-white p-5 shadow-2xl">
+            <div className="mb-1 text-lg font-bold text-slate-900">Add Knowledge</div>
+            <p className="mb-4 text-sm text-slate-600">
+              Choose where to place the new knowledge point.
+            </p>
+
+            <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              disabled={!currentLocation}
+              className="mb-3 w-full rounded-lg bg-blue-600 px-4 py-3 text-left font-semibold text-white disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+            >
+              📍 Use my current location
+            </button>
+
+            {!currentLocation && (
+              <button
+                type="button"
+                onClick={handleLocateMe}
+                disabled={locationStatus === "locating"}
+                className="mb-3 w-full rounded-lg border border-slate-300 px-4 py-3 text-left font-semibold text-slate-800"
+              >
+                {locationStatus === "locating" ? "Getting your location..." : "Get my current location"}
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handlePickLocationOnMap}
+              className="mb-3 w-full rounded-lg border border-slate-300 px-4 py-3 text-left font-semibold text-slate-800"
+            >
+              🗺️ Pick a location on the map
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileLocationChoiceOpen(false)}
+              className="w-full rounded-lg bg-slate-100 px-4 py-3 font-semibold text-slate-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       <AddGuideNoteButton
-
-
         active={addingNote}
-
-
-        onClick={()=>{
-
-
-          setAddingNote(
-            !addingNote
-          );
-
-
-          setSelectedNote(null);
-
-
-        }}
-
-
+        onClick={handleAddKnowledge}
       />
 
 
