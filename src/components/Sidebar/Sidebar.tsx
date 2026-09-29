@@ -11,15 +11,18 @@ import { GuideFilters } from "@/Types/GuideFilters";
 import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideSection } from "@/Types/GuideSection";
+import { RouteLibrary, routeLibraryToGPXRoute } from "@/Types/RouteLibrary";
 
 import GPXImportButton from "../GPX/GPXImportButton";
 import RouteSectionEditor from "../Info/RouteSectionEditor";
+import RouteLibraryEditor from "../Info/RouteLibraryEditor";
 import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
 
 import DataSources from "../UI/DataSources";
 import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
 import { deleteGuideSection, GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
+import { deleteRouteLibraryRoute } from "@/lib/routeLibraryDatabase";
 
 type Props = {
   collapsed: boolean;
@@ -33,6 +36,8 @@ type Props = {
   routeSectionDraft: GPXRoute | null;
   setRouteSectionDraft: React.Dispatch<React.SetStateAction<GPXRoute | null>>;
   guideSections: GuideSection[];
+  routeLibrary: RouteLibrary[];
+  setRouteLibrary: React.Dispatch<React.SetStateAction<RouteLibrary[]>>;
   onRouteSectionCreated: (section: GuideSection | null) => void;
   onRouteSectionUpdated: (section: GuideSection | null) => void;
   onRouteSectionDeleted: (id: number) => void;
@@ -51,6 +56,8 @@ export default function Sidebar({
   routeSectionDraft,
   setRouteSectionDraft,
   guideSections,
+  routeLibrary,
+  setRouteLibrary,
   onRouteSectionCreated,
   onRouteSectionUpdated,
   onRouteSectionDeleted,
@@ -65,6 +72,9 @@ export default function Sidebar({
     useState<GuideSection | null>(null);
   const [deletingRouteSectionId, setDeletingRouteSectionId] =
     useState<number | null>(null);
+  const [addingLibraryRoute, setAddingLibraryRoute] = useState(false);
+  const [editingLibraryRoute, setEditingLibraryRoute] = useState<RouteLibrary | null>(null);
+  const [deletingLibraryRouteId, setDeletingLibraryRouteId] = useState<number | null>(null);
 
   const toggle = (key: keyof GuideFilters) => {
     setFilters({
@@ -100,6 +110,35 @@ export default function Sidebar({
     profile?.role === "approver" ||
     profile?.role === "admin" ||
     profile?.role === "superadmin";
+
+  const canViewRouteLibrary =
+    profile?.role === "instructor" ||
+    profile?.role === "approver" ||
+    profile?.role === "admin" ||
+    profile?.role === "superadmin";
+
+  const canManageRouteLibrary =
+    profile?.role === "admin" ||
+    profile?.role === "superadmin";
+
+  const handleDeleteLibraryRoute = async (route: RouteLibrary) => {
+    const confirmed = window.confirm(
+      "Delete the library route \"" + route.name + "\"? This cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    setDeletingLibraryRouteId(route.id);
+    const success = await deleteRouteLibraryRoute(route.id);
+    setDeletingLibraryRouteId(null);
+
+    if (!success) {
+      window.alert("The library route could not be deleted.");
+      return;
+    }
+
+    setRouteLibrary(current => current.filter(item => item.id !== route.id));
+  };
 
   const handleDeleteRouteSection = async (section: GuideSection) => {
     const confirmed = window.confirm(
@@ -216,11 +255,122 @@ export default function Sidebar({
 
       <CollapsibleSection title="🥾 Routes">
         <GPXImportButton gpxRoute={gpxRoute} setGpxRoute={setGpxRoute} />
+
+        {canViewRouteLibrary && (
+          <div className="mt-4 border-t border-slate-200 pt-4">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Route Library
+            </div>
+            <select
+              value={gpxRoute ? routeLibrary.find(route => route.name === gpxRoute.name)?.id.toString() ?? "" : ""}
+              onChange={event => {
+                const selected = routeLibrary.find(
+                  route => route.id.toString() === event.target.value
+                );
+                if (selected) {
+                  setGpxRoute(routeLibraryToGPXRoute(selected));
+                }
+              }}
+              className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+            >
+              <option value="">Select a standard route...</option>
+              {routeLibrary.map(route => (
+                <option key={route.id} value={route.id}>
+                  {route.name}
+                </option>
+              ))}
+            </select>
+            {routeLibrary.length === 0 && (
+              <p className="mt-2 text-xs text-slate-500">No standard routes are available yet.</p>
+            )}
+          </div>
+        )}
       </CollapsibleSection>
 
       {(canManageRouteSections || canReviewDeletions) && (
         <>
           <div className="my-4 border-t border-slate-300" />
+
+          {canManageRouteLibrary && (
+            <CollapsibleSection title="🥾 Route Library Management">
+              {!addingLibraryRoute && !editingLibraryRoute && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setAddingLibraryRoute(true)}
+                    className="w-full rounded bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  >
+                    + Add Library Route
+                  </button>
+
+                  <div className="mt-4 space-y-2">
+                    <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Existing routes
+                    </div>
+                    {routeLibrary.length === 0 ? (
+                      <p className="text-xs text-slate-500">No library routes yet.</p>
+                    ) : (
+                      routeLibrary.map(route => (
+                        <div key={route.id} className="rounded border border-slate-200 bg-white p-3">
+                          <div className="text-sm font-semibold text-slate-800">{route.name}</div>
+                          {route.description && (
+                            <div className="mt-1 text-xs text-slate-500">{route.description}</div>
+                          )}
+                          <div className="mt-2 flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setEditingLibraryRoute(route)}
+                              className="flex-1 rounded border border-slate-300 px-2 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteLibraryRoute(route)}
+                              disabled={deletingLibraryRouteId === route.id}
+                              className="flex-1 rounded border border-red-200 px-2 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                            >
+                              {deletingLibraryRouteId === route.id ? "Deleting..." : "Delete"}
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
+
+              {addingLibraryRoute && (
+                <RouteLibraryEditor
+                  onCancel={() => setAddingLibraryRoute(false)}
+                  onCreated={route => {
+                    if (route) {
+                      setRouteLibrary(current => [...current, route].sort((a, b) => a.name.localeCompare(b.name)));
+                    }
+                    setAddingLibraryRoute(false);
+                  }}
+                  createdBy={profile?.name}
+                />
+              )}
+
+              {editingLibraryRoute && (
+                <RouteLibraryEditor
+                  existingRoute={editingLibraryRoute}
+                  onCancel={() => setEditingLibraryRoute(null)}
+                  onUpdated={route => {
+                    if (route) {
+                      setRouteLibrary(current =>
+                        current.map(item => item.id === route.id ? route : item)
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                      );
+                    }
+                    setEditingLibraryRoute(null);
+                  }}
+                  createdBy={profile?.name}
+                />
+              )}
+            </CollapsibleSection>
+          )}
 
           {canManageRouteSections && (
             <CollapsibleSection title="🧭 Route Section Management">
