@@ -228,6 +228,34 @@ export default function SwissMap({
     };
   }, []);
 
+
+  const handleAddKnowledge = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 767px)").matches
+    ) {
+      setMobileLocationChoiceOpen(true);
+      return;
+    }
+
+    setAddingNote(current => !current);
+    setSelectedNote(null);
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!currentLocation) return;
+
+    setNewLocation(currentLocation);
+    setMobileLocationChoiceOpen(false);
+    setSelectedNote(null);
+  };
+
+  const handlePickLocationOnMap = () => {
+    setMobileLocationChoiceOpen(false);
+    setAddingNote(true);
+    setSelectedNote(null);
+  };
+
 const handleRouteOverview = () => {
 
   setSelectedNote(null);
