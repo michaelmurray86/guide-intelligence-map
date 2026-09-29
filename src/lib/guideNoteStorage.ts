@@ -10,6 +10,14 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/gif",
 ]);
 
+function isStoredPhotoPath(photo: string) {
+  return (
+    photo &&
+    !photo.startsWith("http") &&
+    !photo.startsWith("/images/")
+  );
+}
+
 export async function uploadGuideNotePhotos(
   noteId: number,
   files: File[]
@@ -57,9 +65,7 @@ export async function uploadGuideNotePhotos(
 export async function deleteGuideNotePhotos(
   paths: string[]
 ): Promise<boolean> {
-  const storagePaths = paths.filter(
-    path => path && !path.startsWith("http")
-  );
+  const storagePaths = paths.filter(isStoredPhotoPath);
 
   if (storagePaths.length === 0) return true;
 
@@ -81,16 +87,10 @@ export async function deleteGuideNotePhotos(
 export async function getGuideNotePhotoUrls(
   photos: string[] = []
 ): Promise<string[]> {
-  const storagePaths = photos.filter(
-    photo => photo && !photo.startsWith("http")
-  );
-
-  const legacyUrls = photos.filter(
-    photo => photo && photo.startsWith("http")
-  );
+  const storagePaths = photos.filter(isStoredPhotoPath);
 
   if (storagePaths.length === 0) {
-    return legacyUrls;
+    return photos;
   }
 
   const { data, error } = await supabase.storage
@@ -102,12 +102,18 @@ export async function getGuideNotePhotoUrls(
       "Error creating guide note photo URLs:",
       JSON.stringify(error, null, 2)
     );
-    return legacyUrls;
+    return photos;
   }
 
-  const signedUrls = (data ?? [])
-    .map(item => item.signedUrl)
-    .filter((url): url is string => Boolean(url));
+  const signedUrlMap = new Map(
+    (data ?? []).map(item => [item.path, item.signedUrl])
+  );
 
-  return [...legacyUrls, ...signedUrls];
+  return photos.map(photo => {
+    if (!isStoredPhotoPath(photo)) {
+      return photo;
+    }
+
+    return signedUrlMap.get(photo) ?? photo;
+  });
 }
