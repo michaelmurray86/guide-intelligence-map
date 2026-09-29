@@ -17,6 +17,7 @@ export type GuideNote = {
   latitude: number;
   severity?: "low" | "medium" | "high";
   photos?: string[];
+  photoUrls?: string[];
   createdAt: string;
   updatedAt: string;
   createdBy?: string;
