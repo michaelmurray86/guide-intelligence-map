@@ -30,6 +30,7 @@ import { GPXRoute } from "@/Types/GPXRoute";
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
 import AddGuideNoteButton from "./AddGuideNoteButton";
+import CurrentLocationMarker from "./CurrentLocationMarker";
 
 
 import GuideNotePanel from "../Info/GuideNotePanel";
@@ -154,6 +155,67 @@ export default function SwissMap({
       latitude:number;
       longitude:number;
     } | null>(null);
+
+  const [currentLocation, setCurrentLocation] =
+    useState<{
+      latitude: number;
+      longitude: number;
+    } | null>(null);
+
+  const [locationStatus, setLocationStatus] =
+    useState<"idle" | "locating" | "available" | "error">("idle");
+
+  const locationWatchId = useRef<number | null>(null);
+
+
+  const handleLocateMe = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus("error");
+      return;
+    }
+
+    setLocationStatus("locating");
+
+    if (locationWatchId.current !== null) {
+      navigator.geolocation.clearWatch(locationWatchId.current);
+    }
+
+    locationWatchId.current = navigator.geolocation.watchPosition(
+      position => {
+        const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+
+        setCurrentLocation(location);
+        setLocationStatus("available");
+
+        if (mapRef.current) {
+          mapRef.current.flyTo({
+            center: [location.longitude, location.latitude],
+            zoom: Math.max(mapRef.current.getZoom(), 14),
+            duration: 800,
+          });
+        }
+      },
+      () => {
+        setLocationStatus("error");
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 10000,
+        timeout: 15000,
+      }
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      if (locationWatchId.current !== null) {
+        navigator.geolocation.clearWatch(locationWatchId.current);
+      }
+    };
+  }, []);
 
 const handleRouteOverview = () => {
 
@@ -482,6 +544,13 @@ const handleSectionDelete = async (section: GuideSection) => {
           position="top-right"
         />
 
+        {currentLocation && (
+          <CurrentLocationMarker
+            latitude={currentLocation.latitude}
+            longitude={currentLocation.longitude}
+          />
+        )}
+
 
 
         {
@@ -565,6 +634,30 @@ const handleSectionDelete = async (section: GuideSection) => {
 
       </Map>
 
+
+
+
+
+      <button
+        type="button"
+        onClick={handleLocateMe}
+        disabled={locationStatus === "locating"}
+        aria-label="Show my current location"
+        title={
+          locationStatus === "error"
+            ? "Location unavailable"
+            : "Show my current location"
+        }
+        className="absolute right-2 top-20 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+      >
+        {locationStatus === "locating" ? "…" : "●"}
+      </button>
+
+      {locationStatus === "error" && (
+        <div className="absolute right-2 top-32 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
+          Location could not be accessed. Please check your browser location permission.
+        </div>
+      )}
 
 
       {
