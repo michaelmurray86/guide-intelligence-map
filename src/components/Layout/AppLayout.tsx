@@ -10,6 +10,8 @@ import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideSection } from "@/Types/GuideSection";
 import { useGuideSections } from "@/hooks/useGuideSections";
+import { useRouteLibrary } from "@/hooks/useRouteLibrary";
+import { RouteLibrary } from "@/Types/RouteLibrary";
 
 export default function AppLayout() {
   const [filters, setFilters] = useState<GuideFilters>({
@@ -42,6 +44,7 @@ export default function AppLayout() {
     useState<number | null>(null);
 
   const { sections, setSections } = useGuideSections();
+  const { routes: routeLibrary, setRoutes: setRouteLibrary } = useRouteLibrary();
 
   const updateSection = (updated: GuideSection | null) => {
     if (!updated) return;
@@ -77,6 +80,8 @@ export default function AppLayout() {
         routeSectionDraft={routeSectionDraft}
         setRouteSectionDraft={setRouteSectionDraft}
         guideSections={sections}
+        routeLibrary={routeLibrary}
+        setRouteLibrary={setRouteLibrary}
         onRouteSectionCreated={(section) => {
           if (!section) return;
           setSections(current => [...current, section]);
