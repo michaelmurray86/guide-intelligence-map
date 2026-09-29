@@ -35,7 +35,7 @@ export default function RouteSectionPanel({
 
   return (
     <aside
-      className="pointer-events-auto fixed left-3 right-3 top-3 z-50 flex h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] w-auto flex-col md:left-auto md:right-15 md:top-6 md:h-auto md:max-h-[70vh] md:w-96" overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl"
+      className="pointer-events-auto fixed left-3 right-3 top-3 z-50 flex h-[calc(100vh-24px)] max-h-[calc(100vh-24px)] w-auto flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl md:left-auto md:right-15 md:top-6 md:h-auto md:max-h-[70vh] md:w-96"
       onClick={(event) => event.stopPropagation()}
     >
       <div className="flex items-start justify-between gap-4 border-b border-slate-200 p-6">
