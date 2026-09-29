@@ -47,28 +47,22 @@ export default function GuideNotePanel({
 
     };
 
-
     window.addEventListener(
       "keydown",
       handleKeyDown
     );
 
-
     return () => {
-
       window.removeEventListener(
         "keydown",
         handleKeyDown
       );
-
     };
-
 
   }, [
     note,
     onClose,
   ]);
-
 
 
   useEffect(() => {
@@ -110,13 +104,14 @@ export default function GuideNotePanel({
     <aside
       className="
         fixed
-        top-3
-        left-3
-        right-3
+        top-4
+        bottom-4
+        left-4
+        right-4
         w-auto
-        h-[calc(100vh-24px)]
-        max-h-[calc(100vh-24px)]
+        max-h-none
         md:top-6
+        md:bottom-auto
         md:left-auto
         md:right-15
         md:w-96
