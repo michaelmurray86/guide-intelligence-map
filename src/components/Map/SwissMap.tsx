@@ -651,13 +651,13 @@ const handleSectionDelete = async (section: GuideSection) => {
             ? "Location unavailable"
             : "Show my current location"
         }
-        className="absolute right-2 top-20 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+        className="absolute right-2 top-24 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
       >
         {locationStatus === "locating" ? "…" : "⌖"}
       </button>
 
       {locationStatus === "error" && (
-        <div className="absolute right-2 top-32 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
+        <div className="absolute right-2 top-36 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
           Location could not be accessed. Please check your browser location permission.
         </div>
       )}
