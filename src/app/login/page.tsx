@@ -44,10 +44,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-slate-900">
             NAE Expeditions Knowledge Hub
           </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Sign in to access the mountain knowledge hub
-          </p>
         </div>
 
         <form
