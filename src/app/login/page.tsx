@@ -93,6 +93,15 @@ export default function LoginPage() {
             />
           </div>
 
+          <div className="text-right">
+            <a
+              href="/reset-password"
+              className="text-sm font-medium text-slate-600 underline-offset-4 hover:text-slate-900 hover:underline"
+            >
+              Forgot your password?
+            </a>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
