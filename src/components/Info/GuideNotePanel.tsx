@@ -22,14 +22,14 @@ export default function GuideNotePanel({
   onEdit,
 }: Props) {
 
-    const [selectedPhoto, setSelectedPhoto] =
-  useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] =
+    useState<string | null>(null);
 
-    const [deletionRequested, setDeletionRequested] =
-      useState(false);
+  const [deletionRequested, setDeletionRequested] =
+    useState(false);
 
-    const [deletionWorking, setDeletionWorking] =
-      useState(false);
+  const [deletionWorking, setDeletionWorking] =
+    useState(false);
 
 
   useEffect(() => {
@@ -100,6 +100,7 @@ export default function GuideNotePanel({
 
   if (!note) return null;
 
+  const photos = note.photoUrls ?? note.photos ?? [];
 
 
   return (
@@ -297,81 +298,81 @@ export default function GuideNotePanel({
 
 
         <p className="text-slate-700">
-
           {new Date(note.updatedAt).toLocaleDateString("en-GB")} · {note.updatedBy || "Unknown"}
-
         </p>
 
 
 
         <div className="my-6 border-t border-slate-200" />
 
-<h3
-  className="
-    mb-2
-    text-xs
-    font-bold
-    uppercase
-    tracking-wider
-    text-slate-500
-  "
->
-  Photos
-</h3>
+        <h3
+          className="
+            mb-2
+            text-xs
+            font-bold
+            uppercase
+            tracking-wider
+            text-slate-500
+          "
+        >
+          Photos
+        </h3>
 
 
-{
-  note.photos &&
-  note.photos.length > 0 ? (
+        {
+          photos.length > 0 ? (
 
-    <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
 
-      {
-        note.photos.map(photo => (
+              {
+                photos.map(photo => (
 
-          <img
-            key={photo}
-            src={photo}
-              onClick={() =>
-                 setSelectedPhoto(photo)
-                }
-            className="
-              w-full
-              rounded-lg
-              cursor-pointer
-              hover:opacity-90
-              transition
-            "
-          />
+                  <img
+                    key={photo}
+                    src={photo}
+                    alt=""
+                    onClick={() =>
+                      setSelectedPhoto(photo)
+                    }
+                    className="
+                      aspect-square
+                      w-full
+                      rounded-lg
+                      cursor-pointer
+                      object-cover
+                      hover:opacity-90
+                      transition
+                    "
+                  />
 
-        ))
-      }
+                ))
+              }
 
-    </div>
+            </div>
 
-  ) : (
+          ) : (
 
-    <div
-      className="
-        flex
-        h-32
-        items-center
-        justify-center
-        rounded-lg
-        border
-        border-dashed
-        border-slate-300
-        bg-slate-50
-        text-slate-500
-      "
-    >
+            <div
+              className="
+                flex
+                h-32
+                items-center
+                justify-center
+                rounded-lg
+                border
+                border-dashed
+                border-slate-300
+                bg-slate-50
+                text-slate-500
+              "
+            >
 
-      No photo attached
+              No photo attached
 
-    </div>
+            </div>
 
-  )
-}
+          )
+        }
 
       </div>
 
@@ -470,7 +471,7 @@ export default function GuideNotePanel({
 
     </aside>
 
- {
+    {
       selectedPhoto && (
         <div
           className="
@@ -490,6 +491,7 @@ export default function GuideNotePanel({
 
           <img
             src={selectedPhoto}
+            alt=""
             className="
               max-w-full
               max-h-full
