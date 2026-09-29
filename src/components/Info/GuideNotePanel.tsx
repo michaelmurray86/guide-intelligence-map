@@ -110,10 +110,18 @@ export default function GuideNotePanel({
     <aside
       className="
         fixed
-        top-6
-        right-15
-        w-96
-        h-[70vh]
+        top-3
+        left-3
+        right-3
+        w-auto
+        h-[calc(100vh-24px)]
+        max-h-[calc(100vh-24px)]
+        md:top-6
+        md:left-auto
+        md:right-15
+        md:w-96
+        md:h-[70vh]
+        md:max-h-none
         flex
         flex-col
         overflow-hidden
