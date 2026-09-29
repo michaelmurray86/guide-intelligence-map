@@ -1092,22 +1092,13 @@ const handleSectionDelete = async (section: GuideSection) => {
         </div>
 
         <div className="max-h-[calc(70vh-65px)] overflow-y-auto p-5">
-          <div className="space-y-5">
           <div>
             <div className="mb-3 text-sm font-bold text-slate-900">🧭 NAE Knowledge</div>
             <div className="space-y-3">
-              <ToggleSwitch
-                checked={Object.values(filters).every(Boolean)}
-                onChange={() => {
-                  const nextValue = !Object.values(filters).every(Boolean);
-                  setFilters(
-                    Object.fromEntries(
-                      Object.keys(filters).map(key => [key, nextValue])
-                    ) as GuideFilters
-                  );
-                }}
-                label="All NAE Knowledge"
-              />
+              <ToggleSwitch checked={Object.values(filters).every(Boolean)} onChange={() => {
+                const nextValue = !Object.values(filters).every(Boolean);
+                setFilters(Object.fromEntries(Object.keys(filters).map(key => [key, nextValue])) as GuideFilters);
+              }} label="All NAE Knowledge" />
               <ToggleSwitch checked={filters.sections} onChange={() => setFilters(current => ({ ...current, sections: !current.sections }))} label="🟧 Route Sections" />
               <ToggleSwitch checked={filters.water} onChange={() => setFilters(current => ({ ...current, water: !current.water }))} label="💧 Water" />
               <ToggleSwitch checked={filters.cattle} onChange={() => setFilters(current => ({ ...current, cattle: !current.cattle }))} label="🐄 Cattle" />
@@ -1120,7 +1111,7 @@ const handleSectionDelete = async (section: GuideSection) => {
             </div>
           </div>
 
-          <div className="border-t border-slate-200 pt-5">
+          <div className="mt-5 border-t border-slate-200 pt-5">
             <div className="mb-3 text-sm font-bold text-slate-900">🗺 SwissTopo</div>
             <div className="space-y-3">
               <ToggleSwitch checked={officialLayers.hikingTrails} onChange={() => setOfficialLayers(current => ({ ...current, hikingTrails: !current.hikingTrails }))} label="🥾 Hiking Trails" />
