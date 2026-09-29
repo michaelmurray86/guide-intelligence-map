@@ -85,8 +85,10 @@ const mapStyle = {
 
 type Props = {
   filters: GuideFilters;
+  setFilters: React.Dispatch<React.SetStateAction<GuideFilters>>;
 
   officialLayers: OfficialLayerFilters;
+  setOfficialLayers: React.Dispatch<React.SetStateAction<OfficialLayerFilters>>;
 
   gpxRoute: GPXRoute | null;
 
@@ -105,7 +107,9 @@ type Props = {
 
 export default function SwissMap({
   filters,
+  setFilters,
   officialLayers,
+  setOfficialLayers,
   gpxRoute,
   setGpxRoute,
   guideSections,
