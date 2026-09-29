@@ -130,9 +130,16 @@ export default function AddGuideNotePanel({
       className="
         absolute
         top-4
+        bottom-4
+        left-4
         right-4
-        w-96
-        max-h-[90vh]
+        w-auto
+        max-h-none
+        md:top-4
+        md:left-auto
+        md:right-4
+        md:w-96
+        md:max-h-[90vh]
         overflow-y-auto
         rounded-xl
         border
@@ -150,7 +157,7 @@ export default function AddGuideNotePanel({
       <p className="mt-2 mb-6 text-sm text-slate-600">
         {editingNote
           ? "Update the guide intelligence details below."
-          : "Clicked location has been selected. Enter the details below."}
+          : "The location has been selected. Enter the details below."}
       </p>
 
       <GuideNoteForm
