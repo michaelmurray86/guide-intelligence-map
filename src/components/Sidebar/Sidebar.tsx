@@ -73,6 +73,18 @@ export default function Sidebar({
     });
   };
 
+  const allKnowledgeLayersOn = Object.values(filters).every(Boolean);
+
+  const toggleAllKnowledgeLayers = () => {
+    const nextValue = !allKnowledgeLayersOn;
+
+    setFilters(
+      Object.fromEntries(
+        Object.keys(filters).map(key => [key, nextValue])
+      ) as GuideFilters
+    );
+  };
+
   const toggleOfficial = (key: keyof OfficialLayerFilters) => {
     setOfficialLayers({
       ...officialLayers,
@@ -161,20 +173,25 @@ export default function Sidebar({
         />
 
         <h1 className="
+          whitespace-nowrap
           text-center
-          text-xl
+          text-lg
           font-bold
           leading-tight
           text-slate-900
         ">
-          Switzerland
-          <br />
-          Mountain Knowledge Hub
+          Switzerland Knowledge Hub
         </h1>
       </div>
 
       <CollapsibleSection title="🧭 NAE Knowledge Layers">
         <div className="space-y-4">
+          <ToggleSwitch
+            checked={allKnowledgeLayersOn}
+            onChange={toggleAllKnowledgeLayers}
+            label="All NAE Knowledge"
+          />
+          <ToggleSwitch checked={filters.sections} onChange={() => toggle("sections")} label="🟧 Route Sections" />
           <ToggleSwitch checked={filters.water} onChange={() => toggle("water")} label="💧 Water" />
           <ToggleSwitch checked={filters.cattle} onChange={() => toggle("cattle")} label="🐄 Cattle" />
           <ToggleSwitch checked={filters.hazard} onChange={() => toggle("hazard")} label="⚠️ Hazards" />
@@ -183,7 +200,6 @@ export default function Sidebar({
           <ToggleSwitch checked={filters.toilet} onChange={() => toggle("toilet")} label="🚻 Toilets" />
           <ToggleSwitch checked={filters.snow} onChange={() => toggle("snow")} label="❄️ Snow" />
           <ToggleSwitch checked={filters.information} onChange={() => toggle("information")} label="ℹ️ Information" />
-          <ToggleSwitch checked={filters.sections} onChange={() => toggle("sections")} label="🟧 Route Sections" />
         </div>
       </CollapsibleSection>
 
