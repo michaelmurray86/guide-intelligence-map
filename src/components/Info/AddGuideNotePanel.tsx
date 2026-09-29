@@ -129,10 +129,16 @@ export default function AddGuideNotePanel({
     <aside
       className="
         absolute
-        top-4
-        right-4
-        w-96
-        max-h-[90vh]
+        top-3
+        left-3
+        right-3
+        w-auto
+        max-h-[calc(100vh-24px)]
+        md:top-4
+        md:left-auto
+        md:right-4
+        md:w-96
+        md:max-h-[90vh]
         overflow-y-auto
         rounded-xl
         border
