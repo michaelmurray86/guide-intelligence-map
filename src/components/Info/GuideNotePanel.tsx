@@ -488,55 +488,92 @@ export default function GuideNotePanel({
             setSelectedPhotoIndex(null)
           }
         >
-          {photos.length > 1 && (
-            <button
-              type="button"
-              aria-label="Previous photo"
-              onClick={event => {
-                event.stopPropagation();
-                setSelectedPhotoIndex(
-                  current =>
-                    current === null
-                      ? null
-                      : (current - 1 + photos.length) % photos.length
-                );
-              }}
-              className="absolute left-[calc(50%-min(50vw,640px)/2+1rem)] top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
-            >
-              ‹
-            </button>
-          )}
-
-          <img
-            src={photos[selectedPhotoIndex]}
-            alt=""
-            onClick={event => event.stopPropagation()}
+          <div
             className="
+              flex
               max-w-full
-              max-h-full
-              rounded-xl
-              shadow-2xl
+              items-center
+              justify-center
+              gap-4
             "
-          />
+            onClick={event => event.stopPropagation()}
+          >
+            {photos.length > 1 && (
+              <button
+                type="button"
+                aria-label="Previous photo"
+                onClick={() => {
+                  setSelectedPhotoIndex(
+                    current =>
+                      current === null
+                        ? null
+                        : (current - 1 + photos.length) % photos.length
+                  );
+                }}
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white/90
+                  text-3xl
+                  text-slate-800
+                  shadow-lg
+                  hover:bg-white
+                "
+              >
+                ‹
+              </button>
+            )}
 
-          {photos.length > 1 && (
-            <button
-              type="button"
-              aria-label="Next photo"
-              onClick={event => {
-                event.stopPropagation();
-                setSelectedPhotoIndex(
-                  current =>
-                    current === null
-                      ? null
-                      : (current + 1) % photos.length
-                );
-              }}
-              className="absolute right-[calc(50%-min(50vw,640px)/2+1rem)] top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
-            >
-              ›
-            </button>
-          )}
+            <img
+              src={photos[selectedPhotoIndex]}
+              alt=""
+              className="
+                block
+                h-auto
+                w-auto
+                max-h-[85vh]
+                max-w-[calc(100vw-160px)]
+                rounded-xl
+                shadow-2xl
+              "
+            />
+
+            {photos.length > 1 && (
+              <button
+                type="button"
+                aria-label="Next photo"
+                onClick={() => {
+                  setSelectedPhotoIndex(
+                    current =>
+                      current === null
+                        ? null
+                        : (current + 1) % photos.length
+                  );
+                }}
+                className="
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white/90
+                  text-3xl
+                  text-slate-800
+                  shadow-lg
+                  hover:bg-white
+                "
+              >
+                ›
+              </button>
+            )}
+          </div>
         </div>
       )
     }
