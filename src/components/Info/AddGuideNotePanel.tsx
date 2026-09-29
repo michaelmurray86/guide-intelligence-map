@@ -172,7 +172,7 @@ export default function AddGuideNotePanel({
           accept="image/jpeg,image/png,image/webp,image/gif"
           multiple
           onChange={handlePhotoSelection}
-          className="block w-full text-sm text-slate-600"
+          className="block w-full cursor-pointer text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-slate-700 file:px-4 file:py-2 file:font-semibold file:text-white file:hover:bg-slate-800"
         />
 
         <p className="mt-1 text-xs text-slate-500">
