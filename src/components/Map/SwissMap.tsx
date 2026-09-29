@@ -18,6 +18,11 @@ import {
   deleteGuideNote,
 } from "@/lib/guideNoteDatabase";
 
+import {
+  deleteGuideNotePhotos,
+  uploadGuideNotePhotos,
+} from "@/lib/guideNoteStorage";
+
 import { GuideFilters } from "@/Types/GuideFilters";
 import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
 import { GPXRoute } from "@/Types/GPXRoute";
@@ -693,7 +698,9 @@ const handleSectionDelete = async (section: GuideSection) => {
   async (
     title,
     description,
-    category
+    category,
+    newPhotos,
+    removedPhotos
   )=>{
 
 
@@ -704,36 +711,86 @@ const handleSectionDelete = async (section: GuideSection) => {
 
             if(editingNote){
 
-  const updatedNote =
-  await updateGuideNote(
-    editingNote.id,
-    {
-      title,
-      description,
-      category,
-    },
-    profile?.name
-  );
+              const currentPhotos =
+                editingNote.photos ?? [];
 
-  if(updatedNote){
+              const remainingPhotos =
+                currentPhotos.filter(
+                  photo =>
+                    !removedPhotos.includes(photo)
+                );
 
-    setGuideNotesState(
-      guideNotesState.map(note =>
-        note.id === updatedNote.id
-          ? updatedNote
-          : note
-      )
-    );
+              const uploadedPaths =
+                await uploadGuideNotePhotos(
+                  editingNote.id,
+                  newPhotos
+                );
 
-  }
+              if(uploadedPaths === null){
 
+                alert(
+                  "One or more photos could not be uploaded. No changes were saved."
+                );
 
-  setEditingNote(null);
+                return;
 
+              }
 
-  return;
+              const updatedPhotos = [
+                ...remainingPhotos,
+                ...uploadedPaths,
+              ];
 
+              const updatedNote =
+                await updateGuideNote(
+                  editingNote.id,
+                  {
+                    title,
+                    description,
+                    category,
+                    photos: updatedPhotos,
+                  },
+                  profile?.name
+                );
 
+              if(!updatedNote){
+
+                await deleteGuideNotePhotos(
+                  uploadedPaths
+                );
+
+                alert(
+                  "The guide note could not be updated. No photo changes were saved."
+                );
+
+                return;
+
+              }
+
+              const deleted =
+                await deleteGuideNotePhotos(
+                  removedPhotos
+                );
+
+              if(!deleted){
+
+                console.warn(
+                  "Some removed guide note photos could not be deleted from Storage."
+                );
+
+              }
+
+              setGuideNotesState(
+                guideNotesState.map(note =>
+                  note.id === updatedNote.id
+                    ? updatedNote
+                    : note
+                )
+              );
+
+              setEditingNote(null);
+
+              return;
 
             }
 
@@ -749,59 +806,123 @@ const handleSectionDelete = async (section: GuideSection) => {
             if(!newLocation)
               return;
 
-console.log("Profile when creating note:", profile);
+            console.log("Profile when creating note:", profile);
 
             const newNote = await createGuideNote({
 
-  title,
+              title,
 
-  description,
+              description,
 
-  category,
+              category,
 
-  latitude:
-    newLocation.latitude,
+              latitude:
+                newLocation.latitude,
 
-  longitude:
-    newLocation.longitude,
+              longitude:
+                newLocation.longitude,
 
-  createdAt:
-    new Date()
-    .toISOString(),
+              createdAt:
+                new Date()
+                .toISOString(),
 
-  updatedAt:
-    new Date()
-    .toISOString(),
+              updatedAt:
+                new Date()
+                .toISOString(),
 
+              createdBy:
+                profile?.name ?? "Unknown",
 
-  createdBy:
-    profile?.name ?? "Unknown",
+              updatedBy:
+                profile?.name ?? "Unknown",
 
+              photos: [],
 
-  updatedBy:
-    profile?.name ?? "Unknown",
+              status:
+                profile?.role === "admin"
+                  ? "approved"
+                  : "pending",
 
-
-  status:
-    profile?.role === "admin"
-      ? "approved"
-      : "pending",
-
-});
-
-
-if(newNote){
-
-  setGuideNotesState([
-    ...guideNotesState,
-    newNote,
-  ]);
-
-}
+            });
 
 
-setNewLocation(null);
+            if(!newNote){
 
+              alert(
+                "The guide note could not be saved."
+              );
+
+              return;
+
+            }
+
+            const uploadedPaths =
+              await uploadGuideNotePhotos(
+                newNote.id,
+                newPhotos
+              );
+
+            if(uploadedPaths === null){
+
+              alert(
+                "The guide note was saved, but its photos could not be uploaded."
+              );
+
+              setGuideNotesState([
+                ...guideNotesState,
+                newNote,
+              ]);
+
+              setNewLocation(null);
+
+              return;
+
+            }
+
+            let savedNote = newNote;
+
+            if(uploadedPaths.length > 0){
+
+              const updatedNote =
+                await updateGuideNote(
+                  newNote.id,
+                  {
+                    photos: uploadedPaths,
+                  },
+                  profile?.name
+                );
+
+              if(!updatedNote){
+
+                await deleteGuideNotePhotos(
+                  uploadedPaths
+                );
+
+                alert(
+                  "The guide note was saved, but its photos could not be attached."
+                );
+
+                setGuideNotesState([
+                  ...guideNotesState,
+                  newNote,
+                ]);
+
+                setNewLocation(null);
+
+                return;
+
+              }
+
+              savedNote = updatedNote;
+
+            }
+
+            setGuideNotesState([
+              ...guideNotesState,
+              savedNote,
+            ]);
+
+            setNewLocation(null);
 
           }
         }
