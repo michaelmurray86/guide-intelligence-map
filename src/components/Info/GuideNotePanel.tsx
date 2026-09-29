@@ -501,7 +501,7 @@ export default function GuideNotePanel({
                       : (current - 1 + photos.length) % photos.length
                 );
               }}
-              className="absolute left-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+              className="absolute left-[calc(50%-min(50vw,640px)/2+1rem)] top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
             >
               ‹
             </button>
@@ -532,7 +532,7 @@ export default function GuideNotePanel({
                       : (current + 1) % photos.length
                 );
               }}
-              className="absolute right-6 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+              className="absolute right-[calc(50%-min(50vw,640px)/2+1rem)] top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
             >
               ›
             </button>
