@@ -11,7 +11,6 @@ import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideSection } from "@/Types/GuideSection";
 import { useGuideSections } from "@/hooks/useGuideSections";
 import { useRouteLibrary } from "@/hooks/useRouteLibrary";
-import { RouteLibrary } from "@/Types/RouteLibrary";
 
 export default function AppLayout() {
   const [filters, setFilters] = useState<GuideFilters>({
