@@ -94,7 +94,9 @@ export default function AppLayout() {
       <main className="min-w-0 flex-1">
         <SwissMap
           filters={filters}
+          setFilters={setFilters}
           officialLayers={officialLayers}
+          setOfficialLayers={setOfficialLayers}
           gpxRoute={gpxRoute}
           setGpxRoute={setGpxRoute}
           guideSections={sections}
