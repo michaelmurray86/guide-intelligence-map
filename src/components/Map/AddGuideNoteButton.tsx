@@ -20,8 +20,9 @@ export default function AddGuideNoteButton({
         md:right-6
         z-20
         rounded-lg
-        px-4
+        px-3
         py-3
+        md:px-4
         font-semibold
         shadow-lg
         transition
@@ -32,7 +33,8 @@ export default function AddGuideNoteButton({
         }
       `}
     >
-      + Add Knowledge Point
+      <span className="md:hidden">+ Add</span>
+      <span className="hidden md:inline">+ Add Knowledge Point</span>
     </button>
   );
 }
