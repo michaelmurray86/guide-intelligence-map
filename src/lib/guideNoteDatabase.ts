@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { GuideNote } from "@/Types/GuideNote";
+import { getGuideNotePhotoUrls } from "@/lib/guideNoteStorage";
 
 
 export async function getGuideNotes(): Promise<GuideNote[]> {
@@ -22,19 +23,30 @@ export async function getGuideNotes(): Promise<GuideNote[]> {
   }
 
 
-return data.map(note => ({
-  ...note,
+  return Promise.all(
+    data.map(async note => {
 
-  createdAt: note.created_at,
-  updatedAt: note.updated_at,
+      const photos = note.photos ?? [];
 
-  createdBy: note.created_by,
-  updatedBy: note.updated_by,
-  approvedBy: note.approved_by,
-  approvedAt: note.approved_at,
-  status: note.status,
+      return {
+        ...note,
 
-})) as GuideNote[];
+        createdAt: note.created_at,
+        updatedAt: note.updated_at,
+
+        createdBy: note.created_by,
+        updatedBy: note.updated_by,
+        approvedBy: note.approved_by,
+        approvedAt: note.approved_at,
+        status: note.status,
+
+        photos,
+        photoUrls: await getGuideNotePhotoUrls(photos),
+
+      } as GuideNote;
+
+    })
+  );
 
 }
 
@@ -97,6 +109,8 @@ export async function createGuideNote(
     approvedBy: data.approved_by,
     approvedAt: data.approved_at,
     status: data.status,
+    photos: data.photos ?? [],
+    photoUrls: [],
 
   } as GuideNote;
 
@@ -150,6 +164,8 @@ export async function updateGuideNote(
 
 
 
+  const photos = data.photos ?? [];
+
   return {
 
     ...data,
@@ -162,6 +178,8 @@ export async function updateGuideNote(
     approvedBy: data.approved_by,
     approvedAt: data.approved_at,
     status: data.status,
+    photos,
+    photoUrls: await getGuideNotePhotoUrls(photos),
 
   } as GuideNote;
 
