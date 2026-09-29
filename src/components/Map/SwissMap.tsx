@@ -1077,9 +1077,9 @@ const handleSectionDelete = async (section: GuideSection) => {
       </button>
 
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-slate-300 bg-white p-5 shadow-2xl transition-transform duration-300 md:hidden ${mobileLayersOpen ? "translate-y-0" : "translate-y-full"}`}
+        className={`fixed bottom-0 left-4 right-4 z-40 max-h-[70vh] overflow-hidden rounded-t-2xl border border-b-0 border-slate-300 bg-white shadow-2xl transition-transform duration-300 md:hidden ${mobileLayersOpen ? "translate-y-0" : "translate-y-full"}`}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
           <h2 className="text-lg font-bold text-slate-900">Map Layers</h2>
           <button
             type="button"
@@ -1091,7 +1091,8 @@ const handleSectionDelete = async (section: GuideSection) => {
           </button>
         </div>
 
-        <div className="space-y-5">
+        <div className="max-h-[calc(70vh-65px)] overflow-y-auto p-5">
+          <div className="space-y-5">
           <div>
             <div className="mb-3 text-sm font-bold text-slate-900">🧭 NAE Knowledge</div>
             <div className="space-y-3">
