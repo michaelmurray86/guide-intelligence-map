@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { upsertHut } from "@/lib/hutDatabase";
+import { submitHutChange, HutEditPayload } from "@/lib/hutChangeDatabase";
 import { Hut } from "@/Types/Hut";
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
   onCancel: () => void;
   onSaved?: (hut: Hut) => void;
   updatedBy?: string;
+  userRole?: string;
+  onSubmittedForApproval?: () => void;
 };
 
 type Form = Record<string, string | boolean>;
@@ -68,7 +71,7 @@ function initialForm(hut: Hut | null | undefined, title: string): Form {
   return form;
 }
 
-export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, onCancel, onSaved, updatedBy }: Props) {
+export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, onCancel, onSaved, updatedBy, userRole, onSubmittedForApproval }: Props) {
   const [form,setForm] = useState(() => initialForm(existingHut,guideNoteTitle));
   const [working,setWorking] = useState(false);
   const [error,setError] = useState<string | null>(null);
@@ -79,7 +82,7 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
     if (!String(value("name")).trim()) { setError("Enter a hut name."); return; }
     setWorking(true); setError(null);
     const number = (key:string) => value(key) ? Number(value(key)) : undefined;
-    const hut = await upsertHut(guideNoteId,{
+    const payload: HutEditPayload = {
       name:String(value("name")).trim(),
       alternativeNames:String(value("alternativeNames")).split(",").map(v=>v.trim()).filter(Boolean),
       country:String(value("country")).trim()||undefined, region:String(value("region")).trim()||undefined,
@@ -103,7 +106,28 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
       instructorNotes:String(value("instructorNotes")).trim()||undefined, photos:existingHut?.photos??[],
       lastCheckedAt:String(value("lastCheckedAt"))||undefined, lastCheckedBy:updatedBy,
       source:String(value("source")).trim()||undefined, updatedBy, createdBy:existingHut?.createdBy??updatedBy,
-    });
+    };
+
+    if (userRole === "instructor") {
+      if (!existingHut) {
+        setWorking(false);
+        setError("This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first.");
+        return;
+      }
+
+      const request = await submitHutChange(existingHut.id, payload);
+      setWorking(false);
+
+      if (!request) {
+        setError("The Hut change could not be submitted for approval.");
+        return;
+      }
+
+      onSubmittedForApproval?.();
+      return;
+    }
+
+    const hut = await upsertHut(guideNoteId, payload);
     setWorking(false);
     if (!hut) { setError("The hut could not be saved. Check your permissions and try again."); return; }
     onSaved?.(hut);
@@ -138,6 +162,11 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
       </section>)}
       {error&&<div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
     </div>
-    <div className="flex gap-3 border-t border-slate-200 p-4"><button type="button" onClick={onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">Cancel</button><button type="button" onClick={save} disabled={working} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{working?"Saving...":"Save Hut Details"}</button></div>
+    <div className="flex gap-3 border-t border-slate-200 p-4">
+      <button type="button" onClick={onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">Cancel</button>
+      <button type="button" onClick={save} disabled={working} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
+        {working ? (userRole === "instructor" ? "Submitting..." : "Saving...") : userRole === "instructor" ? "Submit for Approval" : "Save Hut Details"}
+      </button>
+    </div>
   </div>;
 }
