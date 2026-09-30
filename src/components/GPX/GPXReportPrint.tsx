@@ -13,6 +13,7 @@ type Props = {
   route: GPXRoute;
   notes: RouteKnowledgeItem[];
   routeSections: RouteSectionMatch[];
+  mapImage?: string | null;
 };
 
 type ReportItem =
@@ -33,6 +34,7 @@ export default function GPXReportPrint({
   route,
   notes,
   routeSections,
+  mapImage,
 }: Props) {
   const reportItems = useMemo<ReportItem[]>(() => {
     const items: ReportItem[] = [
@@ -58,6 +60,18 @@ export default function GPXReportPrint({
 
     return `Last updated ${date} by ${updatedBy ?? "Unknown user"}`;
   };
+
+  const [printMapImage, setPrintMapImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handlePrintMap = (event: Event) => {
+      const customEvent = event as CustomEvent<{ mapImage?: string | null }>;
+      setPrintMapImage(customEvent.detail?.mapImage ?? null);
+    };
+
+    window.addEventListener("route-report-print", handlePrintMap);
+    return () => window.removeEventListener("route-report-print", handlePrintMap);
+  }, []);
 
   const generatedAt = new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
@@ -93,6 +107,12 @@ export default function GPXReportPrint({
             </div>
           </div>
         </header>
+
+        {mapImage && (
+          <section className="route-report-print-map">
+            <img src={mapImage} alt="SwissTopo map showing the GPX route, knowledge points and route sections" />
+          </section>
+        )}
 
         <section className="route-report-print-warning">
           <strong>⚠️ Caution</strong>
