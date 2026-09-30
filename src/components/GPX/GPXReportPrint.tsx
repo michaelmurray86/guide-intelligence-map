@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { supabase } from "@/lib/supabase";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { markerIcons } from "../Map/markerIcons";
@@ -51,6 +53,62 @@ export default function GPXReportPrint({
     );
   }, [notes, routeSections]);
 
+  const [profileNames, setProfileNames] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const ids = Array.from(
+      new Set(
+        reportItems
+          .map(reportItem =>
+            reportItem.type === "note"
+              ? reportItem.item.note.updatedBy
+              : reportItem.item.section.updatedBy
+          )
+          .filter((id): id is string => Boolean(id))
+      )
+    );
+
+    if (ids.length === 0) {
+      setProfileNames({});
+      return;
+    }
+
+    async function loadProfileNames() {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, name, email")
+        .in("id", ids);
+
+      if (error) {
+        console.error("Error loading report updater names:", error);
+        return;
+      }
+
+      setProfileNames(
+        Object.fromEntries(
+          (data ?? []).map(profile => [
+            profile.id,
+            profile.name || profile.email || "Unknown user",
+          ])
+        )
+      );
+    }
+
+    loadProfileNames();
+  }, [reportItems]);
+
+  const formatUpdated = (updatedAt: string, updatedBy?: string) => {
+    const date = new Intl.DateTimeFormat("en-GB", {
+      dateStyle: "medium",
+    }).format(new Date(updatedAt));
+
+    const name = updatedBy
+      ? profileNames[updatedBy] ?? "Unknown user"
+      : "Unknown user";
+
+    return `Last updated ${date} by ${name}`;
+  };
+
   const generatedAt = new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -85,6 +143,17 @@ export default function GPXReportPrint({
             </div>
           </div>
         </header>
+
+        <section className="route-report-print-warning">
+          <strong>⚠️ Caution</strong>
+          <p>
+            This report only lists hazards and knowledge that have been
+            imported into the Knowledge Hub and is not an exhaustive list of
+            all possible hazards on the route. It is intended to highlight
+            known possible issues and does not replace dynamic risk assessment
+            whilst on the route.
+          </p>
+        </section>
 
         <section className="route-report-print-intro">
           <div>
@@ -149,12 +218,17 @@ export default function GPXReportPrint({
                           {section.description}
                         </p>
 
-                        <p className="route-report-print-distance">
-                          {(
-                            reportItem.item.distanceAlongRoute / 1000
-                          ).toFixed(1)}{" "}
-                          km along route
-                        </p>
+                        <div className="route-report-print-meta-line">
+                          <p className="route-report-print-distance">
+                            {(
+                              reportItem.item.distanceAlongRoute / 1000
+                            ).toFixed(1)}{" "}
+                            km along route
+                          </p>
+                          <p className="route-report-print-updated">
+                            {formatUpdated(section.updatedAt, section.updatedBy)}
+                          </p>
+                        </div>
                       </div>
                     </article>
                   );
@@ -189,10 +263,15 @@ export default function GPXReportPrint({
                         {item.note.description}
                       </p>
 
-                      <p className="route-report-print-distance">
-                        {(item.distanceAlongRoute / 1000).toFixed(1)} km along
-                        route
-                      </p>
+                      <div className="route-report-print-meta-line">
+                        <p className="route-report-print-distance">
+                          {(item.distanceAlongRoute / 1000).toFixed(1)} km along
+                          route
+                        </p>
+                        <p className="route-report-print-updated">
+                          {formatUpdated(item.note.updatedAt, item.note.updatedBy)}
+                        </p>
+                      </div>
                     </div>
                   </article>
                 );
