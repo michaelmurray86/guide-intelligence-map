@@ -78,7 +78,7 @@ create or replace function public.review_update_request(
 returns public.update_requests
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   request_record public.update_requests%rowtype;
