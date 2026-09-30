@@ -106,7 +106,7 @@ export default function Sidebar({
     profile?.role === "admin" ||
     profile?.role === "superadmin";
 
-  const canReviewDeletions =
+  const canReviewRequests =
     profile?.role === "approver" ||
     profile?.role === "admin" ||
     profile?.role === "superadmin";
@@ -287,7 +287,7 @@ export default function Sidebar({
         )}
       </CollapsibleSection>
 
-      {(canManageRouteSections || canReviewDeletions) && (
+      {(canManageRouteSections || canReviewRequests) && (
         <>
           <div className="my-4 border-t border-slate-300" />
 
@@ -479,9 +479,9 @@ export default function Sidebar({
             </CollapsibleSection>
           )}
 
-          {canReviewDeletions && (
+          {canReviewRequests && (
             <CollapsibleSection title="📋 Update Requests">
-              <UpdateRequestsPanel />
+              <UpdateRequestsPanel userRole={profile?.role} />
             </CollapsibleSection>
           )}
         </>
