@@ -157,8 +157,7 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
       </div>
     ) : null;
 
-  const label="block text-sm font-semibold text-slate-700";
-  const sections=[
+  const sections=
     ["Basic information",["name","alternativeNames","country","region","latitude","longitude","elevationM","maxCapacity"]],
     ["Access",["summerAccess","winterAccess","approachRoutes","typicalApproachTime","approachDifficulty","seasonalRestrictions"]],
     ["Facilities & food",["sleepingCapacity","winterRoom","foodAndMeals","water","toilets","showers","electricity","wifi","cooking","blanketsMattresses"]],
