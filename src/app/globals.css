@@ -29,10 +29,14 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 14mm;
+    margin: 10mm;
   }
 
+  html,
   body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
     background: white !important;
     color: #111827 !important;
   }
@@ -49,13 +53,20 @@ body {
   #route-report-print {
     display: block !important;
     position: absolute !important;
-    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     width: 100% !important;
+    margin: 0 !important;
     background: white !important;
   }
 
   .route-report-print-page {
+    display: block;
     width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
     color: #172033;
   }
@@ -117,6 +128,28 @@ body {
     color: #64748b;
     font-size: 8pt;
     line-height: 1.2;
+  }
+
+  .route-report-print-warning {
+    margin-bottom: 14px;
+    padding: 11px 13px;
+    border: 1px solid #f59e0b;
+    border-left: 5px solid #f59e0b;
+    border-radius: 8px;
+    background: #fffbeb;
+    font-size: 9pt;
+  }
+
+  .route-report-print-warning strong {
+    display: block;
+    color: #92400e;
+    font-size: 9.5pt;
+  }
+
+  .route-report-print-warning p {
+    margin: 4px 0 0;
+    color: #78350f;
+    line-height: 1.4;
   }
 
   .route-report-print-intro {
@@ -228,11 +261,24 @@ body {
     line-height: 1.45;
   }
 
+  .route-report-print-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+  }
+
   .route-report-print-distance {
     margin: 7px 0 0;
     color: #64748b;
     font-size: 8pt;
     font-weight: 600;
+  }
+
+  .route-report-print-updated {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 8pt;
   }
 
   .route-report-print-empty {
