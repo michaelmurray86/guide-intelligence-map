@@ -12,6 +12,7 @@ type Props = {
   onClose: () => void;
   onDelete: (id: number) => Promise<boolean>;
   onEdit: (note: GuideNote) => void;
+  onEditHut?: (note: GuideNote) => void;
 };
 
 
@@ -20,6 +21,7 @@ export default function GuideNotePanel({
   onClose,
   onDelete,
   onEdit,
+  onEditHut,
 }: Props) {
 
   const [selectedPhotoIndex, setSelectedPhotoIndex] =
@@ -395,6 +397,23 @@ export default function GuideNotePanel({
         "
       >
 
+
+        {note.category === "hut" && onEditHut && (
+          <button
+            className="
+              flex-1
+              rounded-lg
+              bg-emerald-600
+              py-3
+              font-semibold
+              text-white
+              hover:bg-emerald-700
+            "
+            onClick={() => onEditHut(note)}
+          >
+            Hut Details
+          </button>
+        )}
 
         <button
 
