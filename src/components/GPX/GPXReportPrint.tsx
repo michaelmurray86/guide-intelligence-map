@@ -61,18 +61,6 @@ export default function GPXReportPrint({
     return `Last updated ${date} by ${updatedBy ?? "Unknown user"}`;
   };
 
-  const [printMapImage, setPrintMapImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handlePrintMap = (event: Event) => {
-      const customEvent = event as CustomEvent<{ mapImage?: string | null }>;
-      setPrintMapImage(customEvent.detail?.mapImage ?? null);
-    };
-
-    window.addEventListener("route-report-print", handlePrintMap);
-    return () => window.removeEventListener("route-report-print", handlePrintMap);
-  }, []);
-
   const generatedAt = new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
     timeStyle: "short",
