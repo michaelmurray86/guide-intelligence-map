@@ -665,8 +665,6 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
         mapStyle={mapStyle as any}
-        preserveDrawingBuffer
-
 
         style={{
           width:"100%",
