@@ -186,6 +186,58 @@ export default function SwissMap({
   const hasCenteredOnLocation = useRef(false);
   const mobileGpxInputRef = useRef<HTMLInputElement>(null);
 
+  const [routeMapImage, setRouteMapImage] = useState<string | null>(null);
+
+  const captureRouteMap = async (): Promise<string | null> => {
+    if (!gpxRoute || !mapRef.current) return null;
+
+    const map = mapRef.current.getMap();
+    const coordinates = gpxRoute.geojson.features.flatMap(feature => {
+      if (feature.geometry.type === "LineString") return feature.geometry.coordinates;
+      if (feature.geometry.type === "MultiLineString") return feature.geometry.coordinates.flat();
+      return [];
+    });
+
+    if (coordinates.length === 0) return null;
+
+    let minLng = coordinates[0][0];
+    let maxLng = coordinates[0][0];
+    let minLat = coordinates[0][1];
+    let maxLat = coordinates[0][1];
+
+    coordinates.forEach(([lng, lat]) => {
+      minLng = Math.min(minLng, lng);
+      maxLng = Math.max(maxLng, lng);
+      minLat = Math.min(minLat, lat);
+      maxLat = Math.max(maxLat, lat);
+    });
+
+    map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {
+      padding: { top: 40, bottom: 40, left: 40, right: 40 },
+      maxZoom: 13,
+      duration: 0,
+    });
+
+    await new Promise<void>(resolve => {
+      if (map.loaded()) {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      } else {
+        map.once("idle", () => resolve());
+      }
+    });
+
+    try {
+      const image = map.getCanvas().toDataURL("image/png");
+      setRouteMapImage(image);
+      return image;
+    } catch (error) {
+      console.error("Unable to capture map for route report:", error);
+      setRouteMapImage(null);
+      return null;
+    }
+  };
+
+
 
   const handleRecenterLesMartinets = () => {
     if (!mapRef.current) return;
@@ -815,6 +867,7 @@ const handleSectionDelete = async (section: GuideSection) => {
           onFocusSection={focusSection}
           onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
+          onPrintMapSnapshot={captureRouteMap}
         />
 
         </div>
