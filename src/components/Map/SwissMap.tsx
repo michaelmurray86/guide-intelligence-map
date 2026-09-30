@@ -46,6 +46,8 @@ import OfficialLayers from "../Layers/OfficialLayers";
 
 import GPXLayer from "../GPX/GPXLayer";
 import {
+  findNotesNearRoute,
+  findRouteSectionsNearRoute,
   RouteKnowledgeItem,
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
@@ -225,8 +227,61 @@ export default function SwissMap({
     });
 
     try {
-      const image = map.getCanvas().toDataURL("image/png");
-      return image;
+      const sourceCanvas = map.getCanvas();
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = sourceCanvas.width;
+      exportCanvas.height = sourceCanvas.height;
+
+      const context = exportCanvas.getContext("2d");
+      if (!context) return null;
+
+      context.drawImage(sourceCanvas, 0, 0);
+
+      const nearbyNotes = findNotesNearRoute(gpxRoute, guideNotesState);
+      const nearbySections = findRouteSectionsNearRoute(gpxRoute, guideSections);
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      nearbyNotes.forEach(({ note }) => {
+        const point = map.project([note.longitude, note.latitude]);
+        const x = point.x * pixelRatio;
+        const y = point.y * pixelRatio;
+        const radius = 13 * pixelRatio;
+
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fillStyle = "#ffffff";
+        context.fill();
+        context.lineWidth = 3 * pixelRatio;
+        context.strokeStyle = "#1e293b";
+        context.stroke();
+
+        context.font = (18 * pixelRatio) + "px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = "#111827";
+        context.fillText(markerIcons[note.category], x, y + 1 * pixelRatio);
+      });
+
+      nearbySections.forEach(({ section }) => {
+        if (section.coordinates.length < 2) return;
+
+        context.beginPath();
+        section.coordinates.forEach(([lng, lat], index) => {
+          const point = map.project([lng, lat]);
+          const x = point.x * pixelRatio;
+          const y = point.y * pixelRatio;
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+
+        context.lineWidth = 5 * pixelRatio;
+        context.strokeStyle = section.color || "#ea580c";
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.stroke();
+      });
+
+      return exportCanvas.toDataURL("image/png");
     } catch (error) {
       console.error("Unable to capture map for route report:", error);
       return null;
@@ -609,6 +664,7 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
         mapStyle={mapStyle as any}
+        preserveDrawingBuffer
 
 
         style={{
