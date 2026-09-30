@@ -24,7 +24,9 @@ create table if not exists public.huts (
   sleeping_capacity integer,
   winter_room text,
   food_and_meals text,
+  picnic_lunches boolean,
   water text,
+  water_drinkable boolean,
   toilets text,
   showers text,
   electricity text,
@@ -37,9 +39,14 @@ create table if not exists public.huts (
   phone text,
   email text,
 
-  school_group_suitable boolean,
-  group_capacity integer,
-  staff_leader_considerations text,
+  vendor boolean,
+  vendor_status_expires_at date,
+  guide_rate_offered boolean,
+  guardian_name text,
+  guardian_email text,
+  guardian_phone text,
+  max_capacity integer,
+
   emergency_information text,
   nearby_hazards text,
   useful_route_information text,
@@ -63,13 +70,55 @@ create index if not exists huts_country_idx on public.huts (country);
 
 alter table public.huts enable row level security;
 
--- Authenticated users can read hut records.
 create policy "Authenticated users can read huts"
   on public.huts
   for select
   to authenticated
   using (true);
 
--- Creation/editing/deletion should be restricted to the app's management roles.
--- These policies will be aligned with the existing role model before the
--- migration is applied to Supabase.
+-- Creation/editing/deletion policies will be aligned with the existing
+-- application role model before the migration is applied to Supabase.
+
+-- Seed the four existing Hut knowledge points when the migration is applied.
+-- These values deliberately preserve the information already recorded in the
+-- knowledge points rather than inventing additional hut details.
+insert into public.huts (
+  guide_note_id,
+  name,
+  latitude,
+  longitude,
+  water,
+  water_drinkable,
+  picnic_lunches,
+  guide_rate_offered
+)
+select
+  id,
+  title,
+  latitude,
+  longitude,
+  case
+    when lower(description) like '%water not drinkable%' then 'Bottled water must be purchased'
+    else null
+  end,
+  case
+    when lower(description) like '%water not drinkable%' then false
+    else null
+  end,
+  case
+    when lower(description) like '%picnic lunches available%' then true
+    else null
+  end,
+  case
+    when lower(description) like '%offers guide rate%' then true
+    else null
+  end
+from public.guide_notes
+where lower(category) = 'hut'
+  and title in (
+    'Cabane de la Tourche',
+    'Cabane du Demècre',
+    'Cabane Fenestral',
+    'Cabane Rambert'
+  )
+on conflict (guide_note_id) do nothing;
