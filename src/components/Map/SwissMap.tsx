@@ -176,8 +176,9 @@ export default function SwissMap({
     useState<"idle" | "locating" | "available" | "error">("idle");
 
   const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
-  const [mobileNaeLayersOpen, setMobileNaeLayersOpen] = useState(true);
-  const [mobileSwissTopoLayersOpen, setMobileSwissTopoLayersOpen] = useState(true);
+  const [mobileNaeLayersOpen, setMobileNaeLayersOpen] = useState(false);
+  const [mobileSwissTopoLayersOpen, setMobileSwissTopoLayersOpen] = useState(false);
+  const [mobileRoutesOpen, setMobileRoutesOpen] = useState(false);
   const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
@@ -1185,8 +1186,17 @@ const handleSectionDelete = async (section: GuideSection) => {
           </div>
 
           <div className="mt-5 border-t border-slate-200 pt-5">
-            <div className="mb-3 text-sm font-bold text-slate-900">🥾 Routes</div>
-            <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setMobileRoutesOpen(current => !current)}
+              className="flex w-full items-center justify-between text-left"
+              aria-expanded={mobileRoutesOpen}
+            >
+              <span className="text-sm font-bold text-slate-900">🥾 Routes</span>
+              <span className="text-lg font-semibold text-slate-700">{mobileRoutesOpen ? "−" : "+"}</span>
+            </button>
+            {mobileRoutesOpen && (
+              <div className="mt-3 space-y-3">
               <input
                 ref={mobileGpxInputRef}
                 type="file"
@@ -1230,7 +1240,8 @@ const handleSectionDelete = async (section: GuideSection) => {
                   ❌ Remove loaded route
                 </button>
               )}
-            </div>
+              </div>
+            )}
           </div>
 
 
