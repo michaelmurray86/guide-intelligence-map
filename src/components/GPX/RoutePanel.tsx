@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideNote } from "@/Types/GuideNote";
+import { GuideSection } from "@/Types/GuideSection";
 
 import {
   findNotesNearRoute,
+  findRouteSectionsNearRoute,
   RouteKnowledgeItem,
+  RouteSectionMatch,
 } from "@/lib/gpxAnalysis";
 
 import GPXReport from "./GPXReport";
@@ -15,6 +18,7 @@ import GPXReport from "./GPXReport";
 type Props = {
   route: GPXRoute | null;
   notes: GuideNote[];
+  guideSections: GuideSection[];
   clearRoute: () => void;
 
   onOverview?: () => void;
@@ -32,14 +36,19 @@ onFocusNote?: (
 export default function RoutePanel({
   route,
   notes,
+  guideSections,
   clearRoute,
   onOverview,
   onSelectNote,
   onFocusNote,
+  onSelectSection,
 }: Props) {
 
   const [routeKnowledge, setRouteKnowledge] =
     useState<RouteKnowledgeItem[]>([]);
+
+  const [routeSections, setRouteSections] =
+    useState<RouteSectionMatch[]>([]);
 
   const [collapsed, setCollapsed] =
     useState(true);
@@ -62,10 +71,19 @@ useEffect(() => {
 
   setRouteKnowledge(results);
 
+  const sectionResults =
+    findRouteSectionsNearRoute(
+      route,
+      guideSections
+    );
+
+  setRouteSections(sectionResults);
+
 
 }, [
   route,
   notes,
+  guideSections,
 ]);
 
 
@@ -172,8 +190,58 @@ useEffect(() => {
                 {routeKnowledge.length}
               </span>{" "}
               knowledge items found
+              <span className="mx-2 text-slate-400">·</span>
+              <span className="font-medium">
+                {routeSections.length}
+              </span>{" "}
+              route sections encountered
 
             </div>
+
+            {/* Route Sections */}
+
+            {routeSections.length > 0 && (
+              <div className="border-b border-slate-200 p-4">
+                <h3 className="mb-3 text-sm font-bold text-slate-800">
+                  🥾 Route Sections encountered
+                </h3>
+
+                <div className="space-y-2">
+                  {routeSections.map(match => {
+                    const label =
+                      match.section.guidanceLevel === "do_not_take"
+                        ? "Do not take"
+                        : match.section.guidanceLevel === "caution"
+                          ? "Caution"
+                          : "Suitable";
+
+                    return (
+                      <button
+                        key={match.section.id}
+                        type="button"
+                        onClick={() => onSelectSection?.(match.section)}
+                        className="w-full rounded-md border border-slate-200 bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <span className="font-semibold text-slate-800">
+                            {match.section.title}
+                          </span>
+                          <span
+                            className="shrink-0 text-xs font-semibold"
+                            style={{ color: match.section.color }}
+                          >
+                            {label}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-slate-500">
+                          Around {(match.distanceAlongRoute / 1000).toFixed(1)} km into route
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Report */}
 
