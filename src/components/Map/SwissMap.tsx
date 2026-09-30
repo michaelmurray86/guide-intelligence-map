@@ -40,6 +40,7 @@ import CurrentLocationMarker from "./CurrentLocationMarker";
 import GuideNotePanel from "../Info/GuideNotePanel";
 import RouteSectionPanel from "../Info/RouteSectionPanel";
 import RouteSectionEditor from "../Info/RouteSectionEditor";
+import HutEditor from "../Info/HutEditor";
 import { deleteGuideSection } from "@/lib/guideSectionDatabase";
 import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 
@@ -53,6 +54,8 @@ import {
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
 import { GuideSection } from "@/Types/GuideSection";
+import { Hut } from "@/Types/Hut";
+import { getHutByGuideNoteId } from "@/lib/hutDatabase";
 
 import { GuideNote } from "@/Types/GuideNote";
 
@@ -148,6 +151,12 @@ export default function SwissMap({
 
   const [editingSection, setEditingSection] =
     useState<GuideSection | null>(null);
+
+  const [editingHutNote, setEditingHutNote] =
+    useState<GuideNote | null>(null);
+  const [editingHut, setEditingHut] =
+    useState<Hut | null>(null);
+  const [hutEditorLoading, setHutEditorLoading] = useState(false);
 
 
 
@@ -1002,6 +1011,8 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         }}
 
+        onEditHut={handleEditHut}
+
 
         onDelete={async (id)=>{
 
@@ -1024,6 +1035,32 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
 
+
+
+      {editingHutNote && !hutEditorLoading && (
+        <HutEditor
+          guideNoteId={editingHutNote.id}
+          guideNoteTitle={editingHutNote.title}
+          existingHut={editingHut}
+          updatedBy={profile?.name}
+          onCancel={() => {
+            setEditingHutNote(null);
+            setEditingHut(null);
+          }}
+          onSaved={hut => {
+            setEditingHut(hut);
+            setEditingHutNote(null);
+          }}
+        />
+      )}
+
+      {hutEditorLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+          <div className="rounded-lg bg-white px-5 py-4 text-sm font-semibold text-slate-800 shadow-xl">
+            Loading Hut details…
+          </div>
+        </div>
+      )}
 
 
       <AddGuideNotePanel
