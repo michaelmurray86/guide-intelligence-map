@@ -23,7 +23,11 @@ function displayValue(value: unknown) {
   return String(value);
 }
 
-export default function UpdateRequestsPanel() {
+type Props = {
+  userRole?: string;
+};
+
+export default function UpdateRequestsPanel({ userRole }: Props) {
   const [requests, setRequests] = useState<UpdateRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [workingId, setWorkingId] = useState<number | null>(null);
@@ -77,6 +81,8 @@ export default function UpdateRequestsPanel() {
           const title = isDelete
             ? request.noteTitle ?? "Knowledge item"
             : request.proposedData?.name ?? "Hut";
+          const hutDeletion = isDelete && request.noteCategory === "hut";
+          const canApprove = !hutDeletion || userRole === "admin" || userRole === "superadmin";
 
           return (
             <div key={request.id} className="rounded-lg border border-slate-300 bg-white p-3">
@@ -110,11 +116,11 @@ export default function UpdateRequestsPanel() {
 
               <div className="mt-3 flex gap-2">
                 <button
-                  disabled={workingId === request.id}
+                  disabled={workingId === request.id || !canApprove}
                   onClick={() => review(request, "approved")}
                   className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50"
                 >
-                  Approve
+                  {hutDeletion && !canApprove ? "Admin approval required" : "Approve"}
                 </button>
                 <button
                   disabled={workingId === request.id}
