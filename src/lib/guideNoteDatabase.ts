@@ -18,7 +18,7 @@ export async function getGuideNotes(): Promise<GuideNote[]> {
       error
     );
 
-    return [];
+    throw error;
 
   }
 
