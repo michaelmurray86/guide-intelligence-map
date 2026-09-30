@@ -76,10 +76,15 @@ useEffect(() => {
     <div
       className={`
         fixed
-        top-6
-        left-[22rem]
-        w-80
+        top-4
+        left-4
+        right-4
+        w-auto
         ${collapsed ? "" : "h-[75vh]"}
+        md:top-6
+        md:left-[22rem]
+        md:right-auto
+        md:w-80
         flex
         flex-col
         overflow-hidden
