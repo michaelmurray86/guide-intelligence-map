@@ -68,6 +68,9 @@ body {
   .route-report-print-page {
     display: block;
     width: 100% !important;
+    padding-top: 3mm;
+    padding-bottom: 3mm;
+    box-sizing: border-box;
     max-width: none;
     margin: 0;
     box-sizing: border-box;
