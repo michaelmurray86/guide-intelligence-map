@@ -41,6 +41,7 @@ import GuideNotePanel from "../Info/GuideNotePanel";
 import RouteSectionPanel from "../Info/RouteSectionPanel";
 import RouteSectionEditor from "../Info/RouteSectionEditor";
 import HutEditor from "../Info/HutEditor";
+import HutChangeRequestsPanel from "../Info/HutChangeRequestsPanel";
 import { deleteGuideSection } from "@/lib/guideSectionDatabase";
 import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 
@@ -157,6 +158,7 @@ export default function SwissMap({
   const [editingHut, setEditingHut] =
     useState<Hut | null>(null);
   const [hutEditorLoading, setHutEditorLoading] = useState(false);
+  const [hutChangesOpen, setHutChangesOpen] = useState(false);
 
 
 
@@ -666,6 +668,17 @@ const canManageRouteSections =
   profile?.role === "admin" ||
   profile?.role === "superadmin";
 
+const canManageHuts =
+  profile?.role === "instructor" ||
+  profile?.role === "approver" ||
+  profile?.role === "admin" ||
+  profile?.role === "superadmin";
+
+const canReviewHutChanges =
+  profile?.role === "approver" ||
+  profile?.role === "admin" ||
+  profile?.role === "superadmin";
+
 const handleSectionDelete = async (section: GuideSection) => {
   if (!window.confirm(
     `Delete the Route Section "${section.title}"? This cannot be undone.`
@@ -1043,6 +1056,12 @@ const handleSectionDelete = async (section: GuideSection) => {
           guideNoteTitle={editingHutNote.title}
           existingHut={editingHut}
           updatedBy={profile?.name}
+          userRole={profile?.role}
+          onSubmittedForApproval={() => {
+            setEditingHutNote(null);
+            setEditingHut(null);
+            window.alert("Hut changes submitted for approval.");
+          }}
           onCancel={() => {
             setEditingHutNote(null);
             setEditingHut(null);
@@ -1052,6 +1071,22 @@ const handleSectionDelete = async (section: GuideSection) => {
             setEditingHutNote(null);
           }}
         />
+      )}
+
+      {canReviewHutChanges && (
+        <>
+          <button
+            type="button"
+            onClick={() => setHutChangesOpen(true)}
+            className="absolute right-2 top-52 z-20 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-md hover:bg-slate-50"
+          >
+            ⏳ Hut changes
+          </button>
+          <HutChangeRequestsPanel
+            open={hutChangesOpen}
+            onClose={() => setHutChangesOpen(false)}
+          />
+        </>
       )}
 
       {hutEditorLoading && (
