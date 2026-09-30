@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   RouteKnowledgeItem,
@@ -17,6 +17,16 @@ type Props = {
   onSelectSection?: (section: RouteSectionMatch["section"]) => void;
 };
 
+type ReportItem =
+  | {
+      type: "note";
+      item: RouteKnowledgeItem;
+    }
+  | {
+      type: "section";
+      item: RouteSectionMatch;
+    };
+
 export default function GPXReport({
   notes,
   routeSections,
@@ -28,10 +38,33 @@ export default function GPXReport({
 
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const reportItems = useMemo<ReportItem[]>(() => {
+    const items: ReportItem[] = [
+      ...notes.map(item => ({
+        type: "note" as const,
+        item,
+      })),
+      ...routeSections.map(item => ({
+        type: "section" as const,
+        item,
+      })),
+    ];
+
+    return items.sort(
+      (a, b) => a.item.distanceAlongRoute - b.item.distanceAlongRoute
+    );
+  }, [notes, routeSections]);
+
   const selectItem = (index: number) => {
     setSelectedIndex(index);
 
-    onFocusNote?.(notes[index]);
+    const selectedItem = reportItems[index];
+
+    if (!selectedItem) return;
+
+    if (selectedItem.type === "note") {
+      onFocusNote?.(selectedItem.item);
+    }
 
     itemRefs.current[index]?.scrollIntoView({
       behavior: "smooth",
@@ -39,12 +72,14 @@ export default function GPXReport({
     });
   };
 
-  const previousNote = () => {
+  const previousItem = () => {
     selectItem(Math.max(selectedIndex - 1, 0));
   };
 
-  const nextNote = () => {
-    selectItem(Math.min(selectedIndex + 1, notes.length - 1));
+  const nextItem = () => {
+    selectItem(
+      Math.min(selectedIndex + 1, reportItems.length - 1)
+    );
   };
 
   return (
@@ -73,55 +108,9 @@ export default function GPXReport({
         🥾 Route Knowledge Report
       </h2>
 
-      {routeSections.length > 0 && (
-        <div className="mb-5 border-b border-slate-200 pb-4">
-          <h3 className="mb-3 text-sm font-bold text-slate-800">
-            🥾 Route Sections Encountered
-          </h3>
-
-          <div className="space-y-2">
-            {routeSections.map(match => {
-              const label =
-                match.section.guidanceLevel === "do_not_take"
-                  ? "Do not take"
-                  : match.section.guidanceLevel === "caution"
-                    ? "Caution"
-                    : "Suitable";
-
-              return (
-                <button
-                  key={match.section.id}
-                  type="button"
-                  onClick={() => onSelectSection?.(match.section)}
-                  className="w-full rounded-md border border-slate-200 bg-slate-50 p-3 text-left transition hover:bg-slate-100"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="font-semibold text-slate-800">
-                      {match.section.title}
-                    </span>
-
-                    <span
-                      className="shrink-0 text-xs font-semibold"
-                      style={{ color: match.section.color }}
-                    >
-                      {label}
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Around{" "}
-                    {(match.distanceAlongRoute / 1000).toFixed(1)} km into route
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {notes.length === 0 ? (
+      {reportItems.length === 0 ? (
         <p className="text-slate-600">
-          No nearby knowledge notes found.
+          No nearby knowledge items or route sections found.
         </p>
       ) : (
         <>
@@ -136,7 +125,7 @@ export default function GPXReport({
             "
           >
             <button
-              onClick={previousNote}
+              onClick={previousItem}
               disabled={selectedIndex === 0}
               className="
                 rounded-md
@@ -157,12 +146,12 @@ export default function GPXReport({
                 text-slate-600
               "
             >
-              {selectedIndex + 1} / {notes.length}
+              {selectedIndex + 1} / {reportItems.length}
             </span>
 
             <button
-              onClick={nextNote}
-              disabled={selectedIndex === notes.length - 1}
+              onClick={nextItem}
+              disabled={selectedIndex === reportItems.length - 1}
               className="
                 rounded-md
                 border
@@ -185,75 +174,145 @@ export default function GPXReport({
               pr-1
             "
           >
-            {notes.map((item, index) => (
-              <div
-                key={item.note.id}
-                ref={el => {
-                  itemRefs.current[index] = el;
-                }}
-                onClick={() => {
-                  setSelectedIndex(index);
-                  onSelectNote?.(item);
-                }}
-                className={`
-                  border-b
-                  border-slate-200
-                  pb-3
-                  cursor-pointer
-                  rounded-md
-                  p-2
-                  transition
-                  ${
-                    selectedIndex === index
-                      ? "bg-slate-100 border-l-4 border-blue-600"
-                      : "hover:bg-slate-50"
-                  }
-                `}
-              >
-                <div
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                  "
-                >
-                  <span className="text-2xl">
-                    {markerIcons[item.note.category]}
-                  </span>
+            {reportItems.map((reportItem, index) => {
+              if (reportItem.type === "section") {
+                const section = reportItem.item.section;
 
-                  <div className="flex-1">
-                    <h3
-                      className="
-                        font-semibold
-                        text-slate-800
-                      "
-                    >
-                      {item.note.title}
-                    </h3>
+                const label =
+                  section.guidanceLevel === "do_not_take"
+                    ? "Do not take"
+                    : section.guidanceLevel === "caution"
+                      ? "Caution"
+                      : "Suitable";
+
+                return (
+                  <div
+                    key={`section-${section.id}`}
+                    ref={el => {
+                      itemRefs.current[index] = el;
+                    }}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      onSelectSection?.(section);
+                    }}
+                    className={`
+                      cursor-pointer
+                      rounded-md
+                      border
+                      border-slate-200
+                      bg-slate-50
+                      p-3
+                      transition
+                      hover:bg-slate-100
+                      ${
+                        selectedIndex === index
+                          ? "border-l-4 border-blue-600"
+                          : ""
+                      }
+                    `}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🥾</span>
+
+                        <div>
+                          <h3 className="font-semibold text-slate-800">
+                            {section.title}
+                          </h3>
+
+                          <p className="mt-1 text-sm text-slate-600">
+                            Route section
+                          </p>
+                        </div>
+                      </div>
+
+                      <span
+                        className="shrink-0 text-xs font-semibold"
+                        style={{ color: section.color }}
+                      >
+                        {label}
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-xs text-slate-500">
+                      {(reportItem.item.distanceAlongRoute / 1000).toFixed(1)} km
+                    </p>
                   </div>
+                );
+              }
 
-                  <span
+              const item = reportItem.item;
+
+              return (
+                <div
+                  key={`note-${item.note.id}`}
+                  ref={el => {
+                    itemRefs.current[index] = el;
+                  }}
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    onSelectNote?.(item);
+                  }}
+                  className={`
+                    border-b
+                    border-slate-200
+                    pb-3
+                    cursor-pointer
+                    rounded-md
+                    p-2
+                    transition
+                    ${
+                      selectedIndex === index
+                        ? "bg-slate-100 border-l-4 border-blue-600"
+                        : "hover:bg-slate-50"
+                    }
+                  `}
+                >
+                  <div
                     className="
-                      text-xs
-                      whitespace-nowrap
-                      text-slate-500
+                      flex
+                      items-start
+                      gap-3
                     "
                   >
-                    {(item.distanceAlongRoute / 1000).toFixed(1)} km
-                  </span>
-                </div>
+                    <span className="text-2xl">
+                      {markerIcons[item.note.category]}
+                    </span>
 
-                <p
-                  className="
-                    text-sm
-                    text-slate-600
-                    mt-1
-                  "
-                >
-                  {item.note.description}
-                </p>
-              </div>
-            ))}
+                    <div className="flex-1">
+                      <h3
+                        className="
+                          font-semibold
+                          text-slate-800
+                        "
+                      >
+                        {item.note.title}
+                      </h3>
+                    </div>
+
+                    <span
+                      className="
+                        text-xs
+                        whitespace-nowrap
+                        text-slate-500
+                      "
+                    >
+                      {(item.distanceAlongRoute / 1000).toFixed(1)} km
+                    </span>
+                  </div>
+
+                  <p
+                    className="
+                      text-sm
+                      text-slate-600
+                      mt-1
+                    "
+                  >
+                    {item.note.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </>
       )}
