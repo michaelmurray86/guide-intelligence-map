@@ -64,7 +64,7 @@ function initialForm(hut: Hut | null | undefined, title: string): Form {
     instructorNotes: hut?.instructorNotes ?? "", lastCheckedAt: hut?.lastCheckedAt?.slice(0,10) ?? "",
     source: hut?.source ?? "",
   };
-  for (const [key] of boolFields) form[key] = hut?.[key as keyof Hut] as boolean ?? false;
+  for (const [key] of boolFields) form[key] = (hut?.[key as keyof Hut] as boolean | undefined) ?? false;
   return form;
 }
 
