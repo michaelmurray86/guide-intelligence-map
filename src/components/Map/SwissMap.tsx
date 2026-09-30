@@ -30,6 +30,7 @@ import { RouteLibrary, routeLibraryToGPXRoute } from "@/Types/RouteLibrary";
 import { parseGPX } from "@/lib/parseGPX";
 
 import GuideMarker from "./GuideMarker";
+import { markerIcons } from "./markerIcons";
 import GuideSectionLayer from "./GuideSectionLayer";
 import AddGuideNoteButton from "./AddGuideNoteButton";
 import ToggleSwitch from "../UI/ToggleSwitch";
@@ -46,6 +47,8 @@ import OfficialLayers from "../Layers/OfficialLayers";
 
 import GPXLayer from "../GPX/GPXLayer";
 import {
+  findNotesNearRoute,
+  findRouteSectionsNearRoute,
   RouteKnowledgeItem,
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
@@ -185,6 +188,137 @@ export default function SwissMap({
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
   const mobileGpxInputRef = useRef<HTMLInputElement>(null);
+
+  const captureRouteMap = async (): Promise<string | null> => {
+    if (!gpxRoute || !mapRef.current) return null;
+
+    const map = mapRef.current.getMap();
+    const mapContainer = map.getContainer();
+
+    const originalStyles = {
+      position: mapContainer.style.position,
+      left: mapContainer.style.left,
+      top: mapContainer.style.top,
+      width: mapContainer.style.width,
+      height: mapContainer.style.height,
+      visibility: mapContainer.style.visibility,
+    };
+
+    const coordinates = gpxRoute.geojson.features.flatMap(feature => {
+      if (feature.geometry.type === "LineString") return feature.geometry.coordinates;
+      if (feature.geometry.type === "MultiLineString") return feature.geometry.coordinates.flat();
+      return [];
+    });
+
+    if (coordinates.length === 0) return null;
+
+    let minLng = coordinates[0][0];
+    let maxLng = coordinates[0][0];
+    let minLat = coordinates[0][1];
+    let maxLat = coordinates[0][1];
+
+    coordinates.forEach(([lng, lat]) => {
+      minLng = Math.min(minLng, lng);
+      maxLng = Math.max(maxLng, lng);
+      minLat = Math.min(minLat, lat);
+      maxLat = Math.max(maxLat, lat);
+    });
+
+    try {
+      // Use a fixed landscape canvas for printing so mobile produces the
+      // same landscape-style route overview as desktop.
+      mapContainer.style.position = "fixed";
+      mapContainer.style.left = "-2000px";
+      mapContainer.style.top = "0";
+      mapContainer.style.width = "1200px";
+      mapContainer.style.height = "675px";
+      mapContainer.style.visibility = "hidden";
+
+      map.resize();
+
+      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {
+        padding: { top: 40, bottom: 40, left: 40, right: 40 },
+        maxZoom: 13,
+        duration: 0,
+      });
+
+      await new Promise<void>(resolve => {
+        if (map.loaded()) {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        } else {
+          map.once("idle", () => resolve());
+        }
+      });
+
+      const sourceCanvas = map.getCanvas();
+      const exportCanvas = document.createElement("canvas");
+      exportCanvas.width = sourceCanvas.width;
+      exportCanvas.height = sourceCanvas.height;
+
+      const context = exportCanvas.getContext("2d");
+      if (!context) return null;
+
+      context.drawImage(sourceCanvas, 0, 0);
+
+      const nearbyNotes = findNotesNearRoute(gpxRoute, guideNotesState);
+      const nearbySections = findRouteSectionsNearRoute(gpxRoute, guideSections);
+      const pixelRatio = window.devicePixelRatio || 1;
+
+      nearbyNotes.forEach(({ note }) => {
+        const point = map.project([note.longitude, note.latitude]);
+        const x = point.x * pixelRatio;
+        const y = point.y * pixelRatio;
+        const radius = 13 * pixelRatio;
+
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fillStyle = "#ffffff";
+        context.fill();
+        context.lineWidth = 3 * pixelRatio;
+        context.strokeStyle = "#1e293b";
+        context.stroke();
+
+        context.font = (18 * pixelRatio) + "px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = "#111827";
+        context.fillText(markerIcons[note.category], x, y + 1 * pixelRatio);
+      });
+
+      nearbySections.forEach(({ section }) => {
+        if (section.coordinates.length < 2) return;
+
+        context.beginPath();
+        section.coordinates.forEach(([lng, lat], index) => {
+          const point = map.project([lng, lat]);
+          const x = point.x * pixelRatio;
+          const y = point.y * pixelRatio;
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+
+        context.lineWidth = 5 * pixelRatio;
+        context.strokeStyle = section.color || "#ea580c";
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.stroke();
+      });
+
+      return exportCanvas.toDataURL("image/png");
+    } catch (error) {
+      console.error("Unable to capture map for route report:", error);
+      return null;
+    } finally {
+      mapContainer.style.position = originalStyles.position;
+      mapContainer.style.left = originalStyles.left;
+      mapContainer.style.top = originalStyles.top;
+      mapContainer.style.width = originalStyles.width;
+      mapContainer.style.height = originalStyles.height;
+      mapContainer.style.visibility = originalStyles.visibility;
+
+      map.resize();
+    }
+  };
 
 
   const handleRecenterLesMartinets = () => {
@@ -562,7 +696,6 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         mapStyle={mapStyle as any}
 
-
         style={{
           width:"100%",
           height:"100%",
@@ -815,6 +948,7 @@ const handleSectionDelete = async (section: GuideSection) => {
           onFocusSection={focusSection}
           onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
+          onPrintMapSnapshot={captureRouteMap}
         />
 
         </div>

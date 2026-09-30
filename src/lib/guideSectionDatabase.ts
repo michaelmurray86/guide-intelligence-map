@@ -43,7 +43,7 @@ export async function getGuideSections(): Promise<GuideSection[]> {
       "Error loading guide sections:",
       JSON.stringify(error, null, 2)
     );
-    return [];
+    throw error;
   }
 
   return (data ?? []).map(normalizeSection);

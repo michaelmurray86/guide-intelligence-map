@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideNote } from "@/Types/GuideNote";
@@ -14,6 +15,7 @@ import {
 } from "@/lib/gpxAnalysis";
 
 import GPXReport from "./GPXReport";
+import GPXReportPrint from "./GPXReportPrint";
 
 type Props = {
   route: GPXRoute | null;
@@ -22,6 +24,7 @@ type Props = {
   clearRoute: () => void;
 
   onOverview?: () => void;
+  onPrintMapSnapshot?: () => Promise<string | null>;
 
   onSelectNote?: (
     note: RouteKnowledgeItem
@@ -43,6 +46,7 @@ export default function RoutePanel({
   guideSections,
   clearRoute,
   onOverview,
+  onPrintMapSnapshot,
   onSelectNote,
   onFocusNote,
   onFocusSection,
@@ -57,6 +61,15 @@ export default function RoutePanel({
 
   const [collapsed, setCollapsed] =
     useState(true);
+
+  const [printMapImage, setPrintMapImage] =
+    useState<string | null>(null);
+
+  const printReport = async () => {
+    const mapImage = await onPrintMapSnapshot?.();
+    setPrintMapImage(mapImage ?? null);
+    window.setTimeout(() => window.print(), 100);
+  };
 
 useEffect(() => {
 
@@ -95,7 +108,7 @@ useEffect(() => {
   if (!route) return null;
 
   return (
-
+    <>
     <div
       className={`
         fixed
@@ -228,6 +241,24 @@ useEffect(() => {
               "
             >
 
+              <button
+                onClick={printReport}
+                className="
+                  w-full
+                  rounded-md
+                  bg-blue-600
+                  px-3
+                  py-2
+                  text-sm
+                  font-semibold
+                  text-white
+                  hover:bg-blue-700
+                  transition
+                "
+              >
+                🖨 Print / Save PDF
+              </button>
+
 
 {onOverview && (
 
@@ -287,6 +318,17 @@ useEffect(() => {
 
     </div>
 
+    {typeof document !== "undefined" &&
+      createPortal(
+        <GPXReportPrint
+          route={route}
+          notes={routeKnowledge}
+          routeSections={routeSections}
+          mapImage={printMapImage}
+        />,
+        document.body
+      )}
+    </>
   );
 
 }
