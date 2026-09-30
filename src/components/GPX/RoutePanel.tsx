@@ -67,7 +67,7 @@ export default function RoutePanel({
 
   const printReport = async () => {
     const mapImage = await onPrintMapSnapshot?.();
-    setPrintMapImage(mapImage);
+    setPrintMapImage(mapImage ?? null);
     window.setTimeout(() => window.print(), 100);
   };
 
