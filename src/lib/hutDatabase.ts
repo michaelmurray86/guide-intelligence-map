@@ -123,6 +123,79 @@ export async function getHuts(): Promise<Hut[]> {
   return ((data ?? []) as HutRow[]).map(normalizeHut);
 }
 
+export async function upsertHut(
+  guideNoteId: number,
+  input: Omit<Hut, "id" | "guideNoteId" | "updatedAt" | "createdAt">
+    & { updatedBy?: string; createdBy?: string }
+): Promise<Hut | null> {
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("huts")
+    .upsert(
+      {
+        guide_note_id: guideNoteId,
+        name: input.name,
+        alternative_names: input.alternativeNames,
+        country: input.country ?? null,
+        region: input.region ?? null,
+        latitude: input.latitude ?? null,
+        longitude: input.longitude ?? null,
+        elevation_m: input.elevationM ?? null,
+        summer_access: input.summerAccess ?? null,
+        winter_access: input.winterAccess ?? null,
+        approach_routes: input.approachRoutes ?? null,
+        typical_approach_time: input.typicalApproachTime ?? null,
+        approach_difficulty: input.approachDifficulty ?? null,
+        seasonal_restrictions: input.seasonalRestrictions ?? null,
+        sleeping_capacity: input.sleepingCapacity ?? null,
+        winter_room: input.winterRoom ?? null,
+        food_and_meals: input.foodAndMeals ?? null,
+        picnic_lunches: input.picnicLunches ?? null,
+        water: input.water ?? null,
+        water_drinkable: input.waterDrinkable ?? null,
+        toilets: input.toilets ?? null,
+        showers: input.showers ?? null,
+        electricity: input.electricity ?? null,
+        wifi: input.wifi ?? null,
+        cooking: input.cooking ?? null,
+        blankets_mattresses: input.blanketsMattresses ?? null,
+        booking_required: input.bookingRequired ?? null,
+        booking_url: input.bookingUrl ?? null,
+        phone: input.phone ?? null,
+        email: input.email ?? null,
+        vendor: input.vendor ?? null,
+        vendor_status_expires_at: input.vendorStatusExpiresAt || null,
+        guide_rate_offered: input.guideRateOffered ?? null,
+        guardian_name: input.guardianName ?? null,
+        guardian_email: input.guardianEmail ?? null,
+        guardian_phone: input.guardianPhone ?? null,
+        max_capacity: input.maxCapacity ?? null,
+        emergency_information: input.emergencyInformation ?? null,
+        nearby_hazards: input.nearbyHazards ?? null,
+        useful_route_information: input.usefulRouteInformation ?? null,
+        instructor_notes: input.instructorNotes ?? null,
+        photos: input.photos,
+        last_checked_at: input.lastCheckedAt ?? null,
+        last_checked_by: input.lastCheckedBy ?? null,
+        source: input.source ?? null,
+        updated_at: now,
+        updated_by: input.updatedBy ?? null,
+        created_by: input.createdBy ?? null,
+      },
+      { onConflict: "guide_note_id" }
+    )
+    .select("*")
+    .single();
+
+  if (error || !data) {
+    console.error("Error saving hut:", JSON.stringify(error, null, 2));
+    return null;
+  }
+
+  return normalizeHut(data as HutRow);
+}
+
 export async function getHutByGuideNoteId(
   guideNoteId: number
 ): Promise<Hut | null> {
