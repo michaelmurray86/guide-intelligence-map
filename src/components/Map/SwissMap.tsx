@@ -671,6 +671,28 @@ const canManageHuts =
   profile?.role === "approver" ||
   profile?.role === "admin" ||
   profile?.role === "superadmin";
+const handleEditHut = async (note: GuideNote) => {
+  if (!canManageHuts) return;
+
+  setSelectedNote(null);
+  setEditingHutNote(note);
+  setEditingHut(null);
+  setHutEditorLoading(true);
+
+  try {
+    const hut = await getHutByGuideNoteId(note.id);
+    setEditingHut(hut);
+  } catch (error) {
+    console.error("Error loading Hut details:", error);
+    setEditingHutNote(null);
+    window.alert(
+      "The Hut Database is not available yet. The database migration needs to be applied before Hut details can be edited."
+    );
+  } finally {
+    setHutEditorLoading(false);
+  }
+};
+
 
 const handleSectionDelete = async (section: GuideSection) => {
   if (!window.confirm(
