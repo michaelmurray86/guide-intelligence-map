@@ -23,7 +23,7 @@ export async function getRouteLibrary(): Promise<RouteLibrary[]> {
       "Error loading route library:",
       JSON.stringify(error, null, 2)
     );
-    return [];
+    throw error;
   }
 
   return (data ?? []).map(normalizeRoute);
