@@ -42,7 +42,7 @@ export default function RoutePanel({
     useState<RouteKnowledgeItem[]>([]);
 
   const [collapsed, setCollapsed] =
-    useState(false);
+    useState(true);
 
 useEffect(() => {
 
@@ -80,11 +80,13 @@ useEffect(() => {
         left-4
         right-4
         w-auto
+        max-w-[calc(100vw-7rem)]
         ${collapsed ? "" : "h-[75vh]"}
         md:top-6
         md:left-[22rem]
         md:right-auto
         md:w-80
+        md:max-w-none
         flex
         flex-col
         overflow-hidden
