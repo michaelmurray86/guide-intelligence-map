@@ -804,12 +804,14 @@ const handleSectionDelete = async (section: GuideSection) => {
         <RoutePanel
           route={gpxRoute}
           notes={guideNotesState}
-            clearRoute={() => {
-              setGpxRoute(null);
-              setSelectedNote(null);
-            }}
+          guideSections={guideSections}
+          clearRoute={() => {
+            setGpxRoute(null);
+            setSelectedNote(null);
+          }}
           onSelectNote={handleRouteNoteSelect}
           onFocusNote={handleRouteNoteFocus}
+          onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
         />
 
