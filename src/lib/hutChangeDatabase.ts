@@ -55,11 +55,13 @@ export async function submitHutChange(
   }
 
   const { data, error } = await supabase
-    .from("hut_change_requests")
-    .insert({
+     .from("update_requests")
+     .insert({
+      request_type: "edit",
       hut_id: hutId,
       requested_by: userData.user.id,
       proposed_data: proposedData,
+      status: "pending",
     })
     .select("*")
     .single();
@@ -74,9 +76,9 @@ export async function submitHutChange(
 
 export async function getPendingHutChanges(): Promise<HutChangeRequest[]> {
   const { data, error } = await supabase
-    .from("hut_change_requests")
+     .from("update_requests")
     .select("*")
-    .eq("status", "pending")
+     .eq("status", "pending")
     .order("requested_at", { ascending: true });
 
   if (error) {
@@ -93,7 +95,7 @@ export async function reviewHutChange(
   comment?: string
 ): Promise<HutChangeRequest | null> {
   const { data, error } = await supabase.rpc(
-    "review_hut_change_request",
+    "review_update_request",
     {
       request_id: requestId,
       decision,
