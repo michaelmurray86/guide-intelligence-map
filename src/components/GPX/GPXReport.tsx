@@ -14,6 +14,7 @@ type Props = {
   routeSections: RouteSectionMatch[];
   onSelectNote?: (note: RouteKnowledgeItem) => void;
   onFocusNote?: (note: RouteKnowledgeItem) => void;
+  onFocusSection?: (section: RouteSectionMatch["section"]) => void;
   onSelectSection?: (section: RouteSectionMatch["section"]) => void;
 };
 
@@ -32,6 +33,7 @@ export default function GPXReport({
   routeSections,
   onSelectNote,
   onFocusNote,
+  onFocusSection,
   onSelectSection,
 }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -65,7 +67,7 @@ export default function GPXReport({
     if (selectedItem.type === "note") {
       onFocusNote?.(selectedItem.item);
     } else {
-      onSelectSection?.(selectedItem.item.section);
+      onFocusSection?.(selectedItem.item.section);
     }
 
     itemRefs.current[index]?.scrollIntoView({
