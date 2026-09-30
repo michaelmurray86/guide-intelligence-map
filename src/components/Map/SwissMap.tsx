@@ -309,9 +309,12 @@ export default function SwissMap({
       console.error("Unable to capture map for route report:", error);
       return null;
     } finally {
-      Object.entries(originalStyles).forEach(([property, value]) => {
-        mapContainer.style[property as keyof CSSStyleDeclaration] = value;
-      });
+      mapContainer.style.position = originalStyles.position;
+      mapContainer.style.left = originalStyles.left;
+      mapContainer.style.top = originalStyles.top;
+      mapContainer.style.width = originalStyles.width;
+      mapContainer.style.height = originalStyles.height;
+      mapContainer.style.visibility = originalStyles.visibility;
 
       map.resize();
     }
