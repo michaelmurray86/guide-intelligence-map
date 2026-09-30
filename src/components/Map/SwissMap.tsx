@@ -180,11 +180,39 @@ export default function SwissMap({
   const [mobileSwissTopoLayersOpen, setMobileSwissTopoLayersOpen] = useState(false);
   const [mobileRoutesOpen, setMobileRoutesOpen] = useState(false);
   const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
+  const [recenterMenuOpen, setRecenterMenuOpen] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
   const mobileGpxInputRef = useRef<HTMLInputElement>(null);
 
+
+  const handleRecenterLesMartinets = () => {
+    if (!mapRef.current) return;
+
+    mapRef.current.flyTo({
+      center: [7.091656, 46.256420],
+      zoom: 12.5,
+      duration: 800,
+    });
+
+    setRecenterMenuOpen(false);
+  };
+
+  const handleRecenterCurrentLocation = () => {
+    if (currentLocation && mapRef.current) {
+      mapRef.current.flyTo({
+        center: [currentLocation.longitude, currentLocation.latitude],
+        zoom: Math.max(mapRef.current.getZoom(), 14),
+        duration: 800,
+      });
+      setRecenterMenuOpen(false);
+      return;
+    }
+
+    handleLocateMe();
+    setRecenterMenuOpen(false);
+  };
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
@@ -719,20 +747,37 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
 
-      <button
-        type="button"
-        onClick={handleLocateMe}
-        disabled={locationStatus === "locating"}
-        aria-label="Show my current location"
-        title={
-          locationStatus === "error"
-            ? "Location unavailable"
-            : "Show my current location"
-        }
-        className="absolute right-2 top-28 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl text-slate-900 shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
-      >
-        {locationStatus === "locating" ? "…" : "⌖"}
-      </button>
+      <div className="absolute right-2 top-28 z-20">
+        <button
+          type="button"
+          onClick={() => setRecenterMenuOpen(current => !current)}
+          disabled={locationStatus === "locating"}
+          aria-label="Recenter map"
+          title="Recenter map"
+          className="flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl text-slate-900 shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+        >
+          {locationStatus === "locating" ? "…" : "⌖"}
+        </button>
+
+        {recenterMenuOpen && (
+          <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-lg border border-slate-300 bg-white shadow-xl">
+            <button
+              type="button"
+              onClick={handleRecenterCurrentLocation}
+              className="block w-full px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50"
+            >
+              📍 {currentLocation ? "Centre on my location" : "Use my current location"}
+            </button>
+            <button
+              type="button"
+              onClick={handleRecenterLesMartinets}
+              className="block w-full border-t border-slate-200 px-4 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50"
+            >
+              🏔 Centre on Les Martinets
+            </button>
+          </div>
+        )}
+      </div>
 
       {locationStatus === "error" && (
         <div className="absolute right-2 top-40 z-20 max-w-56 rounded bg-white px-3 py-2 text-xs text-slate-700 shadow-md">
