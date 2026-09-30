@@ -176,6 +176,8 @@ export default function SwissMap({
     useState<"idle" | "locating" | "available" | "error">("idle");
 
   const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
+  const [mobileNaeLayersOpen, setMobileNaeLayersOpen] = useState(true);
+  const [mobileSwissTopoLayersOpen, setMobileSwissTopoLayersOpen] = useState(true);
   const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
@@ -1132,8 +1134,17 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         <div className="max-h-[calc(70vh-65px)] overflow-y-auto p-5">
           <div>
-            <div className="mb-3 text-sm font-bold text-slate-900">🧭 NAE Knowledge</div>
-            <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setMobileNaeLayersOpen(current => !current)}
+              className="flex w-full items-center justify-between text-left"
+              aria-expanded={mobileNaeLayersOpen}
+            >
+              <span className="text-sm font-bold text-slate-900">🧭 NAE Knowledge</span>
+              <span className="text-lg font-semibold text-slate-700">{mobileNaeLayersOpen ? "−" : "+"}</span>
+            </button>
+            {mobileNaeLayersOpen && (
+              <div className="mt-3 space-y-3">
               <ToggleSwitch checked={Object.values(filters).every(Boolean)} onChange={() => {
                 const nextValue = !Object.values(filters).every(Boolean);
                 setFilters(Object.fromEntries(Object.keys(filters).map(key => [key, nextValue])) as GuideFilters);
@@ -1147,7 +1158,30 @@ const handleSectionDelete = async (section: GuideSection) => {
               <ToggleSwitch checked={filters.toilet} onChange={() => setFilters(current => ({ ...current, toilet: !current.toilet }))} label="🚻 Toilets" />
               <ToggleSwitch checked={filters.snow} onChange={() => setFilters(current => ({ ...current, snow: !current.snow }))} label="❄️ Snow" />
               <ToggleSwitch checked={filters.information} onChange={() => setFilters(current => ({ ...current, information: !current.information }))} label="ℹ️ Information" />
-            </div>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-5 border-t border-slate-200 pt-5">
+            <button
+              type="button"
+              onClick={() => setMobileSwissTopoLayersOpen(current => !current)}
+              className="flex w-full items-center justify-between text-left"
+              aria-expanded={mobileSwissTopoLayersOpen}
+            >
+              <span className="text-sm font-bold text-slate-900">🗺 SwissTopo</span>
+              <span className="text-lg font-semibold text-slate-700">{mobileSwissTopoLayersOpen ? "−" : "+"}</span>
+            </button>
+            {mobileSwissTopoLayersOpen && (
+              <div className="mt-3 space-y-3">
+                <ToggleSwitch checked={officialLayers.hikingTrails} onChange={() => setOfficialLayers(current => ({ ...current, hikingTrails: !current.hikingTrails }))} label="🥾 Hiking Trails" />
+                <ToggleSwitch checked={officialLayers.closures} onChange={() => setOfficialLayers(current => ({ ...current, closures: !current.closures }))} label="🚧 Closures & Diversions" />
+                <ToggleSwitch checked={officialLayers.guardianDogs} onChange={() => setOfficialLayers(current => ({ ...current, guardianDogs: !current.guardianDogs }))} label="🐕 Guardian Dogs" />
+                <ToggleSwitch checked={officialLayers.shootingRanges} onChange={() => setOfficialLayers(current => ({ ...current, shootingRanges: !current.shootingRanges }))} label="🎯 Shooting Bulletins" />
+                <ToggleSwitch checked={officialLayers.transportStops} onChange={() => setOfficialLayers(current => ({ ...current, transportStops: !current.transportStops }))} label="🚉 Transport Stops" />
+                <ToggleSwitch checked={officialLayers.slopeAngle} onChange={() => setOfficialLayers(current => ({ ...current, slopeAngle: !current.slopeAngle }))} label="⛰️ Slope angle >30°" />
+              </div>
+            )}
           </div>
 
           <div className="mt-5 border-t border-slate-200 pt-5">
@@ -1199,17 +1233,7 @@ const handleSectionDelete = async (section: GuideSection) => {
             </div>
           </div>
 
-          <div className="mt-5 border-t border-slate-200 pt-5">
-            <div className="mb-3 text-sm font-bold text-slate-900">🗺 SwissTopo</div>
-            <div className="space-y-3">
-              <ToggleSwitch checked={officialLayers.hikingTrails} onChange={() => setOfficialLayers(current => ({ ...current, hikingTrails: !current.hikingTrails }))} label="🥾 Hiking Trails" />
-              <ToggleSwitch checked={officialLayers.closures} onChange={() => setOfficialLayers(current => ({ ...current, closures: !current.closures }))} label="🚧 Closures & Diversions" />
-              <ToggleSwitch checked={officialLayers.guardianDogs} onChange={() => setOfficialLayers(current => ({ ...current, guardianDogs: !current.guardianDogs }))} label="🐕 Guardian Dogs" />
-              <ToggleSwitch checked={officialLayers.shootingRanges} onChange={() => setOfficialLayers(current => ({ ...current, shootingRanges: !current.shootingRanges }))} label="🎯 Shooting Bulletins" />
-              <ToggleSwitch checked={officialLayers.transportStops} onChange={() => setOfficialLayers(current => ({ ...current, transportStops: !current.transportStops }))} label="🚉 Transport Stops" />
-              <ToggleSwitch checked={officialLayers.slopeAngle} onChange={() => setOfficialLayers(current => ({ ...current, slopeAngle: !current.slopeAngle }))} label="⛰️ Slope angle >30°" />
-            </div>
-          </div>
+
         </div>
       </div>
 
