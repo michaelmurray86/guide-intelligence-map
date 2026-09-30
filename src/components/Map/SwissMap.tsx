@@ -1007,6 +1007,7 @@ const handleSectionDelete = async (section: GuideSection) => {
                 )
               );
 
+              setSelectedNote(updatedNote);
               setEditingNote(null);
 
               return;
