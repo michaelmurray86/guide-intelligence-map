@@ -99,6 +99,7 @@ export default function AppLayout() {
           setOfficialLayers={setOfficialLayers}
           gpxRoute={gpxRoute}
           setGpxRoute={setGpxRoute}
+          routeLibrary={routeLibrary}
           guideSections={sections}
           routeSectionDraft={routeSectionDraft}
           focusedRouteSectionId={focusedRouteSectionId}

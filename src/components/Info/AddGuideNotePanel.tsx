@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import GuideNoteForm from "./GuideNoteForm";
 import { GuideNote, GuideNoteCategory } from "@/Types/GuideNote";
 
@@ -34,6 +34,8 @@ export default function AddGuideNotePanel({
   const [existingPhotoUrls, setExistingPhotoUrls] = useState<string[]>([]);
   const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const photoPickerRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (editingNote) {
@@ -175,11 +177,40 @@ export default function AddGuideNotePanel({
         </label>
 
         <input
+          ref={photoPickerRef}
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
           multiple
           onChange={handlePhotoSelection}
-          className="block w-full cursor-pointer text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-slate-700 file:px-4 file:py-2 file:font-semibold file:text-white file:hover:bg-slate-800"
+          className="hidden md:block w-full cursor-pointer text-sm text-slate-600 file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-slate-700 file:px-4 file:py-2 file:font-semibold file:text-white file:hover:bg-slate-800"
+        />
+
+        <div className="grid grid-cols-2 gap-2 md:hidden">
+          <button
+            type="button"
+            onClick={() => cameraInputRef.current?.click()}
+            className="rounded-lg border border-slate-300 bg-slate-700 px-3 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+          >
+            📷 Take Photo
+          </button>
+
+          <button
+            type="button"
+            onClick={() => photoPickerRef.current?.click()}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+          >
+            🖼️ Choose from phone
+          </button>
+        </div>
+
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handlePhotoSelection}
+          className="hidden"
+          aria-hidden="true"
         />
 
         <p className="mt-1 text-xs text-slate-500">

@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideNote } from "@/Types/GuideNote";
+import { GuideSection } from "@/Types/GuideSection";
 
 import {
   findNotesNearRoute,
+  findRouteSectionsNearRoute,
   RouteKnowledgeItem,
+  RouteSectionMatch,
 } from "@/lib/gpxAnalysis";
 
 import GPXReport from "./GPXReport";
@@ -15,6 +18,7 @@ import GPXReport from "./GPXReport";
 type Props = {
   route: GPXRoute | null;
   notes: GuideNote[];
+  guideSections: GuideSection[];
   clearRoute: () => void;
 
   onOverview?: () => void;
@@ -27,22 +31,32 @@ onFocusNote?: (
     note: RouteKnowledgeItem
   ) => void;
 
+  onFocusSection?: (section: GuideSection) => void;
+
+  onSelectSection?: (section: GuideSection) => void;
+
 };
 
 export default function RoutePanel({
   route,
   notes,
+  guideSections,
   clearRoute,
   onOverview,
   onSelectNote,
   onFocusNote,
+  onFocusSection,
+  onSelectSection,
 }: Props) {
 
   const [routeKnowledge, setRouteKnowledge] =
     useState<RouteKnowledgeItem[]>([]);
 
+  const [routeSections, setRouteSections] =
+    useState<RouteSectionMatch[]>([]);
+
   const [collapsed, setCollapsed] =
-    useState(false);
+    useState(true);
 
 useEffect(() => {
 
@@ -62,10 +76,19 @@ useEffect(() => {
 
   setRouteKnowledge(results);
 
+  const sectionResults =
+    findRouteSectionsNearRoute(
+      route,
+      guideSections
+    );
+
+  setRouteSections(sectionResults);
+
 
 }, [
   route,
   notes,
+  guideSections,
 ]);
 
 
@@ -76,10 +99,17 @@ useEffect(() => {
     <div
       className={`
         fixed
-        top-6
-        left-[22rem]
-        w-80
+        top-4
+        left-4
+        right-4
+        w-auto
+        max-w-[calc(100vw-6rem)]
         ${collapsed ? "" : "h-[75vh]"}
+        md:top-6
+        md:left-[22rem]
+        md:right-auto
+        md:w-80
+        md:max-w-none
         flex
         flex-col
         overflow-hidden
@@ -159,13 +189,12 @@ useEffect(() => {
                 text-slate-700
               "
             >
-
               📍{" "}
-              <span className="font-medium">
-                {routeKnowledge.length}
-              </span>{" "}
+              <span className="font-medium">{routeKnowledge.length}</span>{" "}
               knowledge items found
-
+              <span className="mx-2 text-slate-400">·</span>
+              <span className="font-medium">{routeSections.length}</span>{" "}
+              route sections encountered
             </div>
 
             {/* Report */}
@@ -180,8 +209,11 @@ useEffect(() => {
 
               <GPXReport
                 notes={routeKnowledge}
+                routeSections={routeSections}
                 onSelectNote={onSelectNote}
                 onFocusNote={onFocusNote}
+                onFocusSection={onFocusSection}
+                onSelectSection={onSelectSection}
               />
 
             </div>
