@@ -100,7 +100,7 @@ useEffect(() => {
   if (!route) return null;
 
   return (
-
+    <>
     <div
       className={`
         fixed
@@ -315,7 +315,7 @@ useEffect(() => {
       notes={routeKnowledge}
       routeSections={routeSections}
     />
-
+    </>
   );
 
 }
