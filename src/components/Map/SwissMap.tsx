@@ -26,6 +26,8 @@ import {
 import { GuideFilters } from "@/Types/GuideFilters";
 import { OfficialLayerFilters } from "@/Types/OfficialLayerFilters";
 import { GPXRoute } from "@/Types/GPXRoute";
+import { RouteLibrary, routeLibraryToGPXRoute } from "@/Types/RouteLibrary";
+import { parseGPX } from "@/lib/parseGPX";
 
 import GuideMarker from "./GuideMarker";
 import GuideSectionLayer from "./GuideSectionLayer";
@@ -96,6 +98,8 @@ type Props = {
     React.SetStateAction<GPXRoute | null>
   >;
 
+  routeLibrary: RouteLibrary[];
+
   guideSections: GuideSection[];
   routeSectionDraft: GPXRoute | null;
   focusedRouteSectionId?: number | null;
@@ -112,6 +116,7 @@ export default function SwissMap({
   setOfficialLayers,
   gpxRoute,
   setGpxRoute,
+  routeLibrary,
   guideSections,
   routeSectionDraft,
   focusedRouteSectionId,
@@ -175,6 +180,7 @@ export default function SwissMap({
 
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
+  const mobileGpxInputRef = useRef<HTMLInputElement>(null);
 
 
   const handleLocateMe = () => {
@@ -256,6 +262,35 @@ export default function SwissMap({
     setSelectedNote(null);
   };
 
+  const handleMobileGpxImport = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const route = await parseGPX(file);
+      setGpxRoute(route);
+      setMobileLayersOpen(false);
+    } catch (error) {
+      console.error("Failed to import GPX:", error);
+      window.alert("Unable to import GPX file.");
+    }
+
+    event.target.value = "";
+  };
+
+  const handleLoadMobileLibraryRoute = (routeId: string) => {
+    const selected = routeLibrary.find(
+      route => route.id.toString() === routeId
+    );
+
+    if (!selected) return;
+
+    setGpxRoute(routeLibraryToGPXRoute(selected));
+    setMobileLayersOpen(false);
+  };
+
 const handleRouteOverview = () => {
 
   setSelectedNote(null);
@@ -318,7 +353,11 @@ const handleRouteOverview = () => {
       padding: {
         top: 80,
         bottom: 80,
-        left: 420,
+        left:
+          typeof window !== "undefined" &&
+          window.matchMedia("(max-width: 767px)").matches
+            ? 40
+            : 420,
         right: 80,
       },
       maxZoom: 14,
@@ -687,7 +726,7 @@ const handleSectionDelete = async (section: GuideSection) => {
             ? "Location unavailable"
             : "Show my current location"
         }
-        className="absolute right-2 top-28 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+        className="absolute right-2 top-28 z-20 flex h-11 w-11 items-center justify-center rounded border border-slate-300 bg-white text-xl text-slate-900 shadow-md transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
       >
         {locationStatus === "locating" ? "…" : "⌖"}
       </button>
@@ -1071,7 +1110,7 @@ const handleSectionDelete = async (section: GuideSection) => {
         onClick={() => setMobileLayersOpen(current => !current)}
         aria-label="Open map layers"
         title="Map layers"
-        className="absolute bottom-4 left-4 z-20 flex h-11 w-11 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl shadow-lg transition hover:bg-slate-100 md:hidden"
+        className="absolute bottom-4 left-4 z-20 flex h-11 w-11 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl text-slate-900 shadow-lg transition hover:bg-slate-100 md:hidden"
       >
         ☰
       </button>
@@ -1108,6 +1147,55 @@ const handleSectionDelete = async (section: GuideSection) => {
               <ToggleSwitch checked={filters.toilet} onChange={() => setFilters(current => ({ ...current, toilet: !current.toilet }))} label="🚻 Toilets" />
               <ToggleSwitch checked={filters.snow} onChange={() => setFilters(current => ({ ...current, snow: !current.snow }))} label="❄️ Snow" />
               <ToggleSwitch checked={filters.information} onChange={() => setFilters(current => ({ ...current, information: !current.information }))} label="ℹ️ Information" />
+            </div>
+          </div>
+
+          <div className="mt-5 border-t border-slate-200 pt-5">
+            <div className="mb-3 text-sm font-bold text-slate-900">🥾 Routes</div>
+            <div className="space-y-3">
+              <input
+                ref={mobileGpxInputRef}
+                type="file"
+                accept=".gpx,application/gpx+xml,application/xml,text/xml"
+                onChange={handleMobileGpxImport}
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => mobileGpxInputRef.current?.click()}
+                className="w-full rounded-lg bg-blue-600 px-4 py-3 text-left font-semibold text-white hover:bg-blue-700"
+              >
+                📂 Import GPX
+              </button>
+
+              {routeLibrary.length > 0 && (
+                <select
+                  value={gpxRoute ? routeLibrary.find(route => route.name === gpxRoute.name)?.id.toString() ?? "" : ""}
+                  onChange={event => handleLoadMobileLibraryRoute(event.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm text-slate-700"
+                >
+                  <option value="">Load from Route Library...</option>
+                  {routeLibrary.map(route => (
+                    <option key={route.id} value={route.id}>
+                      {route.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {gpxRoute && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGpxRoute(null);
+                    setSelectedNote(null);
+                  }}
+                  className="w-full rounded-lg border border-red-200 px-4 py-3 text-left font-semibold text-red-700 hover:bg-red-50"
+                >
+                  ❌ Remove loaded route
+                </button>
+              )}
             </div>
           </div>
 
