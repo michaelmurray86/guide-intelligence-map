@@ -266,7 +266,7 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
       {error&&<div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
     </div>
     <div className="flex gap-3 border-t border-slate-200 p-4">
-      <button type="button" existingHut ? onClick={() => setEditing(false)} : onClick={onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">{existingHut ? "Back" : "Cancel"}</button>
+      <button type="button" onClick={existingHut ? () => setEditing(false) : onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">{existingHut ? "Back" : "Cancel"}</button>
       <button type="button" onClick={save} disabled={working} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
         {working ? (userRole === "instructor" ? "Submitting..." : "Saving...") : userRole === "instructor" ? "Submit for Approval" : "Save Hut Details"}
       </button>
