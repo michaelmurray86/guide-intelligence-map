@@ -186,8 +186,6 @@ export default function SwissMap({
   const hasCenteredOnLocation = useRef(false);
   const mobileGpxInputRef = useRef<HTMLInputElement>(null);
 
-  const [routeMapImage, setRouteMapImage] = useState<string | null>(null);
-
   const captureRouteMap = async (): Promise<string | null> => {
     if (!gpxRoute || !mapRef.current) return null;
 
@@ -228,11 +226,9 @@ export default function SwissMap({
 
     try {
       const image = map.getCanvas().toDataURL("image/png");
-      setRouteMapImage(image);
       return image;
     } catch (error) {
       console.error("Unable to capture map for route report:", error);
-      setRouteMapImage(null);
       return null;
     }
   };
