@@ -21,7 +21,9 @@ export type Hut = {
   sleepingCapacity?: number;
   winterRoom?: string;
   foodAndMeals?: string;
+  picnicLunches?: boolean;
   water?: string;
+  waterDrinkable?: boolean;
   toilets?: string;
   showers?: string;
   electricity?: string;
@@ -34,9 +36,14 @@ export type Hut = {
   phone?: string;
   email?: string;
 
-  schoolGroupSuitable?: boolean;
-  groupCapacity?: number;
-  staffLeaderConsiderations?: string;
+  vendor?: boolean;
+  vendorStatusExpiresAt?: string;
+  guideRateOffered?: boolean;
+  guardianName?: string;
+  guardianEmail?: string;
+  guardianPhone?: string;
+  maxCapacity?: number;
+
   emergencyInformation?: string;
   nearbyHazards?: string;
   usefulRouteInformation?: string;
