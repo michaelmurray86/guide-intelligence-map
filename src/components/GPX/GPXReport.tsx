@@ -233,7 +233,7 @@ export default function GPXReport({
                           </h3>
 
                           <p className="mt-1 text-sm text-slate-600">
-                            Route section
+                            {section.description}
                           </p>
                         </div>
                       </div>
