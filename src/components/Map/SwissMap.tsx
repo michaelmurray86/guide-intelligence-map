@@ -158,6 +158,15 @@ export default function SwissMap({
     useState<Hut | null>(null);
   const [hutEditorLoading, setHutEditorLoading] = useState(false);
 
+  const closeInfoWindows = () => {
+    setSelectedNote(null);
+    setSelectedSection(null);
+    setEditingNote(null);
+    setEditingSection(null);
+    setEditingHutNote(null);
+    setEditingHut(null);
+    setHutEditorLoading(false);
+  };
 
 
   const {
@@ -561,6 +570,8 @@ const handleRouteNoteFocus = (
   const note = item.note;
 
   setSelectedSection(null);
+  setEditingNote(null);
+  setEditingSection(null);
   setEditingHutNote(null);
   setEditingHut(null);
   setSelectedNote(note);
@@ -609,6 +620,8 @@ const handleRouteNoteSelect = (
     }
 
     setSelectedSection(null);
+    setEditingNote(null);
+    setEditingSection(null);
     setEditingHutNote(null);
     setEditingHut(null);
     setSelectedNote(note);
@@ -642,6 +655,10 @@ const focusSection = (section: GuideSection) => {
 
 const handleSectionClick = (section: GuideSection) => {
   setSelectedNote(null);
+  setEditingNote(null);
+  setEditingSection(null);
+  setEditingHutNote(null);
+  setEditingHut(null);
   setSelectedSection(section);
   focusSection(section);
 };
@@ -653,6 +670,10 @@ useEffect(() => {
   );
   if (section) {
     setSelectedNote(null);
+    setEditingNote(null);
+    setEditingSection(null);
+    setEditingHutNote(null);
+    setEditingHut(null);
     setSelectedSection(section);
     focusSection(section);
   }
@@ -671,6 +692,8 @@ const handleEditHut = async (note: GuideNote) => {
   if (!canManageHuts) return;
 
   setSelectedSection(null);
+  setEditingNote(null);
+  setEditingSection(null);
   setSelectedNote(null);
   setEditingHutNote(note);
   setEditingHut(null);
