@@ -29,7 +29,7 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm;
+    margin: 6mm;
   }
 
   html,
@@ -60,7 +60,7 @@ body {
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 3mm 3mm 4mm !important;
     background: white !important;
     box-sizing: border-box !important;
   }
