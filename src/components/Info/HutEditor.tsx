@@ -74,6 +74,7 @@ function initialForm(hut: Hut | null | undefined, title: string): Form {
 export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, onCancel, onSaved, updatedBy, userRole, onSubmittedForApproval }: Props) {
   const [form,setForm] = useState(() => initialForm(existingHut,guideNoteTitle));
   const [working,setWorking] = useState(false);
+  const [editing,setEditing] = useState(!existingHut);
   const [error,setError] = useState<string | null>(null);
   const set = (key:string,value:string|boolean) => setForm(current => ({...current,[key]:value}));
   const value = (key:string) => form[key] ?? "";
@@ -135,6 +136,28 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
 
   const cls="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800";
   const label="block text-sm font-semibold text-slate-700";
+
+  const display = (field: keyof Hut) => {
+    const item = existingHut?.[field];
+    if (item === undefined || item === null || item === "") return null;
+    return String(item);
+  };
+
+  const yesNo = (field: keyof Hut) => {
+    const item = existingHut?.[field];
+    if (item === undefined || item === null) return null;
+    return item ? "Yes" : "No";
+  };
+
+  const Info = ({ label: infoLabel, value: infoValue }: { label: string; value?: string | null }) =>
+    infoValue ? (
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{infoLabel}</dt>
+        <dd className="mt-1 whitespace-pre-wrap text-sm text-slate-800">{infoValue}</dd>
+      </div>
+    ) : null;
+
+  const label="block text-sm font-semibold text-slate-700";
   const sections=[
     ["Basic information",["name","alternativeNames","country","region","latitude","longitude","elevationM","maxCapacity"]],
     ["Access",["summerAccess","winterAccess","approachRoutes","typicalApproachTime","approachDifficulty","seasonalRestrictions"]],
@@ -144,6 +167,86 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
     ["Guide information",["emergencyInformation","nearbyHazards","usefulRouteInformation","instructorNotes"]],
     ["Review & source",["lastCheckedAt","source"]],
   ] as const;
+
+  if (existingHut && !editing) {
+    const bookingUrl = display("bookingUrl");
+    return <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[680px] md:-translate-x-1/2">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Hut Database</p>
+          <h2 className="mt-1 text-xl font-bold text-slate-900">{existingHut.name}</h2>
+          <p className="text-sm text-slate-500">{guideNoteTitle}</p>
+        </div>
+        <button type="button" onClick={onCancel} className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100">✕</button>
+      </div>
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
+        <section className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">At a glance</h3>
+          <dl className="grid gap-4 sm:grid-cols-2">
+            <Info label="Location" value={[display("region"), display("country")].filter(Boolean).join(", ") || null} />
+            <Info label="Elevation" value={display("elevationM") ? `${display("elevationM")} m` : null} />
+            <Info label="Maximum capacity" value={display("maxCapacity")} />
+            <Info label="Sleeping capacity" value={display("sleepingCapacity")} />
+          </dl>
+        </section>
+        <section className="rounded-lg border border-slate-200 bg-white p-4">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Access</h3>
+          <dl className="grid gap-4 sm:grid-cols-2">
+            <Info label="Typical approach" value={display("typicalApproachTime")} />
+            <Info label="Difficulty" value={display("approachDifficulty")} />
+            <Info label="Summer access" value={display("summerAccess")} />
+            <Info label="Winter access" value={display("winterAccess")} />
+            <Info label="Approach routes" value={display("approachRoutes")} />
+            <Info label="Seasonal restrictions" value={display("seasonalRestrictions")} />
+          </dl>
+        </section>
+        <section className="rounded-lg border border-slate-200 bg-white p-4">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Food, water & facilities</h3>
+          <dl className="grid gap-4 sm:grid-cols-2">
+            <Info label="Food & meals" value={display("foodAndMeals")} />
+            <Info label="Picnic lunches" value={yesNo("picnicLunches")} />
+            <Info label="Water" value={display("water")} />
+            <Info label="Water drinkable" value={yesNo("waterDrinkable")} />
+            <Info label="Toilets" value={display("toilets")} />
+            <Info label="Winter room" value={display("winterRoom")} />
+            <Info label="Showers" value={display("showers")} />
+            <Info label="Electricity" value={display("electricity")} />
+            <Info label="Wi-Fi" value={display("wifi")} />
+          </dl>
+        </section>
+        <section className="rounded-lg border border-slate-200 bg-white p-4">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Booking & guide information</h3>
+          <dl className="grid gap-4 sm:grid-cols-2">
+            <Info label="Booking required" value={yesNo("bookingRequired")} />
+            <Info label="Reservation website" value={bookingUrl} />
+            <Info label="Hut phone" value={display("phone")} />
+            <Info label="Hut email" value={display("email")} />
+            <Info label="Vendor" value={yesNo("vendor")} />
+            <Info label="Guide rate offered" value={yesNo("guideRateOffered")} />
+            <Info label="Guardian" value={display("guardianName")} />
+            <Info label="Guardian contact" value={[display("guardianEmail"), display("guardianPhone")].filter(Boolean).join(" · ") || null} />
+          </dl>
+        </section>
+        {(display("usefulRouteInformation") || display("nearbyHazards") || display("emergencyInformation") || display("instructorNotes")) && (
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Guide notes</h3>
+            <dl className="space-y-4">
+              <Info label="Useful route information" value={display("usefulRouteInformation")} />
+              <Info label="Nearby hazards" value={display("nearbyHazards")} />
+              <Info label="Emergency information" value={display("emergencyInformation")} />
+              <Info label="Instructor notes" value={display("instructorNotes")} />
+            </dl>
+          </section>
+        )}
+      </div>
+      <div className="flex gap-3 border-t border-slate-200 p-4">
+        <button type="button" onClick={onCancel} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">Close</button>
+        <button type="button" onClick={() => setEditing(true)} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+          {userRole === "instructor" ? "Propose Edit" : "Edit"}
+        </button>
+      </div>
+    </div>;
+  }
 
   return <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[720px] md:-translate-x-1/2">
     <div className="flex items-start justify-between border-b border-slate-200 p-5">
@@ -163,7 +266,7 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
       {error&&<div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
     </div>
     <div className="flex gap-3 border-t border-slate-200 p-4">
-      <button type="button" onClick={onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">Cancel</button>
+      <button type="button" existingHut ? onClick={() => setEditing(false)} : onClick={onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">{existingHut ? "Back" : "Cancel"}</button>
       <button type="button" onClick={save} disabled={working} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
         {working ? (userRole === "instructor" ? "Submitting..." : "Saving...") : userRole === "instructor" ? "Submit for Approval" : "Save Hut Details"}
       </button>
