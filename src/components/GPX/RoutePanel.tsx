@@ -43,6 +43,7 @@ export default function RoutePanel({
   onOverview,
   onSelectNote,
   onFocusNote,
+  onFocusSection,
   onSelectSection,
 }: Props) {
 
@@ -209,6 +210,7 @@ useEffect(() => {
                 routeSections={routeSections}
                 onSelectNote={onSelectNote}
                 onFocusNote={onFocusNote}
+                onFocusSection={onFocusSection}
                 onSelectSection={onSelectSection}
               />
 
