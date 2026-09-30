@@ -24,6 +24,7 @@ type Props = {
   clearRoute: () => void;
 
   onOverview?: () => void;
+  onPrintMapSnapshot?: () => Promise<string | null>;
 
   onSelectNote?: (
     note: RouteKnowledgeItem
@@ -45,6 +46,7 @@ export default function RoutePanel({
   guideSections,
   clearRoute,
   onOverview,
+  onPrintMapSnapshot,
   onSelectNote,
   onFocusNote,
   onFocusSection,
@@ -60,7 +62,13 @@ export default function RoutePanel({
   const [collapsed, setCollapsed] =
     useState(true);
 
-  const printReport = () => {
+  const printReport = async () => {
+    const mapImage = await onPrintMapSnapshot?.();
+    window.dispatchEvent(
+      new CustomEvent("route-report-print", {
+        detail: { mapImage },
+      })
+    );
     window.print();
   };
 
