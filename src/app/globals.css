@@ -60,7 +60,7 @@ body {
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 0 3mm 4mm !important;
+    padding: 4mm 3mm 4mm !important;
     background: white !important;
     box-sizing: border-box !important;
   }
