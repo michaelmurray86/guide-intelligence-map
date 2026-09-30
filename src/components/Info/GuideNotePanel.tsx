@@ -400,6 +400,7 @@ export default function GuideNotePanel({
 
         {note.category === "hut" && onEditHut && (
           <button
+            type="button"
             className="
               flex-1
               rounded-lg
