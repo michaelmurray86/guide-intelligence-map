@@ -193,6 +193,17 @@ export default function SwissMap({
     if (!gpxRoute || !mapRef.current) return null;
 
     const map = mapRef.current.getMap();
+    const mapContainer = map.getContainer();
+
+    const originalStyles = {
+      position: mapContainer.style.position,
+      left: mapContainer.style.left,
+      top: mapContainer.style.top,
+      width: mapContainer.style.width,
+      height: mapContainer.style.height,
+      visibility: mapContainer.style.visibility,
+    };
+
     const coordinates = gpxRoute.geojson.features.flatMap(feature => {
       if (feature.geometry.type === "LineString") return feature.geometry.coordinates;
       if (feature.geometry.type === "MultiLineString") return feature.geometry.coordinates.flat();
@@ -213,21 +224,32 @@ export default function SwissMap({
       maxLat = Math.max(maxLat, lat);
     });
 
-    map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {
-      padding: { top: 40, bottom: 40, left: 40, right: 40 },
-      maxZoom: 13,
-      duration: 0,
-    });
-
-    await new Promise<void>(resolve => {
-      if (map.loaded()) {
-        requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-      } else {
-        map.once("idle", () => resolve());
-      }
-    });
-
     try {
+      // Use a fixed landscape canvas for printing so mobile produces the
+      // same landscape-style route overview as desktop.
+      mapContainer.style.position = "fixed";
+      mapContainer.style.left = "-2000px";
+      mapContainer.style.top = "0";
+      mapContainer.style.width = "1200px";
+      mapContainer.style.height = "675px";
+      mapContainer.style.visibility = "hidden";
+
+      map.resize();
+
+      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {
+        padding: { top: 40, bottom: 40, left: 40, right: 40 },
+        maxZoom: 13,
+        duration: 0,
+      });
+
+      await new Promise<void>(resolve => {
+        if (map.loaded()) {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        } else {
+          map.once("idle", () => resolve());
+        }
+      });
+
       const sourceCanvas = map.getCanvas();
       const exportCanvas = document.createElement("canvas");
       exportCanvas.width = sourceCanvas.width;
@@ -286,9 +308,14 @@ export default function SwissMap({
     } catch (error) {
       console.error("Unable to capture map for route report:", error);
       return null;
+    } finally {
+      Object.entries(originalStyles).forEach(([property, value]) => {
+        mapContainer.style[property as keyof CSSStyleDeclaration] = value;
+      });
+
+      map.resize();
     }
   };
-
 
 
   const handleRecenterLesMartinets = () => {
