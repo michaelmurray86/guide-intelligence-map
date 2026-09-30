@@ -20,7 +20,7 @@ import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
 
 import DataSources from "../UI/DataSources";
-import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
+import UpdateRequestsPanel from "../Info/UpdateRequestsPanel";
 import { deleteGuideSection, GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 import { deleteRouteLibraryRoute } from "@/lib/routeLibraryDatabase";
 
@@ -480,8 +480,8 @@ export default function Sidebar({
           )}
 
           {canReviewDeletions && (
-            <CollapsibleSection title="🗑️ Deletion Requests">
-              <DeletionRequestsPanel />
+            <CollapsibleSection title="📋 Update Requests">
+              <UpdateRequestsPanel />
             </CollapsibleSection>
           )}
         </>
