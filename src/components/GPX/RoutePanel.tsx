@@ -62,14 +62,13 @@ export default function RoutePanel({
   const [collapsed, setCollapsed] =
     useState(true);
 
+  const [printMapImage, setPrintMapImage] =
+    useState<string | null>(null);
+
   const printReport = async () => {
     const mapImage = await onPrintMapSnapshot?.();
-    window.dispatchEvent(
-      new CustomEvent("route-report-print", {
-        detail: { mapImage },
-      })
-    );
-    window.print();
+    setPrintMapImage(mapImage);
+    window.setTimeout(() => window.print(), 100);
   };
 
 useEffect(() => {
@@ -325,6 +324,7 @@ useEffect(() => {
           route={route}
           notes={routeKnowledge}
           routeSections={routeSections}
+          mapImage={printMapImage}
         />,
         document.body
       )}
