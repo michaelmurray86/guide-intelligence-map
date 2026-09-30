@@ -18,7 +18,7 @@ export type UpdateRequest = {
 export async function getPendingUpdateRequests(): Promise<UpdateRequest[]> {
   const { data, error } = await supabase
     .from("update_requests")
-    .select("id, request_type, guide_note_id, hut_id, requested_by, requested_at, reason, proposed_data, status, guide_notes(title)")
+    .select("id, request_type, guide_note_id, hut_id, requested_by, requested_at, reason, proposed_data, status, guide_notes(title, category)")
     .eq("status", "pending")
     .order("requested_at", { ascending: true });
 
