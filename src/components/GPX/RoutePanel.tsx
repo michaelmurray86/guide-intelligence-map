@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { GuideNote } from "@/Types/GuideNote";
@@ -310,11 +311,15 @@ useEffect(() => {
 
     </div>
 
-    <GPXReportPrint
-      route={route}
-      notes={routeKnowledge}
-      routeSections={routeSections}
-    />
+    {typeof document !== "undefined" &&
+      createPortal(
+        <GPXReportPrint
+          route={route}
+          notes={routeKnowledge}
+          routeSections={routeSections}
+        />,
+        document.body
+      )}
     </>
   );
 
