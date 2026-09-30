@@ -45,7 +45,7 @@ export default function UpdateRequestsPanel() {
 
   async function review(request: UpdateRequest, decision: "approved" | "rejected") {
     const subject = request.requestType === "delete"
-      ? `deletion of "${request.reason ?? "knowledge item"}"`
+      ? `deletion of "${request.noteTitle ?? "knowledge item"}"`
       : `Hut update for "${request.proposedData?.name ?? "Hut"}"`;
 
     if (!window.confirm(
@@ -75,7 +75,7 @@ export default function UpdateRequestsPanel() {
         requests.map(request => {
           const isDelete = request.requestType === "delete";
           const title = isDelete
-            ? request.reason ?? "Knowledge item"
+            ? request.noteTitle ?? "Knowledge item"
             : request.proposedData?.name ?? "Hut";
 
           return (
@@ -93,7 +93,7 @@ export default function UpdateRequestsPanel() {
 
               {isDelete ? (
                 <p className="mt-2 text-sm text-slate-600">
-                  {request.reason && request.reason !== title ? request.reason : "Deletion requested for this knowledge item."}
+                  {request.reason ?? "Deletion requested for this knowledge item."}
                 </p>
               ) : (
                 <div className="mt-3 grid gap-2">
