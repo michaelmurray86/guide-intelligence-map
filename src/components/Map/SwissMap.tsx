@@ -560,12 +560,10 @@ const handleRouteNoteFocus = (
 
   const note = item.note;
 
-
-  // Update the open panel if it is already showing
-  if (selectedNote) {
-    setSelectedNote(note);
-  }
-
+  setSelectedSection(null);
+  setEditingHutNote(null);
+  setEditingHut(null);
+  setSelectedNote(note);
 
   if (mapRef.current) {
 
@@ -603,19 +601,17 @@ const handleRouteNoteSelect = (
 };
 
   const handleMarkerClick = (
-    note:GuideNote
+    note: GuideNote
   ) => {
-
-    if(selectedNote?.id === note.id){
-
+    if (selectedNote?.id === note.id) {
       setSelectedNote(null);
-
-    } else {
-
-      setSelectedNote(note);
-
+      return;
     }
 
+    setSelectedSection(null);
+    setEditingHutNote(null);
+    setEditingHut(null);
+    setSelectedNote(note);
   };
 
 const focusSection = (section: GuideSection) => {
@@ -674,6 +670,7 @@ const canManageHuts =
 const handleEditHut = async (note: GuideNote) => {
   if (!canManageHuts) return;
 
+  setSelectedSection(null);
   setSelectedNote(null);
   setEditingHutNote(note);
   setEditingHut(null);
