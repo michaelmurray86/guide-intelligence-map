@@ -31,6 +31,8 @@ onFocusNote?: (
     note: RouteKnowledgeItem
   ) => void;
 
+  onSelectSection?: (section: GuideSection) => void;
+
 };
 
 export default function RoutePanel({
