@@ -491,10 +491,16 @@ const focusSection = (section: GuideSection) => {
     maxLat = Math.max(maxLat, lat);
   });
 
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 767px)").matches;
+
   mapRef.current.fitBounds(
     [[minLng, minLat], [maxLng, maxLat]],
     {
-      padding: { top: 120, bottom: 120, left: 450, right: 120 },
+      padding: isMobile
+        ? { top: 180, bottom: 140, left: 40, right: 40 }
+        : { top: 120, bottom: 120, left: 450, right: 120 },
       duration: 1200,
     }
   );
