@@ -80,7 +80,7 @@ useEffect(() => {
         left-4
         right-4
         w-auto
-        max-w-[calc(100vw-7rem)]
+        max-w-[calc(100vw-6rem)]
         ${collapsed ? "" : "h-[75vh]"}
         md:top-6
         md:left-[22rem]
