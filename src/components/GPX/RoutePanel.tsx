@@ -31,6 +31,8 @@ onFocusNote?: (
     note: RouteKnowledgeItem
   ) => void;
 
+  onFocusSection?: (section: GuideSection) => void;
+
   onSelectSection?: (section: GuideSection) => void;
 
 };
