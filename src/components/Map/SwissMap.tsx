@@ -158,17 +158,6 @@ export default function SwissMap({
     useState<Hut | null>(null);
   const [hutEditorLoading, setHutEditorLoading] = useState(false);
 
-  const closeInfoWindows = () => {
-    setSelectedNote(null);
-    setSelectedSection(null);
-    setEditingNote(null);
-    setEditingSection(null);
-    setEditingHutNote(null);
-    setEditingHut(null);
-    setHutEditorLoading(false);
-  };
-
-
   const {
     notes: guideNotesState,
     setNotes: setGuideNotesState,
