@@ -108,6 +108,7 @@ type Props = {
   focusedRouteSectionId?: number | null;
   onRouteSectionUpdated?: (section: GuideSection | null) => void;
   onRouteSectionDeleted?: (id: number) => void;
+  onPrintMapSnapshot?: () => Promise<string | null>;
 };
 
 
@@ -125,6 +126,7 @@ export default function SwissMap({
   focusedRouteSectionId,
   onRouteSectionUpdated,
   onRouteSectionDeleted,
+  onPrintMapSnapshot,
 }: Props) {
 
   const {
