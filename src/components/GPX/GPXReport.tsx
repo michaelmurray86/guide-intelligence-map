@@ -64,6 +64,8 @@ export default function GPXReport({
 
     if (selectedItem.type === "note") {
       onFocusNote?.(selectedItem.item);
+    } else {
+      onSelectSection?.(selectedItem.item.section);
     }
 
     itemRefs.current[index]?.scrollIntoView({
@@ -133,7 +135,11 @@ export default function GPXReport({
                 px-3
                 py-1
                 text-sm
-                disabled:opacity-40
+                font-semibold
+                text-slate-800
+                bg-white
+                disabled:text-slate-400
+                disabled:bg-slate-50
               "
             >
               ◀ Previous
