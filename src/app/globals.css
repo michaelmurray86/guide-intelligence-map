@@ -29,7 +29,7 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 6mm;
+    margin: 5mm;
   }
 
   html,
@@ -60,8 +60,9 @@ body {
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 3mm 4mm !important;
     background: white !important;
+    box-sizing: border-box !important;
   }
 
   .route-report-print-page {
@@ -134,7 +135,7 @@ body {
   }
 
   .route-report-print-map {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     overflow: hidden;
@@ -146,13 +147,13 @@ body {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 260px;
+    max-height: 360px;
     object-fit: contain;
   }
 
   .route-report-print-warning {
-    margin-bottom: 14px;
-    padding: 11px 13px;
+    margin-bottom: 10px;
+    padding: 8px 10px;
     border: 1px solid #f59e0b;
     border-left: 5px solid #f59e0b;
     border-radius: 8px;
@@ -169,15 +170,15 @@ body {
   .route-report-print-warning p {
     margin: 4px 0 0;
     color: #78350f;
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
   .route-report-print-intro {
     display: flex;
     justify-content: space-between;
     gap: 24px;
-    margin-bottom: 20px;
-    padding: 12px 14px;
+    margin-bottom: 12px;
+    padding: 8px 10px;
     border: 1px solid #dbe3ef;
     border-radius: 8px;
     background: #f8fafc;
@@ -187,7 +188,7 @@ body {
   .route-report-print-intro p {
     margin: 4px 0 0;
     color: #475569;
-    line-height: 1.45;
+    line-height: 1.3;
   }
 
   .route-report-print-generated {
@@ -201,13 +202,13 @@ body {
   .route-report-print-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
   }
 
   .route-report-print-item {
     display: flex;
-    gap: 11px;
-    padding: 12px 13px;
+    gap: 8px;
+    padding: 7px 9px;
     border: 1px solid #dbe3ef;
     border-radius: 8px;
     background: white;
@@ -221,12 +222,12 @@ body {
   }
 
   .route-report-print-number {
-    flex: 0 0 23px;
-    height: 23px;
+    flex: 0 0 20px;
+    height: 20px;
     border-radius: 50%;
     background: #e8eefc;
     color: #1d4ed8;
-    font-size: 9pt;
+    font-size: 8pt;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -234,8 +235,8 @@ body {
   }
 
   .route-report-print-icon {
-    flex: 0 0 25px;
-    font-size: 18pt;
+    flex: 0 0 22px;
+    font-size: 15pt;
     line-height: 1.1;
   }
 
@@ -263,8 +264,8 @@ body {
   .route-report-print-item h2 {
     margin: 0;
     color: #111827;
-    font-size: 12pt;
-    line-height: 1.2;
+    font-size: 10.5pt;
+    line-height: 1.15;
   }
 
   .route-report-print-guidance {
@@ -275,10 +276,10 @@ body {
   }
 
   .route-report-print-description {
-    margin: 6px 0 0;
+    margin: 4px 0 0;
     color: #475569;
-    font-size: 9.5pt;
-    line-height: 1.45;
+    font-size: 8.5pt;
+    line-height: 1.3;
   }
 
   .route-report-print-meta-line {
@@ -289,9 +290,9 @@ body {
   }
 
   .route-report-print-distance {
-    margin: 7px 0 0;
+    margin: 4px 0 0;
     color: #64748b;
-    font-size: 8pt;
+    font-size: 7.5pt;
     font-weight: 600;
   }
 
@@ -313,7 +314,7 @@ body {
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    margin-top: 22px;
+    margin-top: 14px;
     padding-top: 8px;
     border-top: 1px solid #cbd5e1;
     color: #64748b;
