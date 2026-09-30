@@ -18,7 +18,19 @@ export type HutChangeRequest = {
   reviewComment?: string;
 };
 
-function normalizeRequest(row: any): HutChangeRequest {
+type HutChangeRequestRow = {
+  id: number;
+  hut_id: number;
+  requested_by: string;
+  requested_at: string;
+  proposed_data: HutEditPayload;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_comment: string | null;
+};
+
+function normalizeRequest(row: HutChangeRequestRow): HutChangeRequest {
   return {
     id: row.id,
     hutId: row.hut_id,
