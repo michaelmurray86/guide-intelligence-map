@@ -2,13 +2,14 @@
 
 import { useState, useRef } from "react";
 
-import { RouteKnowledgeItem } from "@/lib/gpxAnalysis";
+import { RouteKnowledgeItem, RouteSectionMatch } from "@/lib/gpxAnalysis";
 
 import { markerIcons } from "../Map/markerIcons";
 
 
 type Props = {
   notes: RouteKnowledgeItem[];
+  routeSections: RouteSectionMatch[];
 
   onSelectNote?: (
     note: RouteKnowledgeItem
@@ -18,13 +19,17 @@ type Props = {
     note: RouteKnowledgeItem
   ) => void;
 
+  onSelectSection?: (section: RouteSectionMatch["section"]) => void;
+
 };
 
 
 export default function GPXReport({
   notes,
+  routeSections,
   onSelectNote,
   onFocusNote,
+  onSelectSection,
 }: Props) {
 
 
@@ -108,6 +113,49 @@ export default function GPXReport({
       >
         🥾 Route Knowledge Report
       </h2>
+
+      {routeSections.length > 0 && (
+        <div className="mb-5 border-b border-slate-200 pb-4">
+          <h3 className="mb-3 text-sm font-bold text-slate-800">
+            🥾 Route Sections Encountered
+          </h3>
+
+          <div className="space-y-2">
+            {routeSections.map(match => {
+              const label =
+                match.section.guidanceLevel === "do_not_take"
+                  ? "Do not take"
+                  : match.section.guidanceLevel === "caution"
+                    ? "Caution"
+                    : "Suitable";
+
+              return (
+                <button
+                  key={match.section.id}
+                  type="button"
+                  onClick={() => onSelectSection?.(match.section)}
+                  className="w-full rounded-md border border-slate-200 bg-slate-50 p-3 text-left transition hover:bg-slate-100"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="font-semibold text-slate-800">
+                      {match.section.title}
+                    </span>
+                    <span
+                      className="shrink-0 text-xs font-semibold"
+                      style={{ color: match.section.color }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Around {(match.distanceAlongRoute / 1000).toFixed(1)} km into route
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )
 
 
 
