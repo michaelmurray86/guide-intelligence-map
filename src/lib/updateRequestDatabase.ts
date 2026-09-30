@@ -11,6 +11,7 @@ export type UpdateRequest = {
   reason?: string;
   proposedData?: HutEditPayload;
   status: "pending" | "approved" | "rejected";
+  noteTitle?: string;
 };
 
 export async function getPendingUpdateRequests(): Promise<UpdateRequest[]> {
@@ -32,7 +33,7 @@ export async function getPendingUpdateRequests(): Promise<UpdateRequest[]> {
     hutId: row.hut_id ?? undefined,
     requestedBy: row.requested_by,
     requestedAt: row.requested_at,
-    reason: row.reason ?? row.guide_notes?.title,
+    reason: row.reason ?? undefined,
     proposedData: row.proposed_data ?? undefined,
     status: row.status,
     noteTitle: row.guide_notes?.title ?? undefined,
