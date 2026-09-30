@@ -1,28 +1,21 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
-import { RouteKnowledgeItem, RouteSectionMatch } from "@/lib/gpxAnalysis";
+import {
+  RouteKnowledgeItem,
+  RouteSectionMatch,
+} from "@/lib/gpxAnalysis";
 
 import { markerIcons } from "../Map/markerIcons";
-
 
 type Props = {
   notes: RouteKnowledgeItem[];
   routeSections: RouteSectionMatch[];
-
-  onSelectNote?: (
-    note: RouteKnowledgeItem
-  ) => void;
-
-  onFocusNote?: (
-    note: RouteKnowledgeItem
-  ) => void;
-
+  onSelectNote?: (note: RouteKnowledgeItem) => void;
+  onFocusNote?: (note: RouteKnowledgeItem) => void;
   onSelectSection?: (section: RouteSectionMatch["section"]) => void;
-
 };
-
 
 export default function GPXReport({
   notes,
@@ -31,62 +24,30 @@ export default function GPXReport({
   onFocusNote,
   onSelectSection,
 }: Props) {
-
-
-  const [selectedIndex, setSelectedIndex] =
-    useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const selectItem = (
-  index:number
-) => {
+  const selectItem = (index: number) => {
+    setSelectedIndex(index);
 
-  setSelectedIndex(index);
+    onFocusNote?.(notes[index]);
 
-  onFocusNote?.(
-    notes[index]
-  );
-
-  itemRefs.current[index]?.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
-
-};
-
-
+    itemRefs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
 
   const previousNote = () => {
-
-    const newIndex =
-      Math.max(
-        selectedIndex - 1,
-        0
-      );
-
-    selectItem(newIndex);
-
+    selectItem(Math.max(selectedIndex - 1, 0));
   };
-
-
 
   const nextNote = () => {
-
-    const newIndex =
-      Math.min(
-        selectedIndex + 1,
-        notes.length - 1
-      );
-
-    selectItem(newIndex);
-
+    selectItem(Math.min(selectedIndex + 1, notes.length - 1));
   };
 
-
-
   return (
-
     <div
       className="
         rounded-xl
@@ -101,8 +62,6 @@ export default function GPXReport({
         min-h-0
       "
     >
-
-
       <h2
         className="
           font-bold
@@ -140,6 +99,7 @@ export default function GPXReport({
                     <span className="font-semibold text-slate-800">
                       {match.section.title}
                     </span>
+
                     <span
                       className="shrink-0 text-xs font-semibold"
                       style={{ color: match.section.color }}
@@ -147,39 +107,24 @@ export default function GPXReport({
                       {label}
                     </span>
                   </div>
+
                   <p className="mt-1 text-xs text-slate-500">
-                    Around {(match.distanceAlongRoute / 1000).toFixed(1)} km into route
+                    Around{" "}
+                    {(match.distanceAlongRoute / 1000).toFixed(1)} km into route
                   </p>
                 </button>
               );
             })}
           </div>
         </div>
-      )
+      )}
 
-
-
-      {
-        notes.length === 0 ?
-
-        (
-
-          <p className="text-slate-600">
-            No nearby knowledge notes found.
-          </p>
-
-        )
-
-        :
-
-        (
-
-          <>
-
-
-
-          {/* Navigation */}
-
+      {notes.length === 0 ? (
+        <p className="text-slate-600">
+          No nearby knowledge notes found.
+        </p>
+      ) : (
+        <>
           <div
             className="
               mb-4
@@ -190,13 +135,9 @@ export default function GPXReport({
               pt-3
             "
           >
-
             <button
-
               onClick={previousNote}
-
               disabled={selectedIndex === 0}
-
               className="
                 rounded-md
                 border
@@ -205,12 +146,9 @@ export default function GPXReport({
                 text-sm
                 disabled:opacity-40
               "
-
             >
               ◀ Previous
             </button>
-
-
 
             <span
               className="
@@ -222,16 +160,9 @@ export default function GPXReport({
               {selectedIndex + 1} / {notes.length}
             </span>
 
-
-
             <button
-
               onClick={nextNote}
-
-              disabled={
-                selectedIndex === notes.length - 1
-              }
-
+              disabled={selectedIndex === notes.length - 1}
               className="
                 rounded-md
                 border
@@ -240,14 +171,10 @@ export default function GPXReport({
                 text-sm
                 disabled:opacity-40
               "
-
             >
               Next ▶
             </button>
-
-
           </div>
-
 
           <div
             className="
@@ -258,28 +185,16 @@ export default function GPXReport({
               pr-1
             "
           >
-
-
-          {
-            notes.map((item,index)=>(
-
+            {notes.map((item, index) => (
               <div
-
-  key={item.note.id}
-
-  ref={(el) => {
-    itemRefs.current[index] = el;
-  }}
-
-  onClick={() => {
-
-    setSelectedIndex(index);
-
-    onSelectNote?.(item);
-
-  }}
-
-
+                key={item.note.id}
+                ref={el => {
+                  itemRefs.current[index] = el;
+                }}
+                onClick={() => {
+                  setSelectedIndex(index);
+                  onSelectNote?.(item);
+                }}
                 className={`
                   border-b
                   border-slate-200
@@ -288,67 +203,45 @@ export default function GPXReport({
                   rounded-md
                   p-2
                   transition
-
                   ${
                     selectedIndex === index
-                    ? 
-                    "bg-slate-100 border-l-4 border-blue-600"
-                    :
-                    "hover:bg-slate-50"
+                      ? "bg-slate-100 border-l-4 border-blue-600"
+                      : "hover:bg-slate-50"
                   }
-
                 `}
-
               >
+                <div
+                  className="
+                    flex
+                    items-start
+                    gap-3
+                  "
+                >
+                  <span className="text-2xl">
+                    {markerIcons[item.note.category]}
+                  </span>
 
+                  <div className="flex-1">
+                    <h3
+                      className="
+                        font-semibold
+                        text-slate-800
+                      "
+                    >
+                      {item.note.title}
+                    </h3>
+                  </div>
 
-               <div
-  className="
-    flex
-    items-start
-    gap-3
-  "
->
-
-  <span className="text-2xl">
-    {
-      markerIcons[
-        item.note.category
-      ]
-    }
-  </span>
-
-
-  <div className="flex-1">
-
-    <h3
-      className="
-        font-semibold
-        text-slate-800
-      "
-    >
-      {item.note.title}
-    </h3>
-
-  </div>
-
-
-  <span
-    className="
-      text-xs
-      whitespace-nowrap
-      text-slate-500
-    "
-  >
-    {(
-      item.distanceAlongRoute / 1000
-    ).toFixed(1)} km
-  </span>
-
-
-</div>
-
-
+                  <span
+                    className="
+                      text-xs
+                      whitespace-nowrap
+                      text-slate-500
+                    "
+                  >
+                    {(item.distanceAlongRoute / 1000).toFixed(1)} km
+                  </span>
+                </div>
 
                 <p
                   className="
@@ -359,29 +252,11 @@ export default function GPXReport({
                 >
                   {item.note.description}
                 </p>
-
-
               </div>
-
-            ))
-
-          }
-
+            ))}
           </div>
-
-
-
-
-
-          </>
-
-        )
-
-      }
-
-
+        </>
+      )}
     </div>
-
   );
-
 }
