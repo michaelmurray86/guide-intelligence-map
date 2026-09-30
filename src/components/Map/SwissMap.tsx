@@ -30,6 +30,7 @@ import { RouteLibrary, routeLibraryToGPXRoute } from "@/Types/RouteLibrary";
 import { parseGPX } from "@/lib/parseGPX";
 
 import GuideMarker from "./GuideMarker";
+import { markerIcons } from "./markerIcons";
 import GuideSectionLayer from "./GuideSectionLayer";
 import AddGuideNoteButton from "./AddGuideNoteButton";
 import ToggleSwitch from "../UI/ToggleSwitch";
