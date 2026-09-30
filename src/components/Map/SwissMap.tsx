@@ -157,6 +157,7 @@ export default function SwissMap({
   const [editingHut, setEditingHut] =
     useState<Hut | null>(null);
   const [hutEditorLoading, setHutEditorLoading] = useState(false);
+  const [hutEditorError, setHutEditorError] = useState<string | null>(null);
 
   const {
     notes: guideNotesState,
@@ -686,6 +687,7 @@ const handleEditHut = async (note: GuideNote) => {
   setSelectedNote(null);
   setEditingHutNote(note);
   setEditingHut(null);
+  setHutEditorError(null);
   setHutEditorLoading(true);
 
   try {
@@ -694,7 +696,7 @@ const handleEditHut = async (note: GuideNote) => {
   } catch (error) {
     console.error("Error loading Hut details:", error);
     setEditingHutNote(null);
-    window.alert(
+    setHutEditorError(
       "The Hut Database is not available yet. The database migration needs to be applied before Hut details can be edited."
     );
   } finally {
@@ -1048,7 +1050,7 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         }}
 
-        onEditHut={handleEditHut}
+        onEditHut={canManageHuts ? handleEditHut : undefined}
 
 
         onDelete={async (id)=>{
@@ -1101,6 +1103,26 @@ const handleSectionDelete = async (section: GuideSection) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
           <div className="rounded-lg bg-white px-5 py-4 text-sm font-semibold text-slate-800 shadow-xl">
             Loading Hut details…
+          </div>
+        </div>
+      )}
+
+      {hutEditorError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+            <h2 className="mb-2 text-lg font-bold text-slate-900">
+              Hut Database unavailable
+            </h2>
+            <p className="text-sm leading-6 text-slate-700">
+              {hutEditorError}
+            </p>
+            <button
+              type="button"
+              onClick={() => setHutEditorError(null)}
+              className="mt-5 w-full rounded-lg bg-slate-800 px-4 py-3 font-semibold text-white hover:bg-slate-700"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
