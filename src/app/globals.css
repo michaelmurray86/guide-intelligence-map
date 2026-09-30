@@ -145,8 +145,9 @@ body {
   .route-report-print-map img {
     display: block;
     width: 100%;
-    height: 245px;
-    object-fit: cover;
+    height: auto;
+    max-height: 260px;
+    object-fit: contain;
   }
 
   .route-report-print-warning {
