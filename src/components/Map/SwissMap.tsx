@@ -812,6 +812,7 @@ const handleSectionDelete = async (section: GuideSection) => {
           }}
           onSelectNote={handleRouteNoteSelect}
           onFocusNote={handleRouteNoteFocus}
+          onFocusSection={focusSection}
           onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
         />
