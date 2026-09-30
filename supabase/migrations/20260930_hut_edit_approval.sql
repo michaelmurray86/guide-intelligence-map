@@ -259,3 +259,73 @@ create policy "Approvers and admins can create huts"
         and profiles.role in ('approver', 'admin', 'superadmin')
     )
   );
+
+
+-- Hut records are special: only admins/superadmins may approve deletion
+-- requests for Hut knowledge points. Approvers may not delete Huts.
+create or replace function public.approve_guide_note_deletion(
+  request_id bigint,
+  review_comment text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  request_record public.guide_note_deletion_requests%rowtype;
+  user_role text;
+  note_category text;
+begin
+  select p.role
+    into user_role
+  from public.profiles p
+  where p.id = auth.uid();
+
+  if user_role not in ('approver', 'admin', 'superadmin') then
+    raise exception 'You are not authorised to approve deletion requests';
+  end if;
+
+  select *
+    into request_record
+  from public.guide_note_deletion_requests
+  where id = request_id
+    and status = 'pending'
+  for update;
+
+  if not found then
+    raise exception 'Deletion request not found or already reviewed';
+  end if;
+
+  select category
+    into note_category
+  from public.guide_notes
+  where id = request_record.guide_note_id;
+
+  if lower(coalesce(note_category, '')) = 'hut'
+     and user_role not in ('admin', 'superadmin') then
+    raise exception 'Only admins can delete Huts';
+  end if;
+
+  if request_record.guide_note_id is not null then
+    delete from public.guide_notes
+    where id = request_record.guide_note_id;
+  end if;
+
+  update public.guide_note_deletion_requests
+  set status = 'approved',
+      reviewed_by = auth.uid(),
+      reviewed_at = now(),
+      review_comment = approve_guide_note_deletion.review_comment
+  where id = request_id;
+
+  update public.guide_note_deletion_requests
+  set status = 'rejected',
+      reviewed_by = auth.uid(),
+      reviewed_at = now(),
+      review_comment = 'Superseded by approval of another deletion request.'
+  where guide_note_id = request_record.guide_note_id
+    and id <> request_id
+    and status = 'pending';
+end;
+$$;
