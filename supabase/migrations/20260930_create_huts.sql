@@ -76,8 +76,54 @@ create policy "Authenticated users can read huts"
   to authenticated
   using (true);
 
--- Creation/editing/deletion policies will be aligned with the existing
--- application role model before the migration is applied to Supabase.
+grant select, insert, update, delete on table public.huts to authenticated;
+
+create policy "Content editors can create huts"
+  on public.huts
+  for insert
+  to authenticated
+  with check (
+    exists (
+      select 1
+      from public.profiles
+      where profiles.id = (select auth.uid())
+        and profiles.role in ('admin', 'superadmin', 'approver', 'instructor')
+    )
+  );
+
+create policy "Content editors can update huts"
+  on public.huts
+  for update
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.profiles
+      where profiles.id = (select auth.uid())
+        and profiles.role in ('admin', 'superadmin', 'approver', 'instructor')
+    )
+  )
+  with check (
+    exists (
+      select 1
+      from public.profiles
+      where profiles.id = (select auth.uid())
+        and profiles.role in ('admin', 'superadmin', 'approver', 'instructor')
+    )
+  );
+
+create policy "Admins can delete huts"
+  on public.huts
+  for delete
+  to authenticated
+  using (
+    exists (
+      select 1
+      from public.profiles
+      where profiles.id = (select auth.uid())
+        and profiles.role in ('admin', 'superadmin')
+    )
+  );
 
 -- Seed the four existing Hut knowledge points when the migration is applied.
 -- These values deliberately preserve the information already recorded in the
