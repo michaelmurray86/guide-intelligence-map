@@ -14,6 +14,7 @@ import {
 } from "@/lib/gpxAnalysis";
 
 import GPXReport from "./GPXReport";
+import GPXReportPrint from "./GPXReportPrint";
 
 type Props = {
   route: GPXRoute | null;
@@ -57,6 +58,10 @@ export default function RoutePanel({
 
   const [collapsed, setCollapsed] =
     useState(true);
+
+  const printReport = () => {
+    window.print();
+  };
 
 useEffect(() => {
 
@@ -228,6 +233,24 @@ useEffect(() => {
               "
             >
 
+              <button
+                onClick={printReport}
+                className="
+                  w-full
+                  rounded-md
+                  bg-blue-600
+                  px-3
+                  py-2
+                  text-sm
+                  font-semibold
+                  text-white
+                  hover:bg-blue-700
+                  transition
+                "
+              >
+                🖨 Print / Save PDF
+              </button>
+
 
 {onOverview && (
 
@@ -286,6 +309,12 @@ useEffect(() => {
       }
 
     </div>
+
+    <GPXReportPrint
+      route={route}
+      notes={routeKnowledge}
+      routeSections={routeSections}
+    />
 
   );
 
