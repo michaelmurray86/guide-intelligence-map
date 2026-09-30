@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-
-import { supabase } from "@/lib/supabase";
+import { useMemo } from "react";
 
 import { GPXRoute } from "@/Types/GPXRoute";
 import { markerIcons } from "../Map/markerIcons";
@@ -53,60 +51,12 @@ export default function GPXReportPrint({
     );
   }, [notes, routeSections]);
 
-  const [profileNames, setProfileNames] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    const ids = Array.from(
-      new Set(
-        reportItems
-          .map(reportItem =>
-            reportItem.type === "note"
-              ? reportItem.item.note.updatedBy
-              : reportItem.item.section.updatedBy
-          )
-          .filter((id): id is string => Boolean(id))
-      )
-    );
-
-    if (ids.length === 0) {
-      setProfileNames({});
-      return;
-    }
-
-    async function loadProfileNames() {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, name, email")
-        .in("id", ids);
-
-      if (error) {
-        console.error("Error loading report updater names:", error);
-        return;
-      }
-
-      setProfileNames(
-        Object.fromEntries(
-          (data ?? []).map(profile => [
-            profile.id,
-            profile.name || profile.email || "Unknown user",
-          ])
-        )
-      );
-    }
-
-    loadProfileNames();
-  }, [reportItems]);
-
   const formatUpdated = (updatedAt: string, updatedBy?: string) => {
     const date = new Intl.DateTimeFormat("en-GB", {
       dateStyle: "medium",
     }).format(new Date(updatedAt));
 
-    const name = updatedBy
-      ? profileNames[updatedBy] ?? "Unknown user"
-      : "Unknown user";
-
-    return `Last updated ${date} by ${name}`;
+    return `Last updated ${date} by ${updatedBy ?? "Unknown user"}`;
   };
 
   const generatedAt = new Intl.DateTimeFormat("en-GB", {
