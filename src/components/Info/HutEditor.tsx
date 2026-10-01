@@ -357,6 +357,22 @@ export default function HutEditor({
     ],
   ] as const;
 
+  if (!existingHut && !canEdit) {
+    return (
+      <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[680px] md:-translate-x-1/2">
+        <div className="flex items-start justify-between border-b border-slate-200 p-5">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Hut Database</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">{guideNoteTitle}</h2>
+          </div>
+          <button type="button" onClick={onCancel} className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+        <div className="flex-1 p-5"><div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-5 text-sm leading-6 text-slate-600">Hut details have not been added to the Hut Database yet.</div></div>
+        <div className="border-t border-slate-200 p-4"><button type="button" onClick={onCancel} className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">Close</button></div>
+      </div>
+    );
+  }
+
   if (existingHut && !editing) {
     return (
       <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[680px] md:-translate-x-1/2">

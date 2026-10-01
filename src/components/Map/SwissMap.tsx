@@ -193,6 +193,7 @@ export default function SwissMap({
   const [mobileRoutesOpen, setMobileRoutesOpen] = useState(false);
   const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
   const [recenterMenuOpen, setRecenterMenuOpen] = useState(false);
+  const [routeKnowledgeVisible, setRouteKnowledgeVisible] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
@@ -468,6 +469,7 @@ export default function SwissMap({
 const handleRouteOverview = () => {
 
   setSelectedNote(null);
+  setRouteKnowledgeVisible(false);
 
   if (!gpxRoute || !mapRef.current)
     return;
@@ -559,6 +561,7 @@ const handleRouteNoteFocus = (
 ) => {
 
   const note = item.note;
+  setRouteKnowledgeVisible(true);
 
   setSelectedSection(null);
   setEditingNote(null);
@@ -615,6 +618,7 @@ const handleRouteNoteSelect = (
     setEditingSection(null);
     setEditingHutNote(null);
     setEditingHut(null);
+    if (gpxRoute) setRouteKnowledgeVisible(true);
 
     if (note.category === "hut") {
       try {
@@ -689,11 +693,12 @@ const canManageRouteSections =
   profile?.role === "admin" ||
   profile?.role === "superadmin";
 
-const canManageHuts =
-  profile?.role === "instructor" ||
-  profile?.role === "approver" ||
-  profile?.role === "admin" ||
-  profile?.role === "superadmin";
+const canEditKnowledge = [
+  "instructor",
+  "approver",
+  "admin",
+  "superadmin",
+].includes(profile?.role ?? "");
 const handleEditHut = async (note: GuideNote) => {
   setSelectedSection(null);
   setEditingNote(null);
@@ -1011,6 +1016,7 @@ const handleSectionDelete = async (section: GuideSection) => {
           onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
           onPrintMapSnapshot={captureRouteMap}
+          showKnowledgeItems={routeKnowledgeVisible}
         />
 
         </div>
@@ -1066,6 +1072,7 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         onEditHut={handleEditHut}
         hutPhotoUrls={selectedNote?.category === "hut" ? selectedNote.photoUrls ?? [] : undefined}
+        canEditKnowledge={canEditKnowledge}
 
 
         onDelete={async (id)=>{
@@ -1623,10 +1630,12 @@ const handleSectionDelete = async (section: GuideSection) => {
         </div>
       )}
 
-      <AddGuideNoteButton
+      {canEditKnowledge && (
+              <AddGuideNoteButton
         active={addingNote}
         onClick={handleAddKnowledge}
       />
+      )}
 
 
     </>

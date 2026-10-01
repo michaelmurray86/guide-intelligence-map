@@ -15,6 +15,7 @@ type Props = {
   onEdit: (note: GuideNote) => void;
   onEditHut?: (note: GuideNote) => void;
   hutPhotoUrls?: string[];
+  canEditKnowledge?: boolean;
 };
 
 
@@ -25,6 +26,7 @@ export default function GuideNotePanel({
   onEdit,
   onEditHut,
   hutPhotoUrls,
+  canEditKnowledge = false,
 }: Props) {
 
   const [selectedPhotoIndex, setSelectedPhotoIndex] =
@@ -323,7 +325,7 @@ export default function GuideNotePanel({
           <button type="button" className="flex-1 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700" onClick={() => onEditHut?.(note)}>
             Hut Details
           </button>
-        ) : (
+        ) : canEditKnowledge ? (
           <>
             <button className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700" onClick={() => onEdit(note)}>
               Edit Note
@@ -338,6 +340,8 @@ export default function GuideNotePanel({
               {deletionWorking ? "Submitting..." : deletionRequested ? "Deletion requested" : "Request deletion"}
             </button>
           </>
+        ) : (
+          <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-slate-300 py-3 font-semibold text-slate-800 hover:bg-slate-50">Close</button>
         )}
       </div>
 

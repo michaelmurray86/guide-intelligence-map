@@ -37,6 +37,7 @@ onFocusNote?: (
   onFocusSection?: (section: GuideSection) => void;
 
   onSelectSection?: (section: GuideSection) => void;
+  showKnowledgeItems?: boolean;
 
 };
 
@@ -51,6 +52,7 @@ export default function RoutePanel({
   onFocusNote,
   onFocusSection,
   onSelectSection,
+  showKnowledgeItems = false,
 }: Props) {
 
   const [routeKnowledge, setRouteKnowledge] =
@@ -72,6 +74,10 @@ export default function RoutePanel({
   };
 
 useEffect(() => {
+
+  if (showKnowledgeItems) {
+    setCollapsed(false);
+  }
 
   if (!route) {
 
@@ -210,108 +216,30 @@ useEffect(() => {
               route sections encountered
             </div>
 
-            {/* Report */}
+            {showKnowledgeItems ? (
+              <>
+                {/* Report */}
+                <div className="flex-1 min-h-0 overflow-y-auto">
+                  <GPXReport
+                    notes={routeKnowledge}
+                    routeSections={routeSections}
+                    onSelectNote={onSelectNote}
+                    onFocusNote={onFocusNote}
+                    onFocusSection={onFocusSection}
+                    onSelectSection={onSelectSection}
+                  />
+                </div>
 
-            <div
-              className="
-                flex-1
-                min-h-0
-                overflow-y-auto
-              "
-            >
-
-              <GPXReport
-                notes={routeKnowledge}
-                routeSections={routeSections}
-                onSelectNote={onSelectNote}
-                onFocusNote={onFocusNote}
-                onFocusSection={onFocusSection}
-                onSelectSection={onSelectSection}
-              />
-
-            </div>
-
-            {/* Footer */}
-
-            <div
-              className="
-                border-t
-                bg-white
-                p-3
-              "
-            >
-
-              <button
-                onClick={printReport}
-                className="
-                  w-full
-                  rounded-md
-                  bg-blue-600
-                  px-3
-                  py-2
-                  text-sm
-                  font-semibold
-                  text-white
-                  hover:bg-blue-700
-                  transition
-                "
-              >
-                🖨 Print / Save PDF
-              </button>
-
-
-{onOverview && (
-
-  <button
-    onClick={onOverview}
-    className="
-      mt-3
-      w-full
-      rounded-md
-      border
-      border-slate-300
-      bg-white
-      px-3
-      py-2
-      text-sm
-      font-medium
-      text-slate-700
-      hover:bg-slate-50
-      transition
-    "
-  >
-    🗺 Show Full Route
-  </button>
-
-)}
-
-              <button
-
-                onClick={clearRoute}
-
-                className="
-                  mt-3
-                  w-full
-                  rounded-md
-                  bg-slate-700
-                  px-3
-                  py-2
-                  text-sm
-                  font-medium
-                  text-white
-                  hover:bg-slate-800
-                  transition
-                "
-
-              >
-
-                🗑 Clear Route
-
-              </button>
-
-            </div>
-
-          </>
+                {/* Footer */}
+                <div className="border-t bg-white p-3">
+                  <button onClick={printReport} className="w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition">🖨 Print / Save PDF</button>
+                  {onOverview && <button onClick={onOverview} className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">🗺 Show Full Route</button>}
+                  <button onClick={clearRoute} className="mt-3 w-full rounded-md bg-slate-700 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 transition">🗑 Clear Route</button>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 p-4 text-sm leading-6 text-slate-600">Click a knowledge item on the map to show the route knowledge here. Once opened, you can scroll through the route knowledge and sections.</div>
+            )}</>
 
         )
       }
