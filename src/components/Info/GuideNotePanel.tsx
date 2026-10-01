@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { GuideNote } from "@/Types/GuideNote";
 import { hasPendingGuideNoteDeletionRequest } from "@/lib/guideNoteDatabase";
@@ -320,7 +321,7 @@ export default function GuideNotePanel({
       <div className="border-t border-slate-200 p-4 flex gap-3">
         {note.category === "hut" ? (
           <button type="button" className="flex-1 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700" onClick={() => onEditHut?.(note)}>
-            Hut Details
+            Edit Hut Details
           </button>
         ) : (
           <>
@@ -348,112 +349,71 @@ export default function GuideNotePanel({
 
     </aside>
 
-    {
-      selectedPhotoIndex !== null && (
-        <div
-          className="
-            fixed
-            inset-0
-            z-50
-            flex
-            items-center
-            justify-center
-            bg-black/70
-            p-8
-          "
-          onClick={() =>
-            setSelectedPhotoIndex(null)
-          }
+    {selectedPhotoIndex !== null && typeof document !== "undefined" && createPortal(
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4"
+        onClick={() => setSelectedPhotoIndex(null)}
+      >
+        <button
+          type="button"
+          aria-label="Close photo viewer"
+          onClick={() => setSelectedPhotoIndex(null)}
+          className="fixed right-4 top-4 z-[102] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-bold text-slate-800 shadow-lg hover:bg-slate-100"
         >
-          <div
-            className="
-              flex
-              max-w-full
-              items-center
-              justify-center
-              gap-4
-            "
-            onClick={event => event.stopPropagation()}
-          >
-            {photos.length > 1 && (
-              <button
-                type="button"
-                aria-label="Previous photo"
-                onClick={() => {
-                  setSelectedPhotoIndex(
-                    current =>
-                      current === null
-                        ? null
-                        : (current - 1 + photos.length) % photos.length
-                  );
-                }}
-                className="
-                  flex
-                  h-12
-                  w-12
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white/90
-                  text-3xl
-                  text-slate-800
-                  shadow-lg
-                  hover:bg-white
-                "
-              >
-                ‹
-              </button>
-            )}
+          ×
+        </button>
 
+        <div
+          className="flex max-h-[calc(100vh-2rem)] w-full max-w-[calc(100vw-2rem)] items-center justify-center gap-3"
+          onClick={event => event.stopPropagation()}
+        >
+          {photos.length > 1 && (
+            <button
+              type="button"
+              aria-label="Previous photo"
+              onClick={() => {
+                setSelectedPhotoIndex(
+                  current =>
+                    current === null
+                      ? null
+                      : (current - 1 + photos.length) % photos.length
+                );
+              }}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+            >
+              ‹
+            </button>
+          )}
+
+          <div className="flex max-h-[calc(100vh-2rem)] max-w-[calc(100vw-7rem)] items-center justify-center">
             <img
               src={photos[selectedPhotoIndex]}
               alt=""
-              className="
-                block
-                h-auto
-                w-auto
-                max-h-[85vh]
-                max-w-[calc(100vw-160px)]
-                rounded-xl
-                shadow-2xl
-              "
+              className="block max-h-[calc(100vh-2rem)] max-w-full rounded-xl object-contain shadow-2xl"
             />
-
-            {photos.length > 1 && (
-              <button
-                type="button"
-                aria-label="Next photo"
-                onClick={() => {
-                  setSelectedPhotoIndex(
-                    current =>
-                      current === null
-                        ? null
-                        : (current + 1) % photos.length
-                  );
-                }}
-                className="
-                  flex
-                  h-12
-                  w-12
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-white/90
-                  text-3xl
-                  text-slate-800
-                  shadow-lg
-                  hover:bg-white
-                "
-              >
-                ›
-              </button>
-            )}
           </div>
+
+          {photos.length > 1 && (
+            <button
+              type="button"
+              aria-label="Next photo"
+              onClick={() => {
+                setSelectedPhotoIndex(
+                  current =>
+                    current === null
+                      ? null
+                      : (current + 1) % photos.length
+                );
+              }}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/90 text-3xl text-slate-800 shadow-lg hover:bg-white"
+            >
+              ›
+            </button>
+          )}
         </div>
-      )
-    }
+      </div>,
+      document.body
+    )}
 
     </>
 
