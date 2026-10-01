@@ -75,7 +75,7 @@ export default function GuideNotePanel({
 
     const noteId = note?.id;
 
-    if (noteId === undefined) {
+    if (noteId === undefined || note?.category === "hut") {
       return;
     }
 
@@ -259,32 +259,17 @@ export default function GuideNotePanel({
       >
 
 
-        <h3
-          className="
-            mb-2
-            text-xs
-            font-bold
-            uppercase
-            tracking-wider
-            text-slate-500
-          "
-        >
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
           Description
         </h3>
-
-
-        <p
-          className="
-            leading-7
-            text-slate-800
-          "
-        >
-          {note.description}
+        <p className="leading-7 text-slate-800">
+          {note.category === "hut" ? note.description : note.description}
         </p>
 
 
 
-        <div className="my-6 border-t border-slate-200" />
+
+        {note.category !== "hut" && (<div className="my-6 border-t border-slate-200" />
 
 
 
@@ -351,9 +336,9 @@ export default function GuideNotePanel({
                   />
 
                 ))
-              }
+              })}
 
-            </div>
+      </div>
 
           ) : (
 
@@ -386,104 +371,27 @@ export default function GuideNotePanel({
 
 
       {/* Fixed footer buttons */}
-
-      <div
-        className="
-          border-t
-          border-slate-200
-          p-4
-          flex
-          gap-3
-        "
-      >
-
-
-        {note.category === "hut" && onEditHut && (
-          <button
-            type="button"
-            className="
-              flex-1
-              rounded-lg
-              bg-emerald-600
-              py-3
-              font-semibold
-              text-white
-              hover:bg-emerald-700
-            "
-            onClick={() => onEditHut(note)}
-          >
+      <div className="border-t border-slate-200 p-4 flex gap-3">
+        {note.category === "hut" ? (
+          <button type="button" className="flex-1 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700" onClick={() => onEditHut?.(note)}>
             Hut Details
           </button>
+        ) : (
+          <>
+            <button className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700" onClick={() => onEdit(note)}>
+              Edit Note
+            </button>
+            <button className="flex-1 rounded-lg bg-red-600 py-3 font-semibold text-white hover:bg-red-700" disabled={deletionRequested || deletionWorking} onClick={async () => {
+              if (!confirm("Request deletion of this knowledge item?")) return;
+              setDeletionWorking(true);
+              const success = await onDelete(note.id);
+              setDeletionWorking(false);
+              if (success) setDeletionRequested(true);
+            }}>
+              {deletionWorking ? "Submitting..." : deletionRequested ? "Deletion requested" : "Request deletion"}
+            </button>
+          </>
         )}
-
-        <button
-
-          className="
-            flex-1
-            rounded-lg
-            bg-blue-600
-            py-3
-            font-semibold
-            text-white
-            hover:bg-blue-700
-          "
-
-          onClick={() => onEdit(note)}
-
-        >
-
-          Edit Note
-
-        </button>
-
-
-
-        <button
-
-          className="
-            flex-1
-            rounded-lg
-            bg-red-600
-            py-3
-            font-semibold
-            text-white
-            hover:bg-red-700
-          "
-
-          disabled={deletionRequested || deletionWorking}
-          onClick={async () => {
-
-            if (
-              !confirm(
-                "Request deletion of this knowledge item?"
-              )
-            ) {
-              return;
-            }
-
-            setDeletionWorking(true);
-
-            const success = await onDelete(note.id);
-
-            setDeletionWorking(false);
-
-            if (success) {
-              setDeletionRequested(true);
-            }
-
-          }}
-
-        >
-
-          {deletionWorking
-            ? "Submitting..."
-            : deletionRequested
-              ? "Deletion requested"
-              : "Request deletion"}
-
-        </button>
-
-
       </div>
 
       {deletionRequested && (
