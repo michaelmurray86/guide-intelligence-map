@@ -24,8 +24,12 @@ const textFields = [
   ["sleepingBeds", "Number of beds"],
   ["sleepingDormitories", "Number of dormitories"],
   ["winterRoomCapacity", "Winter room capacity"],
+  ["winterRoomDetails", "Winter room details"],
+  ["openingDate", "Opening date"],
+  ["closingDate", "Closing date"],
   ["showers", "Showers"],
   ["picnicLunchCost", "Picnic lunch cost"],
+  ["dinnerTime", "Dinner time"],
   ["bookingUrl", "Reservation website"],
   ["phone", "Hut phone number"],
   ["email", "Hut email"],
@@ -38,7 +42,7 @@ const textFields = [
 const boolFields = [
   ["picnicLunches", "Picnic lunches available"],
   ["waterDrinkable", "Drinkable water"],
-  ["vendor", "Setup as NAE vendor"],
+  ["vendor", "NAE Vendor"],
   ["guideRateOffered", "IML rate offered"],
 ] as const;
 
@@ -49,8 +53,12 @@ function initialForm(hut: Hut | null | undefined, title: string): Form {
     sleepingBeds: hut?.sleepingBeds?.toString() ?? "",
     sleepingDormitories: hut?.sleepingDormitories?.toString() ?? "",
     winterRoomCapacity: hut?.winterRoomCapacity?.toString() ?? "",
+    winterRoomDetails: hut?.winterRoomDetails ?? "",
+    openingDate: hut?.openingDate?.slice(0, 10) ?? "",
+    closingDate: hut?.closingDate?.slice(0, 10) ?? "",
     showers: hut?.showers ?? "",
     picnicLunchCost: hut?.picnicLunchCost ?? "",
+    dinnerTime: hut?.dinnerTime ?? "",
     bookingUrl: hut?.bookingUrl ?? "",
     phone: hut?.phone ?? "",
     email: hut?.email ?? "",
@@ -107,9 +115,13 @@ export default function HutEditor({
       sleepingBeds: number("sleepingBeds"),
       sleepingDormitories: number("sleepingDormitories"),
       winterRoomCapacity: number("winterRoomCapacity"),
+      winterRoomDetails: String(value("winterRoomDetails")).trim() || undefined,
+      openingDate: String(value("openingDate")) || undefined,
+      closingDate: String(value("closingDate")) || undefined,
       showers: String(value("showers")).trim() || undefined,
       picnicLunches: Boolean(value("picnicLunches")),
       picnicLunchCost: String(value("picnicLunchCost")).trim() || undefined,
+      dinnerTime: String(value("dinnerTime")).trim() || undefined,
       waterDrinkable: Boolean(value("waterDrinkable")),
       bookingUrl: String(value("bookingUrl")).trim() || undefined,
       phone: String(value("phone")).trim() || undefined,
@@ -194,15 +206,15 @@ export default function HutEditor({
   const sections = [
     [
       "Overview",
-      ["name", "elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity"],
+      ["elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity", "winterRoomDetails"],
     ],
     [
       "Facilities & food",
-      ["showers", "picnicLunchCost"],
+      ["showers", "picnicLunchCost", "dinnerTime"],
     ],
     [
       "Booking & contacts",
-      ["bookingUrl", "phone", "email", "guardianName"],
+      ["openingDate", "closingDate", "bookingUrl", "phone", "email", "guardianName"],
     ],
     [
       "Costs & vendor",
@@ -222,10 +234,7 @@ export default function HutEditor({
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Hut Database
             </p>
-            <h2 className="mt-1 text-xl font-bold text-slate-900">
-              {existingHut.name}
-            </h2>
-            <p className="text-sm text-slate-500">{guideNoteTitle}</p>
+            <p className="mt-1 text-sm text-slate-500">{guideNoteTitle}</p>
           </div>
           <button
             type="button"
@@ -246,6 +255,7 @@ export default function HutEditor({
               <Info label="Number of beds" value={display("sleepingBeds")} />
               <Info label="Number of dormitories" value={display("sleepingDormitories")} />
               <Info label="Winter room capacity" value={display("winterRoomCapacity")} />
+              <Info label="Winter room details" value={display("winterRoomDetails")} />
             </dl>
           </section>
 
@@ -257,6 +267,7 @@ export default function HutEditor({
               <Info label="Showers" value={display("showers")} />
               <Info label="Picnic lunches available" value={yesNo("picnicLunches")} />
               <Info label="Picnic lunch cost" value={display("picnicLunchCost")} />
+              <Info label="Dinner time" value={display("dinnerTime")} />
               <Info label="Drinkable water" value={yesNo("waterDrinkable")} />
             </dl>
           </section>
@@ -266,7 +277,16 @@ export default function HutEditor({
               Booking & contacts
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
-              <Info label="Reservation website" value={display("bookingUrl")} />
+              <div>
+                <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reservation website</dt>
+                {display("bookingUrl") && (
+                  <dd className="mt-1 text-sm">
+                    <a href={String(display("bookingUrl"))} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 underline hover:text-blue-800">
+                      Open reservation website ↗
+                    </a>
+                  </dd>
+                )}
+              </div>
               <Info label="Hut phone number" value={display("phone")} />
               <Info label="Hut email" value={display("email")} />
               <Info label="Guardian name" value={display("guardianName")} />
@@ -279,7 +299,7 @@ export default function HutEditor({
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
               <Info label="Costs" value={display("costs")} />
-              <Info label="Setup as NAE vendor" value={yesNo("vendor")} />
+              <Info label="NAE Vendor" value={yesNo("vendor")} />
               <Info label="IML rate offered" value={yesNo("guideRateOffered")} />
             </dl>
           </section>
@@ -355,7 +375,7 @@ export default function HutEditor({
                 const [, labelText] =
                   textFields.find(x => x[0] === key) ?? [key, key];
 
-                const area = ["showers", "costs", "otherNotes"].includes(key);
+                const area = ["showers", "winterRoomDetails", "costs", "otherNotes"].includes(key);
                 const type =
                   ["lastCheckedAt"].includes(key)
                     ? "date"
