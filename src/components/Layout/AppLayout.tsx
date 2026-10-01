@@ -16,6 +16,7 @@ export default function AppLayout() {
   const [filters, setFilters] = useState<GuideFilters>({
     water: true,
     cattle: true,
+    guardian_dog: true,
     hazard: true,
     hut: true,
     cafe: true,

@@ -1469,6 +1469,7 @@ const handleSectionDelete = async (section: GuideSection) => {
               <ToggleSwitch checked={filters.sections} onChange={() => setFilters(current => ({ ...current, sections: !current.sections }))} label="🟧 Route Sections" />
               <ToggleSwitch checked={filters.water} onChange={() => setFilters(current => ({ ...current, water: !current.water }))} label="💧 Water" />
               <ToggleSwitch checked={filters.cattle} onChange={() => setFilters(current => ({ ...current, cattle: !current.cattle }))} label="🐄 Cattle" />
+              <ToggleSwitch checked={filters.guardian_dog} onChange={() => setFilters(current => ({ ...current, guardian_dog: !current.guardian_dog }))} label="🐕 Guardian Dogs" />
               <ToggleSwitch checked={filters.hazard} onChange={() => setFilters(current => ({ ...current, hazard: !current.hazard }))} label="⚠️ Hazards" />
               <ToggleSwitch checked={filters.hut} onChange={() => setFilters(current => ({ ...current, hut: !current.hut }))} label="🛖 Huts" />
               <ToggleSwitch checked={filters.cafe} onChange={() => setFilters(current => ({ ...current, cafe: !current.cafe }))} label="☕ Cafés" />

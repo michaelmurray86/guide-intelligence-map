@@ -233,6 +233,7 @@ export default function Sidebar({
           <ToggleSwitch checked={filters.sections} onChange={() => toggle("sections")} label="🟧 Route Sections" />
           <ToggleSwitch checked={filters.water} onChange={() => toggle("water")} label="💧 Water" />
           <ToggleSwitch checked={filters.cattle} onChange={() => toggle("cattle")} label="🐄 Cattle" />
+          <ToggleSwitch checked={filters.guardian_dog} onChange={() => toggle("guardian_dog")} label="🐕 Guardian Dogs" />
           <ToggleSwitch checked={filters.hazard} onChange={() => toggle("hazard")} label="⚠️ Hazards" />
           <ToggleSwitch checked={filters.hut} onChange={() => toggle("hut")} label="🛖 Huts" />
           <ToggleSwitch checked={filters.cafe} onChange={() => toggle("cafe")} label="☕ Cafés" />
