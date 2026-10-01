@@ -558,13 +558,6 @@ const handleRouteNoteFocus = (
 
   const note = item.note;
 
-  setSelectedSection(null);
-  setEditingNote(null);
-  setEditingSection(null);
-  setEditingHutNote(null);
-  setEditingHut(null);
-  setSelectedNote(note);
-
   if (mapRef.current) {
 
     mapRef.current.flyTo({
