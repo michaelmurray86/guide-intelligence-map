@@ -3,7 +3,7 @@ import { Hut } from "@/Types/Hut";
 
 export type HutEditPayload = Omit<
   Hut,
-  "id" | "guideNoteId" | "updatedAt" | "createdAt"
+  "id" | "guideNoteId" | "updatedAt" | "createdAt" | "photoUrls"
 >;
 
 export type HutChangeRequest = {
