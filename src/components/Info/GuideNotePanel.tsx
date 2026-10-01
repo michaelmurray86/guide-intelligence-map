@@ -269,102 +269,28 @@ export default function GuideNotePanel({
 
 
 
-        {note.category !== "hut" && (<div className="my-6 border-t border-slate-200" />
-
-
-
-        <h3
-          className="
-            mb-2
-            text-xs
-            font-bold
-            uppercase
-            tracking-wider
-            text-slate-500
-          "
-        >
-          Last Updated
-        </h3>
-
-
-        <p className="text-slate-700">
-          {new Date(note.updatedAt).toLocaleDateString("en-GB")} · {note.updatedBy || "Unknown"}
-        </p>
-
-
-
-        <div className="my-6 border-t border-slate-200" />
-
-        <h3
-          className="
-            mb-2
-            text-xs
-            font-bold
-            uppercase
-            tracking-wider
-            text-slate-500
-          "
-        >
-          Photos
-        </h3>
-
-
-        {
-          photos.length > 0 ? (
-
-            <div className="grid grid-cols-2 gap-3">
-
-              {
-                photos.map(photo => (
-
-                  <img
-                    key={photo}
-                    src={photo}
-                    alt=""
-                    onClick={() =>
-                      setSelectedPhotoIndex(photos.indexOf(photo))
-                    }
-                    className="
-                      aspect-square
-                      w-full
-                      rounded-lg
-                      cursor-pointer
-                      object-cover
-                      hover:opacity-90
-                      transition
-                    "
-                  />
-
-                ))
-              })}
-
-      </div>
-
-          ) : (
-
-            <div
-              className="
-                flex
-                h-32
-                items-center
-                justify-center
-                rounded-lg
-                border
-                border-dashed
-                border-slate-300
-                bg-slate-50
-                text-slate-500
-              "
-            >
-
-              No photo attached
-
-            </div>
-
-          )
-        }
-
-      </div>
+        {note.category !== "hut" && (
+          <>
+            <div className="my-6 border-t border-slate-200" />
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Last Updated</h3>
+            <p className="text-slate-700">
+              {new Date(note.updatedAt).toLocaleDateString("en-GB")} · {note.updatedBy || "Unknown"}
+            </p>
+            <div className="my-6 border-t border-slate-200" />
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Photos</h3>
+            {photos.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {photos.map(photo => (
+                  <img key={photo} src={photo} alt="" onClick={() => setSelectedPhotoIndex(photos.indexOf(photo))} className="aspect-square w-full cursor-pointer rounded-lg object-cover hover:opacity-90 transition" />
+                ))}
+              </div>
+            ) : (
+              <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
+                No photo attached
+              </div>
+            )}
+          </>
+        )}      </div>
 
 
 
