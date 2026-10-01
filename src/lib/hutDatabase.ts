@@ -9,9 +9,13 @@ type HutRow = {
   sleeping_beds: number | null;
   sleeping_dormitories: number | null;
   winter_room_capacity: number | null;
+  winter_room_details: string | null;
+  opening_date: string | null;
+  closing_date: string | null;
   showers: string | null;
   picnic_lunches: boolean | null;
   picnic_lunch_cost: string | null;
+  dinner_time: string | null;
   water_drinkable: boolean | null;
   booking_url: string | null;
   phone: string | null;
@@ -38,9 +42,13 @@ function normalizeHut(row: HutRow): Hut {
     sleepingBeds: row.sleeping_beds ?? undefined,
     sleepingDormitories: row.sleeping_dormitories ?? undefined,
     winterRoomCapacity: row.winter_room_capacity ?? undefined,
+    winterRoomDetails: row.winter_room_details ?? undefined,
+    openingDate: row.opening_date ?? undefined,
+    closingDate: row.closing_date ?? undefined,
     showers: row.showers ?? undefined,
     picnicLunches: row.picnic_lunches ?? undefined,
     picnicLunchCost: row.picnic_lunch_cost ?? undefined,
+    dinnerTime: row.dinner_time ?? undefined,
     waterDrinkable: row.water_drinkable ?? undefined,
     bookingUrl: row.booking_url ?? undefined,
     phone: row.phone ?? undefined,
@@ -92,9 +100,13 @@ export async function upsertHut(
         sleeping_beds: input.sleepingBeds ?? null,
         sleeping_dormitories: input.sleepingDormitories ?? null,
         winter_room_capacity: input.winterRoomCapacity ?? null,
+        winter_room_details: input.winterRoomDetails ?? null,
+        opening_date: input.openingDate ?? null,
+        closing_date: input.closingDate ?? null,
         showers: input.showers ?? null,
         picnic_lunches: input.picnicLunches ?? null,
         picnic_lunch_cost: input.picnicLunchCost ?? null,
+        dinner_time: input.dinnerTime ?? null,
         water_drinkable: input.waterDrinkable ?? null,
         booking_url: input.bookingUrl ?? null,
         phone: input.phone ?? null,
