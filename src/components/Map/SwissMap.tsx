@@ -679,8 +679,6 @@ const canManageHuts =
   profile?.role === "admin" ||
   profile?.role === "superadmin";
 const handleEditHut = async (note: GuideNote) => {
-  if (!canManageHuts) return;
-
   setSelectedSection(null);
   setEditingNote(null);
   setEditingSection(null);
@@ -1050,7 +1048,7 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         }}
 
-        onEditHut={canManageHuts ? handleEditHut : undefined}
+        onEditHut={handleEditHut}
 
 
         onDelete={async (id)=>{
