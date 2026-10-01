@@ -83,7 +83,7 @@ export default function RoutePanel({
         >
           <div>
             <h2 className="text-lg font-bold text-slate-900">
-              🥾 Route Overview
+              🥾 Route Knowledge Report
             </h2>
             <p className="mt-1 text-sm text-slate-600">{route.name}</p>
           </div>

@@ -101,17 +101,6 @@ export default function GPXReport({
         min-h-0
       "
     >
-      <h2
-        className="
-          font-bold
-          text-lg
-          mb-5
-          text-slate-800
-        "
-      >
-        🥾 Route Knowledge Report
-      </h2>
-
       {reportItems.length === 0 ? (
         <p className="text-slate-600">
           No nearby knowledge items or route sections found.
