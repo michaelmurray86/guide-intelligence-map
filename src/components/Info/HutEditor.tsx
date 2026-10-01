@@ -234,6 +234,9 @@ export default function HutEditor({
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Hut Database
             </p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">
+              {existingHut.name}
+            </h2>
           </div>
           <button
             type="button"
@@ -376,7 +379,7 @@ export default function HutEditor({
 
                 const area = ["showers", "winterRoomDetails", "costs", "otherNotes"].includes(key);
                 const type =
-                  ["lastCheckedAt"].includes(key)
+                  ["lastCheckedAt", "openingDate", "closingDate"].includes(key)
                     ? "date"
                     : key === "bookingUrl"
                       ? "url"
