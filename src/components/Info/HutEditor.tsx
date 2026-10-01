@@ -21,6 +21,7 @@ type Form = Record<string, string | boolean>;
 
 const textFields = [
   ["name", "Hut name"],
+  ["shortDescription", "Short description"],
   ["elevationM", "Elevation (m)"],
   ["sleepingBeds", "Number of beds"],
   ["sleepingDormitories", "Number of dormitories"],
@@ -112,6 +113,12 @@ export default function HutEditor({
     setWorking(true);
     setError(null);
 
+    if (userRole === "instructor" && !existingHut) {
+      setWorking(false);
+      setError("This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first.");
+      return;
+    }
+
     const uploadedPaths = await uploadGuideNotePhotos(guideNoteId, newPhotos);
     if (uploadedPaths === null) {
       setWorking(false);
@@ -156,14 +163,6 @@ export default function HutEditor({
     };
 
     if (userRole === "instructor") {
-      if (!existingHut) {
-        setWorking(false);
-        setError(
-          "This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first."
-        );
-        return;
-      }
-
       const request = await submitHutChange(existingHut.id, payload);
       setWorking(false);
 
