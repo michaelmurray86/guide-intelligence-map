@@ -1,10 +1,12 @@
 import { supabase } from "@/lib/supabase";
 import { Hut } from "@/Types/Hut";
+import { getGuideNotePhotoUrls } from "@/lib/guideNoteStorage";
 
 type HutRow = {
   id: number;
   guide_note_id: number;
   name: string;
+  short_description: string | null;
   elevation_m: number | null;
   sleeping_beds: number | null;
   sleeping_dormitories: number | null;
@@ -25,6 +27,7 @@ type HutRow = {
   costs: string | null;
   guide_rate_offered: boolean | null;
   other_notes: string | null;
+  photos: string[] | null;
   last_checked_at: string | null;
   last_checked_by: string | null;
   updated_at: string;
@@ -38,6 +41,7 @@ function normalizeHut(row: HutRow): Hut {
     id: row.id,
     guideNoteId: row.guide_note_id,
     name: row.name,
+    shortDescription: row.short_description ?? undefined,
     elevationM: row.elevation_m ?? undefined,
     sleepingBeds: row.sleeping_beds ?? undefined,
     sleepingDormitories: row.sleeping_dormitories ?? undefined,
@@ -58,6 +62,7 @@ function normalizeHut(row: HutRow): Hut {
     costs: row.costs ?? undefined,
     guideRateOffered: row.guide_rate_offered ?? undefined,
     otherNotes: row.other_notes ?? undefined,
+    photos: row.photos ?? [],
     lastCheckedAt: row.last_checked_at ?? undefined,
     lastCheckedBy: row.last_checked_by ?? undefined,
     updatedAt: row.updated_at,
@@ -78,7 +83,10 @@ export async function getHuts(): Promise<Hut[]> {
     throw error;
   }
 
-  return ((data ?? []) as HutRow[]).map(normalizeHut);
+  return Promise.all(((data ?? []) as HutRow[]).map(async row => ({
+    ...normalizeHut(row),
+    photoUrls: await getGuideNotePhotoUrls(row.photos ?? []),
+  })));
 }
 
 export async function upsertHut(
@@ -96,6 +104,7 @@ export async function upsertHut(
       {
         guide_note_id: guideNoteId,
         name: input.name,
+        short_description: input.shortDescription ?? null,
         elevation_m: input.elevationM ?? null,
         sleeping_beds: input.sleepingBeds ?? null,
         sleeping_dormitories: input.sleepingDormitories ?? null,
@@ -116,6 +125,7 @@ export async function upsertHut(
         costs: input.costs ?? null,
         guide_rate_offered: input.guideRateOffered ?? null,
         other_notes: input.otherNotes ?? null,
+        photos: input.photos ?? [],
         last_checked_at: input.lastCheckedAt ?? null,
         last_checked_by: input.lastCheckedBy ?? null,
         updated_at: now,
@@ -149,5 +159,8 @@ export async function getHutByGuideNoteId(
     throw error;
   }
 
-  return data ? normalizeHut(data as HutRow) : null;
+  return data ? {
+    ...normalizeHut(data as HutRow),
+    photoUrls: await getGuideNotePhotoUrls((data as HutRow).photos ?? []),
+  } : null;
 }
