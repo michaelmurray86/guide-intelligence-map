@@ -19,100 +19,118 @@ type Props = {
 type Form = Record<string, string | boolean>;
 
 const textFields = [
-  ["name","Hut name"],["alternativeNames","Alternative / local names"],
-  ["country","Country"],["region","Region"],["latitude","Latitude"],["longitude","Longitude"],
-  ["elevationM","Elevation (m)"],["maxCapacity","Maximum capacity"],
-  ["summerAccess","Summer access"],["winterAccess","Winter access"],["approachRoutes","Approach routes"],
-  ["typicalApproachTime","Typical approach time"],["approachDifficulty","Approach difficulty"],
-  ["seasonalRestrictions","Seasonal restrictions"],["sleepingCapacity","Sleeping capacity"],
-  ["winterRoom","Winter room"],["foodAndMeals","Food & meals"],["water","Water"],
-  ["toilets","Toilets"],["showers","Showers"],["electricity","Electricity"],["wifi","Wi-Fi"],
-  ["cooking","Cooking"],["blanketsMattresses","Blankets / mattresses"],
-  ["bookingUrl","Reservation website"],["phone","Hut phone"],["email","Hut email"],
-  ["vendorStatusExpiresAt","Vendor status expires"],["guardianName","Guardian name"],
-  ["guardianEmail","Guardian email"],["guardianPhone","Guardian phone"],
-  ["emergencyInformation","Emergency information"],["nearbyHazards","Nearby hazards"],
-  ["usefulRouteInformation","Useful route information"],["instructorNotes","Instructor notes"],
-  ["lastCheckedAt","Last checked"],["source","Source"],
+  ["name", "Hut name"],
+  ["elevationM", "Elevation (m)"],
+  ["sleepingBeds", "Number of beds"],
+  ["sleepingDormitories", "Number of dormitories"],
+  ["winterRoomCapacity", "Winter room capacity"],
+  ["showers", "Showers"],
+  ["picnicLunchCost", "Picnic lunch cost"],
+  ["bookingUrl", "Reservation website"],
+  ["phone", "Hut phone number"],
+  ["email", "Hut email"],
+  ["guardianName", "Guardian name"],
+  ["costs", "Costs"],
+  ["otherNotes", "Other useful notes"],
+  ["lastCheckedAt", "Last reviewed"],
 ] as const;
 
 const boolFields = [
-  ["picnicLunches","Picnic lunches available"],
-  ["waterDrinkable","Water is drinkable"],
-  ["bookingRequired","Booking required"],
-  ["vendor","Set up as a vendor"],
-  ["guideRateOffered","Guide rate offered"],
+  ["picnicLunches", "Picnic lunches available"],
+  ["waterDrinkable", "Drinkable water"],
+  ["vendor", "Setup as NAE vendor"],
+  ["guideRateOffered", "IML rate offered"],
 ] as const;
 
 function initialForm(hut: Hut | null | undefined, title: string): Form {
   const form: Form = {
     name: hut?.name ?? title,
-    alternativeNames: hut?.alternativeNames.join(", ") ?? "",
-    country: hut?.country ?? "", region: hut?.region ?? "",
-    latitude: hut?.latitude?.toString() ?? "", longitude: hut?.longitude?.toString() ?? "",
     elevationM: hut?.elevationM?.toString() ?? "",
-    maxCapacity: hut?.maxCapacity?.toString() ?? "",
-    summerAccess: hut?.summerAccess ?? "", winterAccess: hut?.winterAccess ?? "",
-    approachRoutes: hut?.approachRoutes ?? "", typicalApproachTime: hut?.typicalApproachTime ?? "",
-    approachDifficulty: hut?.approachDifficulty ?? "", seasonalRestrictions: hut?.seasonalRestrictions ?? "",
-    sleepingCapacity: hut?.sleepingCapacity?.toString() ?? "", winterRoom: hut?.winterRoom ?? "",
-    foodAndMeals: hut?.foodAndMeals ?? "", water: hut?.water ?? "",
-    toilets: hut?.toilets ?? "", showers: hut?.showers ?? "", electricity: hut?.electricity ?? "",
-    wifi: hut?.wifi ?? "", cooking: hut?.cooking ?? "", blanketsMattresses: hut?.blanketsMattresses ?? "",
-    bookingUrl: hut?.bookingUrl ?? "", phone: hut?.phone ?? "", email: hut?.email ?? "",
-    vendorStatusExpiresAt: hut?.vendorStatusExpiresAt?.slice(0,10) ?? "",
-    guardianName: hut?.guardianName ?? "", guardianEmail: hut?.guardianEmail ?? "",
-    guardianPhone: hut?.guardianPhone ?? "", emergencyInformation: hut?.emergencyInformation ?? "",
-    nearbyHazards: hut?.nearbyHazards ?? "", usefulRouteInformation: hut?.usefulRouteInformation ?? "",
-    instructorNotes: hut?.instructorNotes ?? "", lastCheckedAt: hut?.lastCheckedAt?.slice(0,10) ?? "",
-    source: hut?.source ?? "",
+    sleepingBeds: hut?.sleepingBeds?.toString() ?? "",
+    sleepingDormitories: hut?.sleepingDormitories?.toString() ?? "",
+    winterRoomCapacity: hut?.winterRoomCapacity?.toString() ?? "",
+    showers: hut?.showers ?? "",
+    picnicLunchCost: hut?.picnicLunchCost ?? "",
+    bookingUrl: hut?.bookingUrl ?? "",
+    phone: hut?.phone ?? "",
+    email: hut?.email ?? "",
+    guardianName: hut?.guardianName ?? "",
+    costs: hut?.costs ?? "",
+    otherNotes: hut?.otherNotes ?? "",
+    lastCheckedAt: hut?.lastCheckedAt?.slice(0, 10) ?? "",
   };
-  for (const [key] of boolFields) form[key] = (hut?.[key as keyof Hut] as boolean | undefined) ?? false;
+
+  for (const [key] of boolFields) {
+    form[key] = (hut?.[key as keyof Hut] as boolean | undefined) ?? false;
+  }
+
   return form;
 }
 
-export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, onCancel, onSaved, updatedBy, userRole, onSubmittedForApproval }: Props) {
-  const [form,setForm] = useState(() => initialForm(existingHut,guideNoteTitle));
-  const [working,setWorking] = useState(false);
-  const [editing,setEditing] = useState(!existingHut);
-  const [error,setError] = useState<string | null>(null);
-  const set = (key:string,value:string|boolean) => setForm(current => ({...current,[key]:value}));
-  const value = (key:string) => form[key] ?? "";
+export default function HutEditor({
+  guideNoteId,
+  guideNoteTitle,
+  existingHut,
+  onCancel,
+  onSaved,
+  updatedBy,
+  userRole,
+  onSubmittedForApproval,
+}: Props) {
+  const [form, setForm] = useState(() =>
+    initialForm(existingHut, guideNoteTitle)
+  );
+  const [working, setWorking] = useState(false);
+  const [editing, setEditing] = useState(!existingHut);
+  const [error, setError] = useState<string | null>(null);
+
+  const set = (key: string, value: string | boolean) =>
+    setForm(current => ({ ...current, [key]: value }));
+
+  const value = (key: string) => form[key] ?? "";
 
   const save = async () => {
-    if (!String(value("name")).trim()) { setError("Enter a hut name."); return; }
-    setWorking(true); setError(null);
-    const number = (key:string) => value(key) ? Number(value(key)) : undefined;
+    if (!String(value("name")).trim()) {
+      setError("Enter a hut name.");
+      return;
+    }
+
+    setWorking(true);
+    setError(null);
+
+    const number = (key: string) =>
+      value(key) === "" ? undefined : Number(value(key));
+
     const payload: HutEditPayload = {
-      name:String(value("name")).trim(),
-      alternativeNames:String(value("alternativeNames")).split(",").map(v=>v.trim()).filter(Boolean),
-      country:String(value("country")).trim()||undefined, region:String(value("region")).trim()||undefined,
-      latitude:number("latitude"), longitude:number("longitude"), elevationM:number("elevationM"),
-      summerAccess:String(value("summerAccess")).trim()||undefined, winterAccess:String(value("winterAccess")).trim()||undefined,
-      approachRoutes:String(value("approachRoutes")).trim()||undefined, typicalApproachTime:String(value("typicalApproachTime")).trim()||undefined,
-      approachDifficulty:String(value("approachDifficulty")).trim()||undefined, seasonalRestrictions:String(value("seasonalRestrictions")).trim()||undefined,
-      sleepingCapacity:number("sleepingCapacity"), winterRoom:String(value("winterRoom")).trim()||undefined,
-      foodAndMeals:String(value("foodAndMeals")).trim()||undefined, picnicLunches:Boolean(value("picnicLunches")),
-      water:String(value("water")).trim()||undefined, waterDrinkable:Boolean(value("waterDrinkable")),
-      toilets:String(value("toilets")).trim()||undefined, showers:String(value("showers")).trim()||undefined,
-      electricity:String(value("electricity")).trim()||undefined, wifi:String(value("wifi")).trim()||undefined,
-      cooking:String(value("cooking")).trim()||undefined, blanketsMattresses:String(value("blanketsMattresses")).trim()||undefined,
-      bookingRequired:Boolean(value("bookingRequired")), bookingUrl:String(value("bookingUrl")).trim()||undefined,
-      phone:String(value("phone")).trim()||undefined, email:String(value("email")).trim()||undefined,
-      vendor:Boolean(value("vendor")), vendorStatusExpiresAt:String(value("vendorStatusExpiresAt"))||undefined,
-      guideRateOffered:Boolean(value("guideRateOffered")), guardianName:String(value("guardianName")).trim()||undefined,
-      guardianEmail:String(value("guardianEmail")).trim()||undefined, guardianPhone:String(value("guardianPhone")).trim()||undefined,
-      maxCapacity:number("maxCapacity"), emergencyInformation:String(value("emergencyInformation")).trim()||undefined,
-      nearbyHazards:String(value("nearbyHazards")).trim()||undefined, usefulRouteInformation:String(value("usefulRouteInformation")).trim()||undefined,
-      instructorNotes:String(value("instructorNotes")).trim()||undefined, photos:existingHut?.photos??[],
-      lastCheckedAt:String(value("lastCheckedAt"))||undefined, lastCheckedBy:updatedBy,
-      source:String(value("source")).trim()||undefined, updatedBy, createdBy:existingHut?.createdBy??updatedBy,
+      name: String(value("name")).trim(),
+      elevationM: number("elevationM"),
+      sleepingBeds: number("sleepingBeds"),
+      sleepingDormitories: number("sleepingDormitories"),
+      winterRoomCapacity: number("winterRoomCapacity"),
+      showers: String(value("showers")).trim() || undefined,
+      picnicLunches: Boolean(value("picnicLunches")),
+      picnicLunchCost: String(value("picnicLunchCost")).trim() || undefined,
+      waterDrinkable: Boolean(value("waterDrinkable")),
+      bookingUrl: String(value("bookingUrl")).trim() || undefined,
+      phone: String(value("phone")).trim() || undefined,
+      email: String(value("email")).trim() || undefined,
+      guardianName: String(value("guardianName")).trim() || undefined,
+      vendor: Boolean(value("vendor")),
+      costs: String(value("costs")).trim() || undefined,
+      guideRateOffered: Boolean(value("guideRateOffered")),
+      otherNotes: String(value("otherNotes")).trim() || undefined,
+      lastCheckedAt: String(value("lastCheckedAt")) || undefined,
+      lastCheckedBy: updatedBy,
+      updatedBy,
+      createdBy: existingHut?.createdBy ?? updatedBy,
     };
 
     if (userRole === "instructor") {
       if (!existingHut) {
         setWorking(false);
-        setError("This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first.");
+        setError(
+          "This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first."
+        );
         return;
       }
 
@@ -130,12 +148,18 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
 
     const hut = await upsertHut(guideNoteId, payload);
     setWorking(false);
-    if (!hut) { setError("The hut could not be saved. Check your permissions and try again."); return; }
+
+    if (!hut) {
+      setError("The hut could not be saved. Check your permissions and try again.");
+      return;
+    }
+
     onSaved?.(hut);
   };
 
-  const cls="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800";
-  const label="block text-sm font-semibold text-slate-700";
+  const cls =
+    "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800";
+  const label = "block text-sm font-semibold text-slate-700";
 
   const display = (field: keyof Hut) => {
     const item = existingHut?.[field];
@@ -149,126 +173,294 @@ export default function HutEditor({ guideNoteId, guideNoteTitle, existingHut, on
     return item ? "Yes" : "No";
   };
 
-  const Info = ({ label: infoLabel, value: infoValue }: { label: string; value?: string | null }) =>
+  const Info = ({
+    label: infoLabel,
+    value: infoValue,
+  }: {
+    label: string;
+    value?: string | null;
+  }) =>
     infoValue ? (
       <div>
-        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{infoLabel}</dt>
-        <dd className="mt-1 whitespace-pre-wrap text-sm text-slate-800">{infoValue}</dd>
+        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          {infoLabel}
+        </dt>
+        <dd className="mt-1 whitespace-pre-wrap text-sm text-slate-800">
+          {infoValue}
+        </dd>
       </div>
     ) : null;
 
-  const sections=
-    ["Basic information",["name","alternativeNames","country","region","latitude","longitude","elevationM","maxCapacity"]],
-    ["Access",["summerAccess","winterAccess","approachRoutes","typicalApproachTime","approachDifficulty","seasonalRestrictions"]],
-    ["Facilities & food",["sleepingCapacity","winterRoom","foodAndMeals","water","toilets","showers","electricity","wifi","cooking","blanketsMattresses"]],
-    ["Booking & contacts",["bookingUrl","phone","email"]],
-    ["Vendor / guide information",["vendorStatusExpiresAt","guardianName","guardianEmail","guardianPhone"]],
-    ["Guide information",["emergencyInformation","nearbyHazards","usefulRouteInformation","instructorNotes"]],
-    ["Review & source",["lastCheckedAt","source"]],
+  const sections = [
+    [
+      "Overview",
+      ["name", "elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity"],
+    ],
+    [
+      "Facilities & food",
+      ["showers", "picnicLunchCost"],
+    ],
+    [
+      "Booking & contacts",
+      ["bookingUrl", "phone", "email", "guardianName"],
+    ],
+    [
+      "Costs & vendor",
+      ["costs"],
+    ],
+    [
+      "Other useful notes & review",
+      ["otherNotes", "lastCheckedAt"],
+    ],
   ] as const;
 
   if (existingHut && !editing) {
-    const bookingUrl = display("bookingUrl");
-    return <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[680px] md:-translate-x-1/2">
-      <div className="flex items-start justify-between border-b border-slate-200 p-5">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Hut Database</p>
-          <h2 className="mt-1 text-xl font-bold text-slate-900">{existingHut.name}</h2>
-          <p className="text-sm text-slate-500">{guideNoteTitle}</p>
+    return (
+      <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[680px] md:-translate-x-1/2">
+        <div className="flex items-start justify-between border-b border-slate-200 p-5">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Hut Database
+            </p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">
+              {existingHut.name}
+            </h2>
+            <p className="text-sm text-slate-500">{guideNoteTitle}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100"
+          >
+            ✕
+          </button>
         </div>
-        <button type="button" onClick={onCancel} className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100">✕</button>
-      </div>
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
-        <section className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">At a glance</h3>
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Info label="Location" value={[display("region"), display("country")].filter(Boolean).join(", ") || null} />
-            <Info label="Elevation" value={display("elevationM") ? `${display("elevationM")} m` : null} />
-            <Info label="Maximum capacity" value={display("maxCapacity")} />
-            <Info label="Sleeping capacity" value={display("sleepingCapacity")} />
-          </dl>
-        </section>
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Access</h3>
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Info label="Typical approach" value={display("typicalApproachTime")} />
-            <Info label="Difficulty" value={display("approachDifficulty")} />
-            <Info label="Summer access" value={display("summerAccess")} />
-            <Info label="Winter access" value={display("winterAccess")} />
-            <Info label="Approach routes" value={display("approachRoutes")} />
-            <Info label="Seasonal restrictions" value={display("seasonalRestrictions")} />
-          </dl>
-        </section>
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Food, water & facilities</h3>
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Info label="Food & meals" value={display("foodAndMeals")} />
-            <Info label="Picnic lunches" value={yesNo("picnicLunches")} />
-            <Info label="Water" value={display("water")} />
-            <Info label="Water drinkable" value={yesNo("waterDrinkable")} />
-            <Info label="Toilets" value={display("toilets")} />
-            <Info label="Winter room" value={display("winterRoom")} />
-            <Info label="Showers" value={display("showers")} />
-            <Info label="Electricity" value={display("electricity")} />
-            <Info label="Wi-Fi" value={display("wifi")} />
-          </dl>
-        </section>
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Booking & guide information</h3>
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Info label="Booking required" value={yesNo("bookingRequired")} />
-            <Info label="Reservation website" value={bookingUrl} />
-            <Info label="Hut phone" value={display("phone")} />
-            <Info label="Hut email" value={display("email")} />
-            <Info label="Vendor" value={yesNo("vendor")} />
-            <Info label="Guide rate offered" value={yesNo("guideRateOffered")} />
-            <Info label="Guardian" value={display("guardianName")} />
-            <Info label="Guardian contact" value={[display("guardianEmail"), display("guardianPhone")].filter(Boolean).join(" · ") || null} />
-          </dl>
-        </section>
-        {(display("usefulRouteInformation") || display("nearbyHazards") || display("emergencyInformation") || display("instructorNotes")) && (
-          <section className="rounded-lg border border-slate-200 bg-white p-4">
-            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Guide notes</h3>
-            <dl className="space-y-4">
-              <Info label="Useful route information" value={display("usefulRouteInformation")} />
-              <Info label="Nearby hazards" value={display("nearbyHazards")} />
-              <Info label="Emergency information" value={display("emergencyInformation")} />
-              <Info label="Instructor notes" value={display("instructorNotes")} />
+
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
+          <section className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+              Overview
+            </h3>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Elevation" value={display("elevationM") ? `${display("elevationM")} m` : null} />
+              <Info label="Number of beds" value={display("sleepingBeds")} />
+              <Info label="Number of dormitories" value={display("sleepingDormitories")} />
+              <Info label="Winter room capacity" value={display("winterRoomCapacity")} />
             </dl>
           </section>
-        )}
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+              Facilities & food
+            </h3>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Showers" value={display("showers")} />
+              <Info label="Picnic lunches available" value={yesNo("picnicLunches")} />
+              <Info label="Picnic lunch cost" value={display("picnicLunchCost")} />
+              <Info label="Drinkable water" value={yesNo("waterDrinkable")} />
+            </dl>
+          </section>
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+              Booking & contacts
+            </h3>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Reservation website" value={display("bookingUrl")} />
+              <Info label="Hut phone number" value={display("phone")} />
+              <Info label="Hut email" value={display("email")} />
+              <Info label="Guardian name" value={display("guardianName")} />
+            </dl>
+          </section>
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+              Costs & vendor
+            </h3>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Costs" value={display("costs")} />
+              <Info label="Setup as NAE vendor" value={yesNo("vendor")} />
+              <Info label="IML rate offered" value={yesNo("guideRateOffered")} />
+            </dl>
+          </section>
+
+          {(display("otherNotes") || display("lastCheckedAt") || display("lastCheckedBy")) && (
+            <section className="rounded-lg border border-slate-200 bg-white p-4">
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+                Other useful notes & review
+              </h3>
+              <dl className="space-y-4">
+                <Info label="Other useful notes" value={display("otherNotes")} />
+                <Info label="Last reviewed" value={display("lastCheckedAt") ? new Date(String(display("lastCheckedAt"))).toLocaleDateString("en-GB") : null} />
+                <Info label="Reviewed by" value={display("lastCheckedBy")} />
+              </dl>
+            </section>
+          )}
+        </div>
+
+        <div className="flex gap-3 border-t border-slate-200 p-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+          >
+            {userRole === "instructor" ? "Propose Edit" : "Edit"}
+          </button>
+        </div>
       </div>
-      <div className="flex gap-3 border-t border-slate-200 p-4">
-        <button type="button" onClick={onCancel} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">Close</button>
-        <button type="button" onClick={() => setEditing(true)} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
-          {userRole === "instructor" ? "Propose Edit" : "Edit"}
-        </button>
-      </div>
-    </div>;
+    );
   }
 
-  return <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[720px] md:-translate-x-1/2">
-    <div className="flex items-start justify-between border-b border-slate-200 p-5">
-      <div><p className="text-xs font-bold uppercase tracking-wider text-slate-500">Hut Database</p><h2 className="mt-1 text-xl font-bold text-slate-900">{existingHut?"Edit Hut":"Add Hut Details"}</h2><p className="text-sm text-slate-500">{guideNoteTitle}</p></div>
-      <button type="button" onClick={onCancel} disabled={working} className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100">✕</button>
-    </div>
-    <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
-      {sections.map(([title,keys])=><section key={title} className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">{title}</h3>
-        <div className="grid gap-4 md:grid-cols-2">
-          {keys.map(key=>{const [,labelText]=textFields.find(x=>x[0]===key)??[key,key]; const area=["summerAccess","winterAccess","approachRoutes","seasonalRestrictions","foodAndMeals","water","winterRoom","emergencyInformation","nearbyHazards","usefulRouteInformation","instructorNotes"].includes(key); const type=["vendorStatusExpiresAt","lastCheckedAt"].includes(key)?"date":key==="bookingUrl"?"url":key==="email"||key==="guardianEmail"?"email":key==="phone"||key==="guardianPhone"?"tel":["latitude","longitude","elevationM","sleepingCapacity","maxCapacity"].includes(key)?"number":"text"; return <label key={key} className={label}>{labelText}{area?<textarea rows={3} className={cls} value={String(value(key))} onChange={e=>set(key,e.target.value)}/>:<input type={type} step={type==="number"?"any":undefined} className={cls} value={String(value(key))} onChange={e=>set(key,e.target.value)}/>}</label>})}
+  return (
+    <div className="fixed inset-4 z-50 flex flex-col overflow-hidden rounded-xl border border-slate-300 bg-white shadow-2xl md:left-1/2 md:right-auto md:w-[720px] md:-translate-x-1/2">
+      <div className="flex items-start justify-between border-b border-slate-200 p-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Hut Database
+          </p>
+          <h2 className="mt-1 text-xl font-bold text-slate-900">
+            {existingHut ? "Edit Hut" : "Add Hut Details"}
+          </h2>
+          <p className="text-sm text-slate-500">{guideNoteTitle}</p>
         </div>
-        {title==="Facilities & food"&&<div className="grid gap-3 md:grid-cols-2">{boolFields.slice(0,2).map(([key,text])=><label key={key} className="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={Boolean(value(key))} onChange={e=>set(key,e.target.checked)}/>{text}</label>)}</div>}
-        {title==="Booking & contacts"&&<label className="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={Boolean(value("bookingRequired"))} onChange={e=>set("bookingRequired",e.target.checked)}/>{boolFields[2][1]}</label>}
-        {title==="Vendor / guide information"&&<div className="grid gap-3 md:grid-cols-2">{boolFields.slice(3).map(([key,text])=><label key={key} className="flex items-center gap-2 text-sm font-semibold text-slate-700"><input type="checkbox" checked={Boolean(value(key))} onChange={e=>set(key,e.target.checked)}/>{text}</label>)}</div>}
-      </section>)}
-      {error&&<div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={working}
+          className="rounded-lg px-2 py-1 text-xl text-slate-400 hover:bg-slate-100"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
+        {sections.map(([title, keys]) => (
+          <section
+            key={title}
+            className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4"
+          >
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">
+              {title}
+            </h3>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {keys.map(key => {
+                const [, labelText] =
+                  textFields.find(x => x[0] === key) ?? [key, key];
+
+                const area = ["showers", "costs", "otherNotes"].includes(key);
+                const type =
+                  ["lastCheckedAt"].includes(key)
+                    ? "date"
+                    : key === "bookingUrl"
+                      ? "url"
+                      : key === "email"
+                        ? "email"
+                        : key === "phone"
+                          ? "tel"
+                          : ["elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity"].includes(key)
+                            ? "number"
+                            : "text";
+
+                return (
+                  <label key={key} className={label}>
+                    {labelText}
+                    {area ? (
+                      <textarea
+                        rows={key === "costs" || key === "otherNotes" ? 4 : 2}
+                        className={cls}
+                        value={String(value(key))}
+                        onChange={e => set(key, e.target.value)}
+                      />
+                    ) : (
+                      <input
+                        type={type}
+                        className={cls}
+                        value={String(value(key))}
+                        onChange={e => set(key, e.target.value)}
+                      />
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+
+            {title === "Facilities & food" && (
+              <div className="grid gap-3 md:grid-cols-2">
+                {boolFields.slice(0, 2).map(([key, text]) => (
+                  <label
+                    key={key}
+                    className="flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={Boolean(value(key))}
+                      onChange={e => set(key, e.target.checked)}
+                    />
+                    {text}
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {title === "Costs & vendor" && (
+              <div className="grid gap-3 md:grid-cols-2">
+                {boolFields.slice(2).map(([key, text]) => (
+                  <label
+                    key={key}
+                    className="flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={Boolean(value(key))}
+                      onChange={e => set(key, e.target.checked)}
+                    />
+                    {text}
+                  </label>
+                ))}
+              </div>
+            )}
+          </section>
+        ))}
+
+        {error && (
+          <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-3 border-t border-slate-200 p-4">
+        <button
+          type="button"
+          onClick={existingHut ? () => setEditing(false) : onCancel}
+          disabled={working}
+          className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold"
+        >
+          {existingHut ? "Back" : "Cancel"}
+        </button>
+        <button
+          type="button"
+          onClick={save}
+          disabled={working}
+          className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
+        >
+          {working
+            ? userRole === "instructor"
+              ? "Submitting..."
+              : "Saving..."
+            : userRole === "instructor"
+              ? "Submit for Approval"
+              : "Save Hut Details"}
+        </button>
+      </div>
     </div>
-    <div className="flex gap-3 border-t border-slate-200 p-4">
-      <button type="button" onClick={existingHut ? () => setEditing(false) : onCancel} disabled={working} className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold">{existingHut ? "Back" : "Cancel"}</button>
-      <button type="button" onClick={save} disabled={working} className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
-        {working ? (userRole === "instructor" ? "Submitting..." : "Saving...") : userRole === "instructor" ? "Submit for Approval" : "Save Hut Details"}
-      </button>
-    </div>
-  </div>;
+  );
 }

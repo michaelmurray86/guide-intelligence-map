@@ -3,57 +3,30 @@ export type Hut = {
   guideNoteId: number;
 
   name: string;
-  alternativeNames: string[];
-
-  country?: string;
-  region?: string;
-  latitude?: number;
-  longitude?: number;
   elevationM?: number;
 
-  summerAccess?: string;
-  winterAccess?: string;
-  approachRoutes?: string;
-  typicalApproachTime?: string;
-  approachDifficulty?: string;
-  seasonalRestrictions?: string;
+  sleepingBeds?: number;
+  sleepingDormitories?: number;
+  winterRoomCapacity?: number;
 
-  sleepingCapacity?: number;
-  winterRoom?: string;
-  foodAndMeals?: string;
-  picnicLunches?: boolean;
-  water?: string;
-  waterDrinkable?: boolean;
-  toilets?: string;
   showers?: string;
-  electricity?: string;
-  wifi?: string;
-  cooking?: string;
-  blanketsMattresses?: string;
+  picnicLunches?: boolean;
+  picnicLunchCost?: string;
+  waterDrinkable?: boolean;
 
-  bookingRequired?: boolean;
   bookingUrl?: string;
   phone?: string;
   email?: string;
+  guardianName?: string;
 
   vendor?: boolean;
-  vendorStatusExpiresAt?: string;
+  costs?: string;
   guideRateOffered?: boolean;
-  guardianName?: string;
-  guardianEmail?: string;
-  guardianPhone?: string;
-  maxCapacity?: number;
 
-  emergencyInformation?: string;
-  nearbyHazards?: string;
-  usefulRouteInformation?: string;
-  instructorNotes?: string;
-
-  photos: string[];
+  otherNotes?: string;
 
   lastCheckedAt?: string;
   lastCheckedBy?: string;
-  source?: string;
   updatedAt: string;
   updatedBy?: string;
   createdAt: string;
