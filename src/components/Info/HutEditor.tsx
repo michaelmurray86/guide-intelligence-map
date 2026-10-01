@@ -380,7 +380,6 @@ export default function HutEditor({
           <h2 className="mt-1 text-xl font-bold text-slate-900">
             {existingHut ? "Edit Hut" : "Add Hut Details"}
           </h2>
-          <p className="text-sm text-slate-500">{guideNoteTitle}</p>
         </div>
         <button
           type="button"
