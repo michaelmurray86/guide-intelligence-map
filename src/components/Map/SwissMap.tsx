@@ -131,7 +131,8 @@ export default function SwissMap({
 }: Props) {
 
   const {
-  profile
+  profile,
+  loading: profileLoading,
 } = useProfile();
   
   const mapRef = useRef<any>(null);
@@ -1090,7 +1091,7 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
 
-      {editingHutNote && !hutEditorLoading && (
+      {editingHutNote && !hutEditorLoading && !profileLoading && (
         <HutEditor
           guideNoteId={editingHutNote.id}
           guideNoteTitle={editingHutNote.title}

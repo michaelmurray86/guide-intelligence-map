@@ -184,7 +184,7 @@ export default function HutEditor({
     "admin",
     "superadmin",
   ].includes(normalizedRole);
-  const needsApproval = normalizedRole === "instructor" || normalizedRole === "approver";
+  const needsApproval = normalizedRole === "instructor";
   const canDelete = normalizedRole === "admin" || normalizedRole === "superadmin";
 
   const deleteCurrentHut = async () => {
@@ -481,14 +481,10 @@ export default function HutEditor({
           </button>
           <button
             type="button"
-            onClick={() => {
-              if (!canEdit) {
-                setError("Your account does not have permission to edit Hut details.");
-                return;
-              }
-              setEditing(true);
-            }}
-            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+            onClick={() => setEditing(true)}
+            disabled={!canEdit}
+            title={!canEdit ? "Your account does not have permission to edit Hut details." : undefined}
+            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {needsApproval ? "Propose Edit" : "Edit Hut Details"}
           </button>
