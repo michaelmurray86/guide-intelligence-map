@@ -177,13 +177,15 @@ export default function HutEditor({
 
   const value = (key: string) => form[key] ?? "";
 
-  const canEdit =
-    userRole === "instructor" ||
-    userRole === "approver" ||
-    userRole === "admin" ||
-    userRole === "superadmin";
-  const needsApproval = userRole === "instructor" || userRole === "approver";
-  const canDelete = userRole === "admin" || userRole === "superadmin";
+  const normalizedRole = String(userRole ?? "").trim().toLowerCase();
+  const canEdit = [
+    "instructor",
+    "approver",
+    "admin",
+    "superadmin",
+  ].includes(normalizedRole);
+  const needsApproval = normalizedRole === "instructor" || normalizedRole === "approver";
+  const canDelete = normalizedRole === "admin" || normalizedRole === "superadmin";
 
   const deleteCurrentHut = async () => {
     if (!existingHut || !canDelete) return;
@@ -477,15 +479,15 @@ export default function HutEditor({
           >
             Close
           </button>
-          {canEdit && (
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
-            >
-              {needsApproval ? "Propose Edit" : "Edit Hut Details"}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            disabled={!canEdit}
+            title={!canEdit ? "Your account does not have permission to edit Hut details." : undefined}
+            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {needsApproval ? "Propose Edit" : "Edit Hut Details"}
+          </button>
         </div>
         <PhotoLightbox
           photos={existingHut.photoUrls ?? []}
