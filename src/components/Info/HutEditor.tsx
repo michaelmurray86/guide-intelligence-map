@@ -234,7 +234,6 @@ export default function HutEditor({
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Hut Database
             </p>
-            <p className="mt-1 text-sm text-slate-500">{guideNoteTitle}</p>
           </div>
           <button
             type="button"
@@ -281,7 +280,7 @@ export default function HutEditor({
                 <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reservation website</dt>
                 {display("bookingUrl") && (
                   <dd className="mt-1 text-sm">
-                    <a href={String(display("bookingUrl"))} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 underline hover:text-blue-800">
+                    <a href={/^https?:\/\//i.test(String(display("bookingUrl"))) ? String(display("bookingUrl")) : `https://${String(display("bookingUrl"))}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 underline hover:text-blue-800">
                       Open reservation website ↗
                     </a>
                   </dd>
