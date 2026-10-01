@@ -8,10 +8,14 @@ export type Hut = {
   sleepingBeds?: number;
   sleepingDormitories?: number;
   winterRoomCapacity?: number;
+  winterRoomDetails?: string;
+  openingDate?: string;
+  closingDate?: string;
 
   showers?: string;
   picnicLunches?: boolean;
   picnicLunchCost?: string;
+  dinnerTime?: string;
   waterDrinkable?: boolean;
 
   bookingUrl?: string;
