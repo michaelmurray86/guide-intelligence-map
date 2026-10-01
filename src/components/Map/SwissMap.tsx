@@ -601,7 +601,7 @@ const handleRouteNoteSelect = (
 
 };
 
-  const handleMarkerClick = (
+  const handleMarkerClick = async (
     note: GuideNote
   ) => {
     if (selectedNote?.id === note.id) {
@@ -614,6 +614,21 @@ const handleRouteNoteSelect = (
     setEditingSection(null);
     setEditingHutNote(null);
     setEditingHut(null);
+
+    if (note.category === "hut") {
+      try {
+        const hut = await getHutByGuideNoteId(note.id);
+        setSelectedNote({
+          ...note,
+          photos: hut?.photos ?? [],
+          photoUrls: hut?.photoUrls ?? [],
+        });
+        return;
+      } catch (error) {
+        console.error("Error loading Hut photos:", error);
+      }
+    }
+
     setSelectedNote(note);
   };
 
@@ -1049,6 +1064,7 @@ const handleSectionDelete = async (section: GuideSection) => {
         }}
 
         onEditHut={handleEditHut}
+        hutPhotoUrls={selectedNote?.category === "hut" ? selectedNote.photoUrls ?? [] : undefined}
 
 
         onDelete={async (id)=>{
@@ -1087,6 +1103,14 @@ const handleSectionDelete = async (section: GuideSection) => {
             window.alert("Hut changes submitted for approval.");
           }}
           onCancel={() => {
+            setEditingHutNote(null);
+            setEditingHut(null);
+          }}
+          onDeleted={() => {
+            if (editingHutNote) {
+              setGuideNotesState(current => current.filter(note => note.id !== editingHutNote.id));
+            }
+            setSelectedNote(null);
             setEditingHutNote(null);
             setEditingHut(null);
           }}

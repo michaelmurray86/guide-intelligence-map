@@ -162,6 +162,17 @@ export async function upsertHut(
   return { ...hut, photoUrls: await getGuideNotePhotoUrls(hut.photos ?? []) };
 }
 
+export async function deleteHut(hutId: number, photoPaths: string[] = []): Promise<boolean> {
+  const storagePaths = photoPaths.filter(path => path && !path.startsWith("http") && !path.startsWith("/images/"));
+  if (storagePaths.length > 0) {
+    const { error: storageError } = await supabase.storage.from("guide-notes").remove(storagePaths);
+    if (storageError) { console.error("Error deleting Hut photos:", JSON.stringify(storageError, null, 2)); return false; }
+  }
+  const { error } = await supabase.rpc("delete_hut", { hut_id: hutId });
+  if (error) { console.error("Error deleting Hut:", JSON.stringify(error, null, 2)); return false; }
+  return true;
+}
+
 export async function getHutByGuideNoteId(
   guideNoteId: number
 ): Promise<Hut | null> {

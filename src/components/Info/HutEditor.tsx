@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { upsertHut } from "@/lib/hutDatabase";
+import { createPortal } from "react-dom";
+import { deleteHut, upsertHut } from "@/lib/hutDatabase";
 import { submitHutChange, HutEditPayload } from "@/lib/hutChangeDatabase";
 import { Hut } from "@/Types/Hut";
 import { deleteGuideNotePhotos, uploadGuideNotePhotos } from "@/lib/guideNoteStorage";
@@ -15,6 +16,7 @@ type Props = {
   updatedBy?: string;
   userRole?: string;
   onSubmittedForApproval?: () => void;
+  onDeleted?: () => void;
 };
 
 type Form = Record<string, string | boolean>;
@@ -78,6 +80,62 @@ function initialForm(hut: Hut | null | undefined, title: string): Form {
   return form;
 }
 
+
+function PhotoLightbox({
+  photos,
+  selectedIndex,
+  onClose,
+  onSelect,
+}: {
+  photos: string[];
+  selectedIndex: number | null;
+  onClose: () => void;
+  onSelect: React.Dispatch<React.SetStateAction<number | null>>;
+}) {
+  if (selectedIndex === null || photos.length === 0 || typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="flex h-full w-full items-center justify-center gap-3"
+        onClick={event => event.stopPropagation()}
+      >
+        {photos.length > 1 && (
+          <button
+            type="button"
+            aria-label="Previous photo"
+            onClick={() => onSelect(current => current === null ? null : (current - 1 + photos.length) % photos.length)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800 shadow-lg"
+          >
+            ‹
+          </button>
+        )}
+        <img
+          src={photos[selectedIndex]}
+          alt=""
+          className="block max-h-[90vh] max-w-[calc(100vw-120px)] object-contain rounded-xl shadow-2xl"
+        />
+        {photos.length > 1 && (
+          <button
+            type="button"
+            aria-label="Next photo"
+            onClick={() => onSelect(current => current === null ? null : (current + 1) % photos.length)}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800 shadow-lg"
+          >
+            ›
+          </button>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 export default function HutEditor({
   guideNoteId,
   guideNoteTitle,
@@ -87,6 +145,7 @@ export default function HutEditor({
   updatedBy,
   userRole,
   onSubmittedForApproval,
+  onDeleted,
 }: Props) {
   const [form, setForm] = useState(() =>
     initialForm(existingHut, guideNoteTitle)
@@ -110,6 +169,35 @@ export default function HutEditor({
 
   const value = (key: string) => form[key] ?? "";
 
+  const canEdit =
+    userRole === "instructor" ||
+    userRole === "approver" ||
+    userRole === "admin" ||
+    userRole === "superadmin";
+  const needsApproval = userRole === "instructor" || userRole === "approver";
+  const canDelete = userRole === "admin" || userRole === "superadmin";
+
+  const deleteCurrentHut = async () => {
+    if (!existingHut || !canDelete) return;
+
+    if (!window.confirm(
+      "Delete the Hut \"" + existingHut.name + "\"? This will permanently remove the Hut and its knowledge item. This cannot be undone."
+    )) return;
+
+    setWorking(true);
+    setError(null);
+
+    const success = await deleteHut(existingHut.id, existingHut.photos ?? []);
+    setWorking(false);
+
+    if (!success) {
+      setError("The Hut could not be deleted. No changes were made.");
+      return;
+    }
+
+    onDeleted?.();
+  };
+
   const save = async () => {
     if (!String(value("name")).trim()) {
       setError("Enter a hut name.");
@@ -119,7 +207,7 @@ export default function HutEditor({
     setWorking(true);
     setError(null);
 
-    if (userRole === "instructor" && !existingHut) {
+    if (needsApproval && !existingHut) {
       setWorking(false);
       setError("This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first.");
       return;
@@ -168,7 +256,7 @@ export default function HutEditor({
       createdBy: existingHut?.createdBy ?? updatedBy,
     };
 
-    if (userRole === "instructor") {
+    if (needsApproval) {
       if (!existingHut) {
         setWorking(false);
         await deleteGuideNotePhotos(uploadedPaths);
@@ -310,11 +398,19 @@ export default function HutEditor({
 
           <section className="rounded-lg border border-slate-200 bg-white p-4">
             <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
-              Booking & contacts
+              Season dates
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
               <Info label="Opening date" value={display("openingDate") ? new Date(String(display("openingDate"))).toLocaleDateString("en-GB") : null} />
               <Info label="Closing date" value={display("closingDate") ? new Date(String(display("closingDate"))).toLocaleDateString("en-GB") : null} />
+            </dl>
+          </section>
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
+              Booking & contacts
+            </h3>
+            <dl className="grid gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reservation website</dt>
                 {display("bookingUrl") && (
@@ -373,14 +469,22 @@ export default function HutEditor({
           >
             Close
           </button>
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
-          >
-            {userRole === "instructor" ? "Propose Edit" : "Edit"}
-          </button>
+          {canEdit && (
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+            >
+              {needsApproval ? "Propose Edit" : "Edit"}
+            </button>
+          )}
         </div>
+        <PhotoLightbox
+          photos={existingHut.photoUrls ?? []}
+          selectedIndex={selectedPhotoIndex}
+          onClose={() => setSelectedPhotoIndex(null)}
+          onSelect={setSelectedPhotoIndex}
+        />
       </div>
     );
   }
@@ -500,7 +604,7 @@ export default function HutEditor({
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">Photos</h3>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => photoPickerRef.current?.click()} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100">Add photos</button>
-            <button type="button" onClick={() => cameraInputRef.current?.click()} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">Take photo</button>
+            <button type="button" onClick={() => cameraInputRef.current?.click()} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 md:hidden">Take photo</button>
           </div>
           <input ref={photoPickerRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={event => { setNewPhotos(current => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
           <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={event => { setNewPhotos(current => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
@@ -533,6 +637,16 @@ export default function HutEditor({
       </div>
 
       <div className="flex gap-3 border-t border-slate-200 p-4">
+        {canDelete && existingHut && (
+          <button
+            type="button"
+            onClick={deleteCurrentHut}
+            disabled={working}
+            className="rounded-lg border border-red-300 px-4 py-3 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            Delete Hut
+          </button>
+        )}
         <button
           type="button"
           onClick={existingHut ? () => setEditing(false) : onCancel}
@@ -548,24 +662,21 @@ export default function HutEditor({
           className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50"
         >
           {working
-            ? userRole === "instructor"
+            ? needsApproval
               ? "Submitting..."
               : "Saving..."
-            : userRole === "instructor"
+            : needsApproval
               ? "Submit for Approval"
               : "Save Hut Details"}
         </button>
       </div>
 
-      {selectedPhotoIndex !== null && existingHut?.photoUrls && existingHut.photoUrls.length > 0 && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-4" onClick={() => setSelectedPhotoIndex(null)}>
-          <div className="flex max-w-full items-center gap-3" onClick={event => event.stopPropagation()}>
-            {existingHut.photoUrls.length > 1 && <button type="button" aria-label="Previous photo" onClick={() => setSelectedPhotoIndex(index => index === null ? null : (index - 1 + existingHut.photoUrls!.length) % existingHut.photoUrls!.length)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800">‹</button>}
-            <img src={existingHut.photoUrls[selectedPhotoIndex]} alt="" className="max-h-[85vh] max-w-[calc(100vw-120px)] rounded-xl object-contain shadow-2xl" />
-            {existingHut.photoUrls.length > 1 && <button type="button" aria-label="Next photo" onClick={() => setSelectedPhotoIndex(index => index === null ? null : (index + 1) % existingHut.photoUrls!.length)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800">›</button>}
-          </div>
-        </div>
-      )}
+      <PhotoLightbox
+        photos={existingHut?.photoUrls ?? []}
+        selectedIndex={selectedPhotoIndex}
+        onClose={() => setSelectedPhotoIndex(null)}
+        onSelect={setSelectedPhotoIndex}
+      />
     </div>
   );
 }

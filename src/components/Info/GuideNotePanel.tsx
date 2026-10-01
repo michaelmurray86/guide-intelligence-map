@@ -13,6 +13,7 @@ type Props = {
   onDelete: (id: number) => Promise<boolean>;
   onEdit: (note: GuideNote) => void;
   onEditHut?: (note: GuideNote) => void;
+  hutPhotoUrls?: string[];
 };
 
 
@@ -22,6 +23,7 @@ export default function GuideNotePanel({
   onDelete,
   onEdit,
   onEditHut,
+  hutPhotoUrls,
 }: Props) {
 
   const [selectedPhotoIndex, setSelectedPhotoIndex] =
@@ -96,7 +98,7 @@ export default function GuideNotePanel({
 
   if (!note) return null;
 
-  const photos = note.photoUrls ?? note.photos ?? [];
+  const photos = note.category === "hut" ? (hutPhotoUrls ?? []) : (note.photoUrls ?? note.photos ?? []);
 
 
   return (
@@ -265,6 +267,24 @@ export default function GuideNotePanel({
         <p className="leading-7 text-slate-800">
           {note.category === "hut" ? note.description : note.description}
         </p>
+
+        {note.category === "hut" && (
+          <>
+            <div className="my-6 border-t border-slate-200" />
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Photos</h3>
+            {photos.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {photos.map(photo => (
+                  <img key={photo} src={photo} alt="" onClick={() => setSelectedPhotoIndex(photos.indexOf(photo))} className="aspect-square w-full cursor-pointer rounded-lg object-cover transition hover:opacity-90" />
+                ))}
+              </div>
+            ) : (
+              <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
+                No photo attached
+              </div>
+            )}
+          </>
+        )}
 
 
 
