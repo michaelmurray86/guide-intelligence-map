@@ -313,6 +313,8 @@ export default function HutEditor({
               Booking & contacts
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Opening date" value={display("openingDate") ? new Date(String(display("openingDate"))).toLocaleDateString("en-GB") : null} />
+              <Info label="Closing date" value={display("closingDate") ? new Date(String(display("closingDate"))).toLocaleDateString("en-GB") : null} />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reservation website</dt>
                 {display("bookingUrl") && (
@@ -357,7 +359,7 @@ export default function HutEditor({
             <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Photos</h3>
             {(existingHut.photoUrls?.length ?? 0) > 0 ? (
               <div className="grid grid-cols-2 gap-3">
-                {existingHut.photoUrls?.map((url, index) => <img key={url} src={url} alt="" className="aspect-square w-full cursor-pointer rounded-lg object-cover" />)}
+                {existingHut.photoUrls?.map((url, index) => <img key={url} src={url} alt="" onClick={() => setSelectedPhotoIndex(existingHut.photoUrls?.indexOf(url) ?? 0)} className="aspect-square w-full cursor-pointer rounded-lg object-cover hover:opacity-90" />)}
               </div>
             ) : <p className="text-sm text-slate-500">No photos attached.</p>}
           </section>
