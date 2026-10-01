@@ -10,163 +10,117 @@ import {
 
 import { supabase } from "@/lib/supabase";
 
-
 type Profile = {
-
   id: string;
-
   name: string;
-
   email: string;
-
   role: string;
-
   created_at: string;
-
 };
-
-
 
 type ProfileContextType = {
-
   profile: Profile | null;
-
   loading: boolean;
-
 };
 
-
-
-const ProfileContext =
-  createContext<ProfileContextType | undefined>(
-    undefined
-  );
-
-
+const ProfileContext = createContext<ProfileContextType | undefined>(
+  undefined
+);
 
 export function ProfileProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-
-
-  const [profile, setProfile] =
-    useState<Profile | null>(null);
-
-
-  const [loading, setLoading] =
-    useState(true);
-
-
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
 
+    async function loadProfile(userId?: string) {
+      if (!mounted) return;
 
-    async function loadProfile(){
+      setLoading(true);
 
+      let id = userId;
 
-      const {
-        data:{
-          user
+      if (!id) {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          console.error("Error loading authenticated user:", userError);
         }
-      } =
-      await supabase.auth.getUser();
 
+        id = user?.id;
+      }
 
-
-      if(!user){
-
-        setLoading(false);
-
+      if (!id) {
+        if (mounted) {
+          setProfile(null);
+          setLoading(false);
+        }
         return;
-
       }
 
-
-
-      const {
-        data,
-        error
-      } =
-      await supabase
-
+      const { data, error } = await supabase
         .from("profiles")
-
         .select("*")
+        .eq("id", id)
+        .maybeSingle();
 
-        .eq(
-          "id",
-          user.id
-        )
+      if (!mounted) return;
 
-        .single();
-
-
-
-      if(error){
-
-        console.error(
-          "Error loading profile:",
-          error
-        );
-
+      if (error) {
+        console.error("Error loading profile:", error);
+        setProfile(null);
+      } else if (data) {
+        setProfile({
+          ...data,
+          role: String(data.role ?? "").trim().toLowerCase(),
+        });
+      } else {
+        setProfile(null);
       }
-
-
-      setProfile(data);
-
 
       setLoading(false);
-
-
     }
 
+    void loadProfile();
 
-    loadProfile();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        void loadProfile(session.user.id);
+      } else {
+        setProfile(null);
+        setLoading(false);
+      }
+    });
 
-
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-
-
   return (
-
-    <ProfileContext.Provider
-      value={{
-        profile,
-        loading,
-      }}
-    >
-
+    <ProfileContext.Provider value={{ profile, loading }}>
       {children}
-
     </ProfileContext.Provider>
-
   );
-
 }
 
+export function useProfile() {
+  const context = useContext(ProfileContext);
 
-
-export function useProfile(){
-
-
-  const context =
-    useContext(ProfileContext);
-
-
-
-  if(!context){
-
-    throw new Error(
-      "useProfile must be used inside ProfileProvider"
-    );
-
+  if (!context) {
+    throw new Error("useProfile must be used inside ProfileProvider");
   }
 
-
   return context;
-
-
 }
