@@ -321,7 +321,7 @@ export default function GuideNotePanel({
       <div className="border-t border-slate-200 p-4 flex gap-3">
         {note.category === "hut" ? (
           <button type="button" className="flex-1 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700" onClick={() => onEditHut?.(note)}>
-            Edit Hut Details
+            Hut Details
           </button>
         ) : (
           <>

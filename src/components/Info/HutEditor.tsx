@@ -101,6 +101,14 @@ function PhotoLightbox({
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4"
       onClick={onClose}
     >
+      <button
+        type="button"
+        aria-label="Close photo viewer"
+        onClick={onClose}
+        className="fixed right-4 top-4 z-[102] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-bold text-slate-800 shadow-lg hover:bg-slate-100"
+      >
+        ×
+      </button>
       <div
         className="flex h-full w-full items-center justify-center gap-3"
         onClick={event => event.stopPropagation()}
@@ -465,7 +473,7 @@ export default function HutEditor({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold"
+            className="flex-1 rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
           >
             Close
           </button>
@@ -475,7 +483,7 @@ export default function HutEditor({
               onClick={() => setEditing(true)}
               className="flex-1 rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800"
             >
-              {needsApproval ? "Propose Edit" : "Edit"}
+              {needsApproval ? "Propose Edit" : "Edit Hut Details"}
             </button>
           )}
         </div>
