@@ -193,7 +193,6 @@ export default function SwissMap({
   const [mobileRoutesOpen, setMobileRoutesOpen] = useState(false);
   const [mobileLocationChoiceOpen, setMobileLocationChoiceOpen] = useState(false);
   const [recenterMenuOpen, setRecenterMenuOpen] = useState(false);
-  const [routeKnowledgeVisible, setRouteKnowledgeVisible] = useState(false);
 
   const locationWatchId = useRef<number | null>(null);
   const hasCenteredOnLocation = useRef(false);
@@ -468,9 +467,6 @@ export default function SwissMap({
 
 const handleRouteOverview = () => {
 
-  setSelectedNote(null);
-  setRouteKnowledgeVisible(false);
-
   if (!gpxRoute || !mapRef.current)
     return;
 
@@ -561,7 +557,6 @@ const handleRouteNoteFocus = (
 ) => {
 
   const note = item.note;
-  setRouteKnowledgeVisible(true);
 
   setSelectedSection(null);
   setEditingNote(null);
@@ -608,17 +603,11 @@ const handleRouteNoteSelect = (
   const handleMarkerClick = async (
     note: GuideNote
   ) => {
-    if (selectedNote?.id === note.id) {
-      setSelectedNote(null);
-      return;
-    }
-
     setSelectedSection(null);
     setEditingNote(null);
     setEditingSection(null);
     setEditingHutNote(null);
     setEditingHut(null);
-    if (gpxRoute) setRouteKnowledgeVisible(true);
 
     if (note.category === "hut") {
       try {
@@ -1016,7 +1005,6 @@ const handleSectionDelete = async (section: GuideSection) => {
           onSelectSection={handleSectionClick}
           onOverview={handleRouteOverview}
           onPrintMapSnapshot={captureRouteMap}
-          showKnowledgeItems={routeKnowledgeVisible}
         />
 
         </div>
