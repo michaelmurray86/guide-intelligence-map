@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { upsertHut } from "@/lib/hutDatabase";
 import { submitHutChange, HutEditPayload } from "@/lib/hutChangeDatabase";
 import { Hut } from "@/Types/Hut";
+import { deleteGuideNotePhotos, uploadGuideNotePhotos } from "@/lib/guideNoteStorage";
 
 type Props = {
   guideNoteId: number;
@@ -49,6 +50,7 @@ const boolFields = [
 function initialForm(hut: Hut | null | undefined, title: string): Form {
   const form: Form = {
     name: hut?.name ?? title,
+    shortDescription: hut?.shortDescription ?? "",
     elevationM: hut?.elevationM?.toString() ?? "",
     sleepingBeds: hut?.sleepingBeds?.toString() ?? "",
     sleepingDormitories: hut?.sleepingDormitories?.toString() ?? "",
@@ -91,6 +93,10 @@ export default function HutEditor({
   const [working, setWorking] = useState(false);
   const [editing, setEditing] = useState(!existingHut);
   const [error, setError] = useState<string | null>(null);
+  const [newPhotos, setNewPhotos] = useState<File[]>([]);
+  const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
+  const photoPickerRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const set = (key: string, value: string | boolean) =>
     setForm(current => ({ ...current, [key]: value }));
@@ -106,11 +112,22 @@ export default function HutEditor({
     setWorking(true);
     setError(null);
 
+    const uploadedPaths = await uploadGuideNotePhotos(guideNoteId, newPhotos);
+    if (uploadedPaths === null) {
+      setWorking(false);
+      setError("One or more photos could not be uploaded. No changes were saved.");
+      return;
+    }
+
+    const currentPhotos = existingHut?.photos ?? [];
+    const photos = [...currentPhotos.filter(photo => !removedPhotos.includes(photo)), ...uploadedPaths];
+
     const number = (key: string) =>
       value(key) === "" ? undefined : Number(value(key));
 
     const payload: HutEditPayload = {
       name: String(value("name")).trim(),
+      shortDescription: String(value("shortDescription")).trim() || undefined,
       elevationM: number("elevationM"),
       sleepingBeds: number("sleepingBeds"),
       sleepingDormitories: number("sleepingDormitories"),
@@ -131,6 +148,7 @@ export default function HutEditor({
       costs: String(value("costs")).trim() || undefined,
       guideRateOffered: Boolean(value("guideRateOffered")),
       otherNotes: String(value("otherNotes")).trim() || undefined,
+      photos,
       lastCheckedAt: String(value("lastCheckedAt")) || undefined,
       lastCheckedBy: updatedBy,
       updatedBy,
@@ -150,6 +168,7 @@ export default function HutEditor({
       setWorking(false);
 
       if (!request) {
+        await deleteGuideNotePhotos(uploadedPaths);
         setError("The Hut change could not be submitted for approval.");
         return;
       }
@@ -162,10 +181,12 @@ export default function HutEditor({
     setWorking(false);
 
     if (!hut) {
+      await deleteGuideNotePhotos(uploadedPaths);
       setError("The hut could not be saved. Check your permissions and try again.");
       return;
     }
 
+    await deleteGuideNotePhotos(removedPhotos);
     onSaved?.(hut);
   };
 
@@ -206,7 +227,7 @@ export default function HutEditor({
   const sections = [
     [
       "Overview",
-      ["elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity", "winterRoomDetails"],
+      ["shortDescription", "elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity", "winterRoomDetails"],
     ],
     [
       "Facilities & food",
@@ -253,6 +274,7 @@ export default function HutEditor({
               Overview
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
+              <Info label="Short description" value={display("shortDescription")} />
               <Info label="Elevation" value={display("elevationM") ? `${display("elevationM")} m` : null} />
               <Info label="Number of beds" value={display("sleepingBeds")} />
               <Info label="Number of dormitories" value={display("sleepingDormitories")} />
@@ -289,8 +311,8 @@ export default function HutEditor({
                   </dd>
                 )}
               </div>
-              <Info label="Hut phone number" value={display("phone")} />
-              <Info label="Hut email" value={display("email")} />
+              <Info label="Phone number" value={display("phone")} />
+              <Info label="Email" value={display("email")} />
               <Info label="Guardian name" value={display("guardianName")} />
             </dl>
           </section>
@@ -306,7 +328,7 @@ export default function HutEditor({
             </dl>
           </section>
 
-          {(display("otherNotes") || display("lastCheckedAt") || display("lastCheckedBy")) && (
+          {(display("otherNotes") || display("lastCheckedAt") || display("lastCheckedBy") || (existingHut.photoUrls?.length ?? 0) > 0) && (
             <section className="rounded-lg border border-slate-200 bg-white p-4">
               <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">
                 Other useful notes & review
@@ -318,6 +340,15 @@ export default function HutEditor({
               </dl>
             </section>
           )}
+
+          <section className="rounded-lg border border-slate-200 bg-white p-4">
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-500">Photos</h3>
+            {(existingHut.photoUrls?.length ?? 0) > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {existingHut.photoUrls?.map((url, index) => <img key={url} src={url} alt="" className="aspect-square w-full cursor-pointer rounded-lg object-cover" />)}
+              </div>
+            ) : <p className="text-sm text-slate-500">No photos attached.</p>}
+          </section>
         </div>
 
         <div className="flex gap-3 border-t border-slate-200 p-4">
