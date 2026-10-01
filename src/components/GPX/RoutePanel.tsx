@@ -22,22 +22,12 @@ type Props = {
   notes: GuideNote[];
   guideSections: GuideSection[];
   clearRoute: () => void;
-
   onOverview?: () => void;
   onPrintMapSnapshot?: () => Promise<string | null>;
-
-  onSelectNote?: (
-    note: RouteKnowledgeItem
-  ) => void;
-
-onFocusNote?: (
-    note: RouteKnowledgeItem
-  ) => void;
-
+  onSelectNote?: (note: RouteKnowledgeItem) => void;
+  onFocusNote?: (note: RouteKnowledgeItem) => void;
   onFocusSection?: (section: GuideSection) => void;
-
   onSelectSection?: (section: GuideSection) => void;
-
 };
 
 export default function RoutePanel({
@@ -52,18 +42,10 @@ export default function RoutePanel({
   onFocusSection,
   onSelectSection,
 }: Props) {
-
-  const [routeKnowledge, setRouteKnowledge] =
-    useState<RouteKnowledgeItem[]>([]);
-
-  const [routeSections, setRouteSections] =
-    useState<RouteSectionMatch[]>([]);
-
-  const [collapsed, setCollapsed] =
-    useState(true);
-
-  const [printMapImage, setPrintMapImage] =
-    useState<string | null>(null);
+  const [routeKnowledge, setRouteKnowledge] = useState<RouteKnowledgeItem[]>([]);
+  const [routeSections, setRouteSections] = useState<RouteSectionMatch[]>([]);
+  const [collapsed, setCollapsed] = useState(true);
+  const [printMapImage, setPrintMapImage] = useState<string | null>(null);
 
   const printReport = async () => {
     const mapImage = await onPrintMapSnapshot?.();
@@ -71,137 +53,49 @@ export default function RoutePanel({
     window.setTimeout(() => window.print(), 100);
   };
 
-useEffect(() => {
+  useEffect(() => {
+    if (!route) {
+      setRouteKnowledge([]);
+      setRouteSections([]);
+      return;
+    }
 
-  if (!route) {
-
-    setRouteKnowledge([]);
-
-    return;
-
-  }
-
-  const results =
-    findNotesNearRoute(
-      route,
-      notes
-    );
-
-  setRouteKnowledge(results);
-
-  const sectionResults =
-    findRouteSectionsNearRoute(
-      route,
-      guideSections
-    );
-
-  setRouteSections(sectionResults);
-
-
-}, [
-  route,
-  notes,
-  guideSections,
-]);
-
+    setRouteKnowledge(findNotesNearRoute(route, notes));
+    setRouteSections(findRouteSectionsNearRoute(route, guideSections));
+  }, [route, notes, guideSections]);
 
   if (!route) return null;
 
   return (
     <>
-    <div
-      className={`
-        fixed
-        top-4
-        left-4
-        right-4
-        w-auto
-        max-w-[calc(100vw-6rem)]
-        ${collapsed ? "" : "h-[75vh]"}
-        md:top-6
-        md:left-[22rem]
-        md:right-auto
-        md:w-80
-        md:max-w-none
-        flex
-        flex-col
-        overflow-hidden
-        rounded-xl
-        bg-white
-        shadow-xl
-        border
-        border-slate-300
-        z-20
-      `}
-    >
-
-      {/* Header */}
-
       <div
-        className="
-          flex
-          items-center
-          justify-between
-          cursor-pointer
-          border-b
-          p-4
-          hover:bg-slate-50
-        "
-        onClick={() =>
-          setCollapsed(!collapsed)
-        }
+        className={`
+          fixed top-4 left-4 right-4 w-auto max-w-[calc(100vw-6rem)]
+          ${collapsed ? "" : "h-[75vh]"}
+          md:top-6 md:left-[22rem] md:right-auto md:w-80 md:max-w-none
+          flex flex-col overflow-hidden rounded-xl bg-white shadow-xl
+          border border-slate-300 z-20
+        `}
       >
+        <div
+          className="flex items-center justify-between cursor-pointer border-b p-4 hover:bg-slate-50"
+          onClick={() => setCollapsed(current => !current)}
+        >
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">
+              🥾 Route Overview
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">{route.name}</p>
+          </div>
 
-        <div>
-
-          <h2
-            className="
-              text-lg
-              font-bold
-              text-slate-900
-            "
-          >
-            🥾 Route Overview
-          </h2>
-
-          <p
-            className="
-              mt-1
-              text-sm
-              text-slate-600
-            "
-          >
-            {route.name}
-          </p>
-
+          <span className="text-xl text-slate-500">
+            {collapsed ? "▲" : "▼"}
+          </span>
         </div>
 
-        <span
-          className="
-            text-xl
-            text-slate-500
-          "
-        >
-          {collapsed ? "▲" : "▼"}
-        </span>
-
-      </div>
-
-      {
-        !collapsed && (
-
+        {!collapsed && (
           <>
-
-            {/* Summary */}
-
-            <div
-              className="
-                border-b
-                p-4
-                text-sm
-                text-slate-700
-              "
-            >
+            <div className="border-b p-4 text-sm text-slate-700">
               📍{" "}
               <span className="font-medium">{routeKnowledge.length}</span>{" "}
               knowledge items found
@@ -210,33 +104,55 @@ useEffect(() => {
               route sections encountered
             </div>
 
-            <>
-              <div className="flex-1 min-h-0 overflow-y-auto">
-                <GPXReport notes={routeKnowledge} routeSections={routeSections} onSelectNote={onSelectNote} onFocusNote={onFocusNote} onFocusSection={onFocusSection} onSelectSection={onSelectSection} />
-              </div>
-              <div className="border-t bg-white p-3">
-                <button onClick={printReport} className="w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition">🖨 Print / Save PDF</button>
-                {onOverview && <button onClick={onOverview} className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">🗺 Show Full Route</button>}
-                <button onClick={clearRoute} className="mt-3 w-full rounded-md bg-slate-700 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 transition">🗑 Clear Route</button>
-              </div>
-            </>>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <GPXReport
+                notes={routeKnowledge}
+                routeSections={routeSections}
+                onSelectNote={onSelectNote}
+                onFocusNote={onFocusNote}
+                onFocusSection={onFocusSection}
+                onSelectSection={onSelectSection}
+              />
+            </div>
 
-        )
-      }
+            <div className="border-t bg-white p-3">
+              <button
+                onClick={printReport}
+                className="w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
+              >
+                🖨 Print / Save PDF
+              </button>
 
-    </div>
+              {onOverview && (
+                <button
+                  onClick={onOverview}
+                  className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
+                >
+                  🗺 Show Full Route
+                </button>
+              )}
 
-    {typeof document !== "undefined" &&
-      createPortal(
-        <GPXReportPrint
-          route={route}
-          notes={routeKnowledge}
-          routeSections={routeSections}
-          mapImage={printMapImage}
-        />,
-        document.body
-      )}
+              <button
+                onClick={clearRoute}
+                className="mt-3 w-full rounded-md bg-slate-700 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 transition"
+              >
+                🗑 Clear Route
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {typeof document !== "undefined" &&
+        createPortal(
+          <GPXReportPrint
+            route={route}
+            notes={routeKnowledge}
+            routeSections={routeSections}
+            mapImage={printMapImage}
+          />,
+          document.body
+        )}
     </>
   );
-
 }
