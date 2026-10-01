@@ -1092,6 +1092,25 @@ const handleSectionDelete = async (section: GuideSection) => {
           }}
           onSaved={hut => {
             setEditingHut(hut);
+
+            if (editingHutNote) {
+              const updatedNote = {
+                ...editingHutNote,
+                title: hut.name,
+                description: hut.shortDescription ?? "",
+                photos: hut.photos ?? [],
+                photoUrls: hut.photoUrls ?? hut.photos ?? [],
+                updatedAt: hut.updatedAt,
+                updatedBy: hut.updatedBy ?? editingHutNote.updatedBy,
+              };
+
+              setGuideNotesState(current =>
+                current.map(note =>
+                  note.id === editingHutNote.id ? updatedNote : note
+                )
+              );
+            }
+
             setEditingHutNote(null);
           }}
         />
