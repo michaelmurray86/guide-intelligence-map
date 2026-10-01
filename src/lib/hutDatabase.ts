@@ -142,7 +142,24 @@ export async function upsertHut(
     return null;
   }
 
-  return normalizeHut(data as HutRow);
+  const hut = normalizeHut(data as HutRow);
+
+  const { error: noteError } = await supabase
+    .from("guide_notes")
+    .update({
+      title: hut.name,
+      description: hut.shortDescription ?? "",
+      photos: hut.photos ?? [],
+      updated_at: now,
+      updated_by: input.updatedBy ?? null,
+    })
+    .eq("id", guideNoteId);
+
+  if (noteError) {
+    console.error("Error syncing Hut knowledge item:", JSON.stringify(noteError, null, 2));
+  }
+
+  return { ...hut, photoUrls: await getGuideNotePhotoUrls(hut.photos ?? []) };
 }
 
 export async function getHutByGuideNoteId(
