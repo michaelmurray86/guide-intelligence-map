@@ -3,6 +3,7 @@ export type Hut = {
   guideNoteId: number;
 
   name: string;
+  shortDescription?: string;
   elevationM?: number;
 
   sleepingBeds?: number;
@@ -28,6 +29,9 @@ export type Hut = {
   guideRateOffered?: boolean;
 
   otherNotes?: string;
+
+  photos?: string[];
+  photoUrls?: string[];
 
   lastCheckedAt?: string;
   lastCheckedBy?: string;
