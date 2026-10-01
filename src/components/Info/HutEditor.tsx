@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { upsertHut } from "@/lib/hutDatabase";
 import { submitHutChange, HutEditPayload } from "@/lib/hutChangeDatabase";
 import { Hut } from "@/Types/Hut";
@@ -33,8 +33,8 @@ const textFields = [
   ["picnicLunchCost", "Picnic lunch cost"],
   ["dinnerTime", "Dinner time"],
   ["bookingUrl", "Reservation website"],
-  ["phone", "Hut phone number"],
-  ["email", "Hut email"],
+  ["phone", "Phone number"],
+  ["email", "Email"],
   ["guardianName", "Guardian name"],
   ["costs", "Costs"],
   ["otherNotes", "Other useful notes"],
@@ -98,6 +98,12 @@ export default function HutEditor({
   const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
   const photoPickerRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+  const newPhotoPreviews = useMemo(() => newPhotos.map(file => URL.createObjectURL(file)), [newPhotos]);
+
+  useEffect(() => {
+    return () => newPhotoPreviews.forEach(url => URL.revokeObjectURL(url));
+  }, [newPhotoPreviews]);
 
   const set = (key: string, value: string | boolean) =>
     setForm(current => ({ ...current, [key]: value }));
@@ -163,6 +169,13 @@ export default function HutEditor({
     };
 
     if (userRole === "instructor") {
+      if (!existingHut) {
+        setWorking(false);
+        await deleteGuideNotePhotos(uploadedPaths);
+        setError("This Hut has not been created in the Hut Database yet. An approver or admin needs to create it first.");
+        return;
+      }
+
       const request = await submitHutChange(existingHut.id, payload);
       setWorking(false);
 
@@ -481,6 +494,35 @@ export default function HutEditor({
           </section>
         ))}
 
+        <section className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">Photos</h3>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => photoPickerRef.current?.click()} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100">Add photos</button>
+            <button type="button" onClick={() => cameraInputRef.current?.click()} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">Take photo</button>
+          </div>
+          <input ref={photoPickerRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={event => { setNewPhotos(current => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
+          <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={event => { setNewPhotos(current => [...current, ...Array.from(event.target.files ?? [])]); event.target.value = ""; }} />
+          {(existingHut?.photoUrls?.length ?? 0) + newPhotoPreviews.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {(existingHut?.photoUrls ?? []).map((url, index) => {
+                const path = existingHut?.photos?.[index];
+                const removed = path ? removedPhotos.includes(path) : false;
+                return (
+                  <div key={path ?? url} className={"relative aspect-square overflow-hidden rounded-lg border border-slate-200 " + (removed ? "opacity-40" : "")}>
+                    <img src={url} alt="" className="h-full w-full cursor-pointer object-cover" onClick={() => setSelectedPhotoIndex(index)} />
+                    {path && <button type="button" onClick={() => setRemovedPhotos(current => current.includes(path) ? current.filter(item => item !== path) : [...current, path])} className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-lg text-white" aria-label={removed ? "Keep photo" : "Remove photo"}>{removed ? "+" : "×"}</button>}
+                  </div>
+                );
+              })}
+              {newPhotoPreviews.map((url, index) => (
+                <div key={"new-" + index + "-" + newPhotos[index]?.name} className="relative aspect-square overflow-hidden rounded-lg border border-emerald-300">
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <button type="button" onClick={() => setNewPhotos(current => current.filter((_, itemIndex) => itemIndex !== index))} className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-lg text-white" aria-label="Remove new photo">×</button>
+                </div>
+              ))}
+            </div>
+          ) : <p className="text-sm text-slate-500">No photos attached.</p>}
+        </section>
         {error && (
           <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
             {error}
@@ -512,6 +554,16 @@ export default function HutEditor({
               : "Save Hut Details"}
         </button>
       </div>
+
+      {selectedPhotoIndex !== null && existingHut?.photoUrls && existingHut.photoUrls.length > 0 && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-4" onClick={() => setSelectedPhotoIndex(null)}>
+          <div className="flex max-w-full items-center gap-3" onClick={event => event.stopPropagation()}>
+            {existingHut.photoUrls.length > 1 && <button type="button" aria-label="Previous photo" onClick={() => setSelectedPhotoIndex(index => index === null ? null : (index - 1 + existingHut.photoUrls!.length) % existingHut.photoUrls!.length)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800">‹</button>}
+            <img src={existingHut.photoUrls[selectedPhotoIndex]} alt="" className="max-h-[85vh] max-w-[calc(100vw-120px)] rounded-xl object-contain shadow-2xl" />
+            {existingHut.photoUrls.length > 1 && <button type="button" aria-label="Next photo" onClick={() => setSelectedPhotoIndex(index => index === null ? null : (index + 1) % existingHut.photoUrls!.length)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-2xl text-slate-800">›</button>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
