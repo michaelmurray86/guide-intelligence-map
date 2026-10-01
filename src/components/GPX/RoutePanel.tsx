@@ -219,7 +219,7 @@ useEffect(() => {
                 {onOverview && <button onClick={onOverview} className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition">🗺 Show Full Route</button>}
                 <button onClick={clearRoute} className="mt-3 w-full rounded-md bg-slate-700 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 transition">🗑 Clear Route</button>
               </div>
-            </>/>
+            </>>
 
         )
       }
