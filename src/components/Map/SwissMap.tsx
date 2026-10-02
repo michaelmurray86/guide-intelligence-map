@@ -717,6 +717,9 @@ const handleSectionDelete = async (section: GuideSection) => {
     return;
   }
 
+  const photosToDelete = (section.photos ?? []).filter(photo => photo && !photo.startsWith("http") && !photo.startsWith("/images/"));
+  if (photosToDelete.length > 0) await deleteGuideNotePhotos(photosToDelete);
+
   setSelectedSection(null);
   onRouteSectionDeleted?.(section.id);
 };

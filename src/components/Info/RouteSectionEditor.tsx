@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { parseGPX } from "@/lib/parseGPX";
 import {
   createGuideSection,
   updateGuideSection,
+  deleteGuideSection,
   GUIDE_SECTION_COLORS,
 } from "@/lib/guideSectionDatabase";
 import {
@@ -12,6 +13,7 @@ import {
   GuideSectionGuidanceLevel,
 } from "@/Types/GuideSection";
 import { GPXRoute } from "@/Types/GPXRoute";
+import { deleteGuideNotePhotos, uploadGuideNotePhotos } from "@/lib/guideNoteStorage";
 
 type Props = {
   onCancel: () => void;
@@ -85,6 +87,13 @@ export default function RouteSectionEditor({
       existingSection?.guidanceLevel ?? "caution"
     );
   const [working, setWorking] = useState(false);
+  const [newPhotos, setNewPhotos] = useState<File[]>([]);
+  const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+  const photoPickerRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const newPhotoPreviews = useMemo(() => newPhotos.map(file => URL.createObjectURL(file)), [newPhotos]);
+  useEffect(() => () => newPhotoPreviews.forEach(url => URL.revokeObjectURL(url)), [newPhotoPreviews]);
   const [error, setError] = useState<string | null>(null);
 
   const handleFile = async (
@@ -153,19 +162,34 @@ export default function RouteSectionEditor({
     setWorking(true);
 
     if (isEditing && existingSection) {
+      const existingPhotos = existingSection.photos ?? [];
+      const keptPhotos = existingPhotos.filter(photo => !removedPhotos.includes(photo));
+      const uploadedPhotos = await uploadGuideNotePhotos(existingSection.id, newPhotos);
+      if (uploadedPhotos === null) {
+        setWorking(false);
+        setError("One or more photos could not be uploaded.");
+        return;
+      }
+
       const section = await updateGuideSection(existingSection.id, {
         title: title.trim(),
         description: description.trim(),
         guidanceLevel,
         updatedBy: createdBy,
+        photos: [...keptPhotos, ...uploadedPhotos],
       });
 
       setWorking(false);
 
       if (!section) {
+        await deleteGuideNotePhotos(uploadedPhotos);
+        setWorking(false);
         setError("The Route Section could not be updated.");
         return;
       }
+
+      const photosToDelete = removedPhotos.filter(photo => !photo.startsWith("http") && !photo.startsWith("/images/"));
+      if (photosToDelete.length > 0) await deleteGuideNotePhotos(photosToDelete);
 
       onPreview(null);
       onUpdated?.(section);
@@ -178,17 +202,39 @@ export default function RouteSectionEditor({
       coordinates: route.coordinates,
       guidanceLevel,
       createdBy,
+      photos: [],
     });
 
-    setWorking(false);
-
     if (!section) {
+      setWorking(false);
       setError("The Route Section could not be saved.");
       return;
     }
 
+    const uploadedPhotos = await uploadGuideNotePhotos(section.id, newPhotos);
+    if (uploadedPhotos === null) {
+      await deleteGuideSection(section.id);
+      setWorking(false);
+      setError("One or more photos could not be uploaded. The Route Section was not saved.");
+      onPreview(null);
+      return;
+    }
+
+    let savedSection = section;
+    if (uploadedPhotos.length > 0) {
+      const withPhotos = await updateGuideSection(section.id, {
+        title: section.title,
+        description: section.description,
+        guidanceLevel: section.guidanceLevel,
+        updatedBy: createdBy,
+        photos: uploadedPhotos,
+      });
+      if (withPhotos) savedSection = withPhotos;
+    }
+
+    setWorking(false);
     onPreview(null);
-    onCreated?.(section);
+    onCreated?.(savedSection);
   };
 
   return (
@@ -288,6 +334,19 @@ export default function RouteSectionEditor({
         />
       </label>
 
+      <section className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div><h3 className="text-sm font-semibold text-slate-800">Photos</h3><p className="text-xs text-slate-500">Add useful photos of this section for guides in the field.</p></div>
+          <div className="flex gap-2"><button type="button" onClick={()=>photoPickerRef.current?.click()} disabled={working} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">Add photos</button><button type="button" onClick={()=>cameraInputRef.current?.click()} disabled={working} className="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50 md:hidden">Take photo</button></div>
+        </div>
+        <input ref={photoPickerRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple className="hidden" onChange={event=>{setNewPhotos(current=>[...current,...Array.from(event.target.files??[])]);event.target.value="";}} />
+        <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={event=>{setNewPhotos(current=>[...current,...Array.from(event.target.files??[])]);event.target.value="";}} />
+        {((existingSection?.photoUrls?.length??0)+newPhotoPreviews.length)>0 ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {(existingSection?.photoUrls??[]).map((url,index)=>{const path=existingSection?.photos?.[index];const removed=path?removedPhotos.includes(path):false;return <div key={path??url} className={"relative aspect-square overflow-hidden rounded-lg border border-slate-200 "+(removed?"opacity-40":"")}><img src={url} alt="" className="h-full w-full cursor-pointer object-cover" onClick={()=>setSelectedPhotoIndex(index)}/>{path&&<button type="button" onClick={()=>setRemovedPhotos(current=>current.includes(path)?current.filter(item=>item!==path):[...current,path])} className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-lg text-white">{removed?"+":"×"}</button>}</div>})}
+          {newPhotoPreviews.map((url,index)=><div key={"new-"+index} className="relative aspect-square overflow-hidden rounded-lg border border-emerald-300"><img src={url} alt="" className="h-full w-full object-cover"/><button type="button" onClick={()=>setNewPhotos(current=>current.filter((_,i)=>i!==index))} className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-lg text-white">×</button></div>)}
+        </div> : <p className="text-sm text-slate-500">No photos attached.</p>}
+      </section>
+
       {error && (
         <div className="rounded border border-red-200 bg-red-50 p-2 text-sm text-red-700">
           {error}
@@ -317,5 +376,16 @@ export default function RouteSectionEditor({
         </button>
       </div>
     </div>
+
+    {selectedPhotoIndex !== null && typeof document !== "undefined" && existingSection?.photoUrls && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4" onClick={()=>setSelectedPhotoIndex(null)}>
+        <button type="button" aria-label="Close photo viewer" onClick={()=>setSelectedPhotoIndex(null)} className="fixed right-4 top-4 z-[102] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl font-bold text-slate-800 shadow-lg">×</button>
+        <div className="flex h-full w-full items-center justify-center gap-3" onClick={event=>event.stopPropagation()}>
+          {existingSection.photoUrls.length>1&&<button type="button" aria-label="Previous photo" onClick={()=>setSelectedPhotoIndex(i=>i===null?null:(i-1+existingSection.photoUrls!.length)%existingSection.photoUrls!.length)} className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-2xl">‹</button>}
+          <img src={existingSection.photoUrls[selectedPhotoIndex]} alt="" className="max-h-[90vh] max-w-[calc(100vw-120px)] rounded-xl object-contain"/>
+          {existingSection.photoUrls.length>1&&<button type="button" aria-label="Next photo" onClick={()=>setSelectedPhotoIndex(i=>i===null?null:(i+1)%existingSection.photoUrls!.length)} className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-2xl">›</button>}
+        </div>
+      </div>
+    )}
   );
 }

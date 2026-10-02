@@ -3,6 +3,7 @@ import {
   GuideSection,
   GuideSectionGuidanceLevel,
 } from "@/Types/GuideSection";
+import { getGuideNotePhotoUrls } from "@/lib/guideNoteStorage";
 
 export const GUIDE_SECTION_COLORS: Record<
   GuideSectionGuidanceLevel,
@@ -13,9 +14,10 @@ export const GUIDE_SECTION_COLORS: Record<
   do_not_take: "#dc2626",
 };
 
-function normalizeSection(section: any): GuideSection {
+async function normalizeSection(section: any): Promise<GuideSection> {
   const guidanceLevel =
     section.guidance_level as GuideSectionGuidanceLevel;
+  const photos = section.photos ?? [];
 
   return {
     ...section,
@@ -27,6 +29,8 @@ function normalizeSection(section: any): GuideSection {
     approvedAt: section.approved_at,
     status: section.status,
     guidanceLevel,
+    photos,
+    photoUrls: await getGuideNotePhotoUrls(photos),
     // Guidance level is the source of truth for Route Section colour.
     color: GUIDE_SECTION_COLORS[guidanceLevel],
   } as GuideSection;
@@ -46,7 +50,7 @@ export async function getGuideSections(): Promise<GuideSection[]> {
     throw error;
   }
 
-  return (data ?? []).map(normalizeSection);
+  return Promise.all((data ?? []).map(normalizeSection));
 }
 
 export async function createGuideSection(input: {
@@ -55,6 +59,7 @@ export async function createGuideSection(input: {
   coordinates: [number, number][];
   guidanceLevel: GuideSectionGuidanceLevel;
   createdBy?: string;
+  photos?: string[];
 }): Promise<GuideSection | null> {
   const now = new Date().toISOString();
 
@@ -65,6 +70,7 @@ export async function createGuideSection(input: {
       description: input.description,
       coordinates: input.coordinates,
       guidance_level: input.guidanceLevel,
+      photos: input.photos ?? [],
       color: GUIDE_SECTION_COLORS[input.guidanceLevel],
       created_at: now,
       updated_at: now,
@@ -93,6 +99,7 @@ export async function updateGuideSection(
     description: string;
     guidanceLevel: GuideSectionGuidanceLevel;
     updatedBy?: string;
+    photos?: string[];
   }
 ): Promise<GuideSection | null> {
   const now = new Date().toISOString();
@@ -103,6 +110,7 @@ export async function updateGuideSection(
       title: input.title,
       description: input.description,
       guidance_level: input.guidanceLevel,
+      photos: input.photos,
       // Keep the stored colour aligned with the guidance level.
       color: GUIDE_SECTION_COLORS[input.guidanceLevel],
       updated_at: now,
