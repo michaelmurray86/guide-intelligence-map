@@ -1113,7 +1113,6 @@ const handleSectionDelete = async (section: GuideSection) => {
               const updatedNote = {
                 ...editingHutNote,
                 title: hut.name,
-                description: hut.shortDescription ?? "",
                 photos: hut.photos ?? [],
                 photoUrls: hut.photoUrls ?? hut.photos ?? [],
                 updatedAt: hut.updatedAt,
