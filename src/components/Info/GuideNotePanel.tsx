@@ -264,12 +264,16 @@ export default function GuideNotePanel({
       >
 
 
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-          Description
-        </h3>
-        <p className="leading-7 text-slate-800">
-          {note.category === "hut" ? note.description : note.description}
-        </p>
+        {note.category !== "hut" && (
+          <>
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+              Description
+            </h3>
+            <p className="leading-7 text-slate-800">
+              {note.description}
+            </p>
+          </>
+        )}
 
         {note.category === "hut" && (
           <>

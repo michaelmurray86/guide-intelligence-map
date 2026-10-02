@@ -23,7 +23,6 @@ type Form = Record<string, string | boolean>;
 
 const textFields = [
   ["name", "Hut name"],
-  ["shortDescription", "Short description"],
   ["elevationM", "Elevation (m)"],
   ["sleepingBeds", "Number of beds"],
   ["sleepingDormitories", "Number of dormitories"],
@@ -53,7 +52,6 @@ const boolFields = [
 function initialForm(hut: Hut | null | undefined, title: string): Form {
   const form: Form = {
     name: hut?.name ?? title,
-    shortDescription: hut?.shortDescription ?? "",
     elevationM: hut?.elevationM?.toString() ?? "",
     sleepingBeds: hut?.sleepingBeds?.toString() ?? "",
     sleepingDormitories: hut?.sleepingDormitories?.toString() ?? "",
@@ -238,7 +236,6 @@ export default function HutEditor({
 
     const payload: HutEditPayload = {
       name: String(value("name")).trim(),
-      shortDescription: String(value("shortDescription")).trim() || undefined,
       elevationM: number("elevationM"),
       sleepingBeds: number("sleepingBeds"),
       sleepingDormitories: number("sleepingDormitories"),
@@ -337,7 +334,7 @@ export default function HutEditor({
   const sections = [
     [
       "Overview",
-      ["shortDescription", "elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity", "winterRoomDetails"],
+      ["elevationM", "sleepingBeds", "sleepingDormitories", "winterRoomCapacity", "winterRoomDetails"],
     ],
     [
       "Facilities & food",
@@ -400,7 +397,6 @@ export default function HutEditor({
               Overview
             </h3>
             <dl className="grid gap-4 sm:grid-cols-2">
-              <Info label="Short description" value={display("shortDescription")} />
               <Info label="Elevation" value={display("elevationM") ? `${display("elevationM")} m` : null} />
               <Info label="Number of beds" value={display("sleepingBeds")} />
               <Info label="Number of dormitories" value={display("sleepingDormitories")} />

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getPendingUpdateRequests, reviewUpdateRequest, UpdateRequest } from "@/lib/updateRequestDatabase";
 
 const labels: Record<string, string> = {
-  name: "Hut name", shortDescription: "Short description", elevationM: "Elevation",
+  name: "Hut name", elevationM: "Elevation",
   sleepingBeds: "Number of beds", sleepingDormitories: "Number of dormitories",
   winterRoomCapacity: "Winter room capacity", winterRoomDetails: "Winter room details",
   openingDate: "Opening date", closingDate: "Closing date", showers: "Showers",

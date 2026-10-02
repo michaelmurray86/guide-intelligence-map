@@ -9,7 +9,7 @@ export type UpdateRequest = {
 };
 
 type HutRow = {
-  id: number; name: string; short_description: string | null; elevation_m: number | null;
+  id: number; name: string; elevation_m: number | null;
   sleeping_beds: number | null; sleeping_dormitories: number | null; winter_room_capacity: number | null;
   winter_room_details: string | null; opening_date: string | null; closing_date: string | null;
   showers: string | null; picnic_lunches: boolean | null; picnic_lunch_cost: string | null;
@@ -21,7 +21,7 @@ type HutRow = {
 
 function hutRowToEditPayload(row: HutRow): HutEditPayload {
   return {
-    name: row.name, shortDescription: row.short_description ?? undefined, elevationM: row.elevation_m ?? undefined,
+    name: row.name, elevationM: row.elevation_m ?? undefined,
     sleepingBeds: row.sleeping_beds ?? undefined, sleepingDormitories: row.sleeping_dormitories ?? undefined,
     winterRoomCapacity: row.winter_room_capacity ?? undefined, winterRoomDetails: row.winter_room_details ?? undefined,
     openingDate: row.opening_date ?? undefined, closingDate: row.closing_date ?? undefined, showers: row.showers ?? undefined,
@@ -46,7 +46,7 @@ export async function getPendingUpdateRequests(): Promise<UpdateRequest[]> {
 
   if (hutIds.length > 0) {
     const { data: huts, error: hutsError } = await supabase.from("huts")
-      .select("id, name, short_description, elevation_m, sleeping_beds, sleeping_dormitories, winter_room_capacity, winter_room_details, opening_date, closing_date, showers, picnic_lunches, picnic_lunch_cost, dinner_time, water_drinkable, booking_url, phone, email, guardian_name, vendor, costs, guide_rate_offered, other_notes, photos, last_checked_at, last_checked_by")
+      .select("id, name, elevation_m, sleeping_beds, sleeping_dormitories, winter_room_capacity, winter_room_details, opening_date, closing_date, showers, picnic_lunches, picnic_lunch_cost, dinner_time, water_drinkable, booking_url, phone, email, guardian_name, vendor, costs, guide_rate_offered, other_notes, photos, last_checked_at, last_checked_by")
       .in("id", hutIds);
     if (hutsError) console.error("Error loading current Hut data for update requests:", hutsError);
     else hutsById = new Map((huts ?? []).map(row => [row.id, hutRowToEditPayload(row as HutRow)]));

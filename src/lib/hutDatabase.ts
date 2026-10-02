@@ -6,7 +6,6 @@ type HutRow = {
   id: number;
   guide_note_id: number;
   name: string;
-  short_description: string | null;
   elevation_m: number | null;
   sleeping_beds: number | null;
   sleeping_dormitories: number | null;
@@ -41,7 +40,6 @@ function normalizeHut(row: HutRow): Hut {
     id: row.id,
     guideNoteId: row.guide_note_id,
     name: row.name,
-    shortDescription: row.short_description ?? undefined,
     elevationM: row.elevation_m ?? undefined,
     sleepingBeds: row.sleeping_beds ?? undefined,
     sleepingDormitories: row.sleeping_dormitories ?? undefined,
@@ -104,7 +102,6 @@ export async function upsertHut(
       {
         guide_note_id: guideNoteId,
         name: input.name,
-        short_description: input.shortDescription ?? null,
         elevation_m: input.elevationM ?? null,
         sleeping_beds: input.sleepingBeds ?? null,
         sleeping_dormitories: input.sleepingDormitories ?? null,
@@ -148,7 +145,7 @@ export async function upsertHut(
     .from("guide_notes")
     .update({
       title: hut.name,
-      description: hut.shortDescription ?? "",
+      description: "",
       photos: hut.photos ?? [],
       updated_at: now,
       updated_by: input.updatedBy ?? null,
