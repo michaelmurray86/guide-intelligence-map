@@ -238,7 +238,8 @@ export default function RouteSectionEditor({
   };
 
   return (
-    <div className="space-y-4 rounded-lg border border-slate-300 bg-white p-4 shadow-sm">
+    <>
+      <div className="space-y-4 rounded-lg border border-slate-300 bg-white p-4 shadow-sm">
       <div>
         <h2 className="font-semibold text-slate-900">
           {isEditing ? "Edit Route Section" : "Add Route Section"}
@@ -375,7 +376,7 @@ export default function RouteSectionEditor({
               : "Save Route Section"}
         </button>
       </div>
-    </div>
+      </div>
 
     {selectedPhotoIndex !== null && typeof document !== "undefined" && existingSection?.photoUrls && (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4" onClick={()=>setSelectedPhotoIndex(null)}>
@@ -387,5 +388,6 @@ export default function RouteSectionEditor({
         </div>
       </div>
     )}
+    </>
   );
 }
