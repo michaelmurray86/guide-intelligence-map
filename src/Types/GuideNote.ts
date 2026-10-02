@@ -1,6 +1,7 @@
 export type GuideNoteCategory =
   | "water"
   | "cattle"
+  | "guardian_dog"
   | "hazard"
   | "hut"
   | "cafe"

@@ -10,6 +10,8 @@ export type GuideSection = {
   coordinates: [number, number][];
   guidanceLevel: GuideSectionGuidanceLevel;
   color?: string;
+  photos?: string[];
+  photoUrls?: string[];
   createdAt: string;
   updatedAt: string;
   createdBy?: string;

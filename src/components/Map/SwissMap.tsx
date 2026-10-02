@@ -40,6 +40,7 @@ import CurrentLocationMarker from "./CurrentLocationMarker";
 import GuideNotePanel from "../Info/GuideNotePanel";
 import RouteSectionPanel from "../Info/RouteSectionPanel";
 import RouteSectionEditor from "../Info/RouteSectionEditor";
+import HutEditor from "../Info/HutEditor";
 import { deleteGuideSection } from "@/lib/guideSectionDatabase";
 import AddGuideNotePanel from "../Info/AddGuideNotePanel";
 
@@ -53,6 +54,8 @@ import {
 } from "@/lib/gpxAnalysis";
 import RoutePanel from "../GPX/RoutePanel";
 import { GuideSection } from "@/Types/GuideSection";
+import { Hut } from "@/Types/Hut";
+import { getHutByGuideNoteId } from "@/lib/hutDatabase";
 
 import { GuideNote } from "@/Types/GuideNote";
 
@@ -128,7 +131,8 @@ export default function SwissMap({
 }: Props) {
 
   const {
-  profile
+  profile,
+  loading: profileLoading,
 } = useProfile();
   
   const mapRef = useRef<any>(null);
@@ -149,7 +153,12 @@ export default function SwissMap({
   const [editingSection, setEditingSection] =
     useState<GuideSection | null>(null);
 
-
+  const [editingHutNote, setEditingHutNote] =
+    useState<GuideNote | null>(null);
+  const [editingHut, setEditingHut] =
+    useState<Hut | null>(null);
+  const [hutEditorLoading, setHutEditorLoading] = useState(false);
+  const [hutEditorError, setHutEditorError] = useState<string | null>(null);
 
   const {
     notes: guideNotesState,
@@ -458,8 +467,6 @@ export default function SwissMap({
 
 const handleRouteOverview = () => {
 
-  setSelectedNote(null);
-
   if (!gpxRoute || !mapRef.current)
     return;
 
@@ -551,13 +558,6 @@ const handleRouteNoteFocus = (
 
   const note = item.note;
 
-
-  // Update the open panel if it is already showing
-  if (selectedNote) {
-    setSelectedNote(note);
-  }
-
-
   if (mapRef.current) {
 
     mapRef.current.flyTo({
@@ -593,20 +593,30 @@ const handleRouteNoteSelect = (
 
 };
 
-  const handleMarkerClick = (
-    note:GuideNote
+  const handleMarkerClick = async (
+    note: GuideNote
   ) => {
+    setSelectedSection(null);
+    setEditingNote(null);
+    setEditingSection(null);
+    setEditingHutNote(null);
+    setEditingHut(null);
 
-    if(selectedNote?.id === note.id){
-
-      setSelectedNote(null);
-
-    } else {
-
-      setSelectedNote(note);
-
+    if (note.category === "hut") {
+      try {
+        const hut = await getHutByGuideNoteId(note.id);
+        setSelectedNote({
+          ...note,
+          photos: hut?.photos ?? [],
+          photoUrls: hut?.photoUrls ?? [],
+        });
+        return;
+      } catch (error) {
+        console.error("Error loading Hut photos:", error);
+      }
     }
 
+    setSelectedNote(note);
   };
 
 const focusSection = (section: GuideSection) => {
@@ -637,6 +647,10 @@ const focusSection = (section: GuideSection) => {
 
 const handleSectionClick = (section: GuideSection) => {
   setSelectedNote(null);
+  setEditingNote(null);
+  setEditingSection(null);
+  setEditingHutNote(null);
+  setEditingHut(null);
   setSelectedSection(section);
   focusSection(section);
 };
@@ -648,6 +662,10 @@ useEffect(() => {
   );
   if (section) {
     setSelectedNote(null);
+    setEditingNote(null);
+    setEditingSection(null);
+    setEditingHutNote(null);
+    setEditingHut(null);
     setSelectedSection(section);
     focusSection(section);
   }
@@ -656,6 +674,37 @@ useEffect(() => {
 const canManageRouteSections =
   profile?.role === "admin" ||
   profile?.role === "superadmin";
+
+const canEditKnowledge = [
+  "instructor",
+  "approver",
+  "admin",
+  "superadmin",
+].includes(profile?.role ?? "");
+const handleEditHut = async (note: GuideNote) => {
+  setSelectedSection(null);
+  setEditingNote(null);
+  setEditingSection(null);
+  setSelectedNote(null);
+  setEditingHutNote(note);
+  setEditingHut(null);
+  setHutEditorError(null);
+  setHutEditorLoading(true);
+
+  try {
+    const hut = await getHutByGuideNoteId(note.id);
+    setEditingHut(hut);
+  } catch (error) {
+    console.error("Error loading Hut details:", error);
+    setEditingHutNote(null);
+    setHutEditorError(
+      "The Hut Database is not available yet. The database migration needs to be applied before Hut details can be edited."
+    );
+  } finally {
+    setHutEditorLoading(false);
+  }
+};
+
 
 const handleSectionDelete = async (section: GuideSection) => {
   if (!window.confirm(
@@ -667,6 +716,9 @@ const handleSectionDelete = async (section: GuideSection) => {
     window.alert("The Route Section could not be deleted.");
     return;
   }
+
+  const photosToDelete = (section.photos ?? []).filter(photo => photo && !photo.startsWith("http") && !photo.startsWith("/images/"));
+  if (photosToDelete.length > 0) await deleteGuideNotePhotos(photosToDelete);
 
   setSelectedSection(null);
   onRouteSectionDeleted?.(section.id);
@@ -1002,6 +1054,10 @@ const handleSectionDelete = async (section: GuideSection) => {
 
         }}
 
+        onEditHut={handleEditHut}
+        hutPhotoUrls={selectedNote?.category === "hut" ? selectedNote.photoUrls ?? [] : undefined}
+        canEditKnowledge={canEditKnowledge}
+
 
         onDelete={async (id)=>{
 
@@ -1024,6 +1080,84 @@ const handleSectionDelete = async (section: GuideSection) => {
 
 
 
+
+
+      {editingHutNote && !hutEditorLoading && !profileLoading && (
+        <HutEditor
+          guideNoteId={editingHutNote.id}
+          guideNoteTitle={editingHutNote.title}
+          existingHut={editingHut}
+          updatedBy={profile?.name}
+          userRole={profile?.role}
+          onSubmittedForApproval={() => {
+            setEditingHutNote(null);
+            setEditingHut(null);
+            window.alert("Hut changes submitted for approval.");
+          }}
+          onCancel={() => {
+            setEditingHutNote(null);
+            setEditingHut(null);
+          }}
+          onDeleted={() => {
+            if (editingHutNote) {
+              setGuideNotesState(current => current.filter(note => note.id !== editingHutNote.id));
+            }
+            setSelectedNote(null);
+            setEditingHutNote(null);
+            setEditingHut(null);
+          }}
+          onSaved={hut => {
+            setEditingHut(hut);
+
+            if (editingHutNote) {
+              const updatedNote = {
+                ...editingHutNote,
+                title: hut.name,
+                photos: hut.photos ?? [],
+                photoUrls: hut.photoUrls ?? hut.photos ?? [],
+                updatedAt: hut.updatedAt,
+                updatedBy: hut.updatedBy ?? editingHutNote.updatedBy,
+              };
+
+              setGuideNotesState(current =>
+                current.map(note =>
+                  note.id === editingHutNote.id ? updatedNote : note
+                )
+              );
+            }
+
+            setEditingHutNote(null);
+          }}
+        />
+      )}
+
+      {hutEditorLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+          <div className="rounded-lg bg-white px-5 py-4 text-sm font-semibold text-slate-800 shadow-xl">
+            Loading Hut details…
+          </div>
+        </div>
+      )}
+
+      {hutEditorError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+            <h2 className="mb-2 text-lg font-bold text-slate-900">
+              Hut Database unavailable
+            </h2>
+            <p className="text-sm leading-6 text-slate-700">
+              {hutEditorError}
+            </p>
+            <button
+              type="button"
+              onClick={() => setHutEditorError(null)}
+              className="mt-5 w-full rounded-lg bg-slate-800 px-4 py-3 font-semibold text-white hover:bg-slate-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
 
       <AddGuideNotePanel
@@ -1337,6 +1471,7 @@ const handleSectionDelete = async (section: GuideSection) => {
               <ToggleSwitch checked={filters.sections} onChange={() => setFilters(current => ({ ...current, sections: !current.sections }))} label="🟧 Route Sections" />
               <ToggleSwitch checked={filters.water} onChange={() => setFilters(current => ({ ...current, water: !current.water }))} label="💧 Water" />
               <ToggleSwitch checked={filters.cattle} onChange={() => setFilters(current => ({ ...current, cattle: !current.cattle }))} label="🐄 Cattle" />
+              <ToggleSwitch checked={filters.guardian_dog} onChange={() => setFilters(current => ({ ...current, guardian_dog: !current.guardian_dog }))} label="🐕 Guardian Dogs" />
               <ToggleSwitch checked={filters.hazard} onChange={() => setFilters(current => ({ ...current, hazard: !current.hazard }))} label="⚠️ Hazards" />
               <ToggleSwitch checked={filters.hut} onChange={() => setFilters(current => ({ ...current, hut: !current.hut }))} label="🛖 Huts" />
               <ToggleSwitch checked={filters.cafe} onChange={() => setFilters(current => ({ ...current, cafe: !current.cafe }))} label="☕ Cafés" />
@@ -1479,10 +1614,12 @@ const handleSectionDelete = async (section: GuideSection) => {
         </div>
       )}
 
-      <AddGuideNoteButton
+      {canEditKnowledge && (
+              <AddGuideNoteButton
         active={addingNote}
         onClick={handleAddKnowledge}
       />
+      )}
 
 
     </>

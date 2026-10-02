@@ -20,7 +20,7 @@ import CollapsibleSection from "../UI/CollapsibleSection";
 import ToggleSwitch from "../UI/ToggleSwitch";
 
 import DataSources from "../UI/DataSources";
-import DeletionRequestsPanel from "../Info/DeletionRequestsPanel";
+import UpdateRequestsPanel from "../Info/UpdateRequestsPanel";
 import { deleteGuideSection, GUIDE_SECTION_COLORS } from "@/lib/guideSectionDatabase";
 import { deleteRouteLibraryRoute } from "@/lib/routeLibraryDatabase";
 
@@ -106,7 +106,7 @@ export default function Sidebar({
     profile?.role === "admin" ||
     profile?.role === "superadmin";
 
-  const canReviewDeletions =
+  const canReviewRequests =
     profile?.role === "approver" ||
     profile?.role === "admin" ||
     profile?.role === "superadmin";
@@ -233,6 +233,7 @@ export default function Sidebar({
           <ToggleSwitch checked={filters.sections} onChange={() => toggle("sections")} label="🟧 Route Sections" />
           <ToggleSwitch checked={filters.water} onChange={() => toggle("water")} label="💧 Water" />
           <ToggleSwitch checked={filters.cattle} onChange={() => toggle("cattle")} label="🐄 Cattle" />
+          <ToggleSwitch checked={filters.guardian_dog} onChange={() => toggle("guardian_dog")} label="🐕 Guardian Dogs" />
           <ToggleSwitch checked={filters.hazard} onChange={() => toggle("hazard")} label="⚠️ Hazards" />
           <ToggleSwitch checked={filters.hut} onChange={() => toggle("hut")} label="🛖 Huts" />
           <ToggleSwitch checked={filters.cafe} onChange={() => toggle("cafe")} label="☕ Cafés" />
@@ -287,7 +288,7 @@ export default function Sidebar({
         )}
       </CollapsibleSection>
 
-      {(canManageRouteSections || canReviewDeletions) && (
+      {(canManageRouteSections || canReviewRequests) && (
         <>
           <div className="my-4 border-t border-slate-300" />
 
@@ -479,9 +480,9 @@ export default function Sidebar({
             </CollapsibleSection>
           )}
 
-          {canReviewDeletions && (
-            <CollapsibleSection title="🗑️ Deletion Requests">
-              <DeletionRequestsPanel />
+          {canReviewRequests && (
+            <CollapsibleSection title="📋 Update Requests">
+              <UpdateRequestsPanel userRole={profile?.role} />
             </CollapsibleSection>
           )}
         </>

@@ -190,97 +190,55 @@ export async function deleteGuideNote(
   id: number,
   reason?: string
 ): Promise<boolean> {
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    console.error(
-      "Unable to identify the signed-in user for deletion request:",
-      userError
-    );
+    console.error("Unable to identify the signed-in user for update request:", userError);
     return false;
   }
 
-  const { data: existingRequest, error: existingRequestError } =
-    await supabase
-      .from("guide_note_deletion_requests")
-      .select("id")
-      .eq("guide_note_id", id)
-      .eq("requested_by", user.id)
-      .eq("status", "pending")
-      .maybeSingle();
+  const { data: existingRequest, error: existingRequestError } = await supabase
+    .from("update_requests")
+    .select("id")
+    .eq("request_type", "delete")
+    .eq("guide_note_id", id)
+    .eq("requested_by", user.id)
+    .eq("status", "pending")
+    .maybeSingle();
 
   if (existingRequestError) {
-    console.error(
-      "Unable to check for an existing deletion request:",
-      JSON.stringify(existingRequestError, null, 2)
-    );
+    console.error("Unable to check for an existing update request:", existingRequestError);
     return false;
   }
 
-  if (existingRequest) {
-    return true;
-  }
+  if (existingRequest) return true;
 
-  const { data: note, error: noteError } = await supabase
-    .from("guide_notes")
-    .select("title")
-    .eq("id", id)
-    .single();
-
-  if (noteError || !note) {
-    console.error(
-      "Unable to load guide note for deletion request:",
-      JSON.stringify(noteError, null, 2)
-    );
-    return false;
-  }
-
-  const { error } =
-    await supabase
-      .from("guide_note_deletion_requests")
-      .insert({
-        guide_note_id: id,
-        guide_note_title: note.title,
-        requested_by: user.id,
-        reason: reason ?? null,
-        status: "pending",
-      });
+  const { error } = await supabase
+    .from("update_requests")
+    .insert({
+      request_type: "delete",
+      guide_note_id: id,
+      requested_by: user.id,
+      reason: reason ?? null,
+      status: "pending",
+    });
 
   if (error) {
-
-    console.error(
-      "Error requesting guide note deletion:",
-      JSON.stringify(error, null, 2)
-    );
-
+    console.error("Error requesting guide note deletion:", error);
     return false;
-
   }
 
   return true;
-
 }
 
-
-export async function hasPendingGuideNoteDeletionRequest(
-  id: number
-): Promise<boolean> {
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return false;
-  }
+export async function hasPendingGuideNoteDeletionRequest(id: number): Promise<boolean> {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) return false;
 
   const { data, error } = await supabase
-    .from("guide_note_deletion_requests")
+    .from("update_requests")
     .select("id")
+    .eq("request_type", "delete")
     .eq("guide_note_id", id)
     .eq("requested_by", user.id)
     .eq("status", "pending")
@@ -288,89 +246,67 @@ export async function hasPendingGuideNoteDeletionRequest(
     .maybeSingle();
 
   if (error) {
-    console.error(
-      "Error checking guide note deletion request:",
-      JSON.stringify(error, null, 2)
-    );
+    console.error("Error checking update request:", error);
     return false;
   }
 
   return !!data;
 }
 
-
 export async function getPendingGuideNoteDeletionRequests() {
   const { data, error } = await supabase
-    .from("guide_note_deletion_requests")
-.select("id, guide_note_id, guide_note_title, requested_by, requested_at, reason, status")
+    .from("update_requests")
+    .select("id, guide_note_id, requested_by, requested_at, reason, status")
+    .eq("request_type", "delete")
     .eq("status", "pending")
     .order("requested_at", { ascending: true });
 
   if (error) {
-    console.error(
-      "Error loading guide note deletion requests:",
-      JSON.stringify(error, null, 2)
-    );
+    console.error("Error loading update requests:", error);
     return [];
   }
 
-  if (!data || data.length === 0) {
-    return [];
-  }
-
-  return data.map(request => ({
+  return (data ?? []).map(request => ({
     id: request.id,
     guideNoteId: request.guide_note_id,
     requestedBy: request.requested_by,
     requestedAt: request.requested_at,
     reason: request.reason,
     status: request.status,
-    noteTitle: request.guide_note_title ?? "Unknown knowledge item",
+    noteTitle: "Knowledge item",
   }));
 }
-
 
 export async function approveGuideNoteDeletion(
   requestId: number,
   reviewComment?: string
 ): Promise<boolean> {
-  const { error } = await supabase.rpc(
-    "approve_guide_note_deletion",
-    {
-      request_id: requestId,
-      review_comment: reviewComment ?? null,
-    }
-  );
+  const { error } = await supabase.rpc("review_update_request", {
+    request_id: requestId,
+    decision: "approved",
+    comment: reviewComment ?? null,
+  });
 
   if (error) {
-    console.error(
-      "Error approving guide note deletion:",
-      JSON.stringify(error, null, 2)
-    );
+    console.error("Error approving update request:", error);
     return false;
   }
 
   return true;
 }
 
-
 export async function rejectGuideNoteDeletion(
   requestId: number,
   reviewComment?: string
 ): Promise<boolean> {
-  const { error } = await supabase.rpc(
-    "reject_guide_note_deletion",
-    {
-      request_id: requestId,
-      review_comment: reviewComment ?? null,
-    }
-  );
+  const { error } = await supabase.rpc("review_update_request", {
+    request_id: requestId,
+    decision: "rejected",
+    comment: reviewComment ?? null,
+  });
 
   if (error) {
-    console.error(
-      "Error rejecting guide note deletion:",
-      JSON.stringify(error, null, 2)
-    );
+    console.error("Error rejecting update request:", error);
     return false;
   }
 
