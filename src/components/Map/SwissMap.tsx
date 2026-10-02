@@ -3,6 +3,7 @@
 import {
   useProfile
 } from "@/context/ProfileContext";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   useState,
@@ -134,6 +135,7 @@ export default function SwissMap({
   profile,
   loading: profileLoading,
 } = useProfile();
+  const { logout } = useAuth();
   
   const mapRef = useRef<any>(null);
 
@@ -1437,7 +1439,7 @@ const handleSectionDelete = async (section: GuideSection) => {
       </button>
 
       <div
-        className={`fixed bottom-0 left-4 right-4 z-40 max-h-[70vh] overflow-hidden rounded-t-2xl border border-b-0 border-slate-300 bg-white shadow-2xl transition-transform duration-300 md:hidden ${mobileLayersOpen ? "translate-y-0" : "translate-y-full"}`}
+        className={`fixed bottom-0 left-4 right-4 z-40 flex max-h-[70vh] flex-col overflow-hidden rounded-t-2xl border border-b-0 border-slate-300 bg-white shadow-2xl transition-transform duration-300 md:hidden ${mobileLayersOpen ? "translate-y-0" : "translate-y-full"}`}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
           <h2 className="text-lg font-bold text-slate-900">Map Layers</h2>
@@ -1451,7 +1453,7 @@ const handleSectionDelete = async (section: GuideSection) => {
           </button>
         </div>
 
-        <div className="max-h-[calc(70vh-65px)] overflow-y-auto p-5">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div>
             <button
               type="button"
@@ -1564,6 +1566,24 @@ const handleSectionDelete = async (section: GuideSection) => {
           </div>
 
 
+        </div>
+
+        <div className="shrink-0 border-t border-slate-200 bg-white px-5 py-4">
+          <div className="mb-3 text-center text-sm text-slate-700">
+            <div className="font-medium">{profile?.name ?? "Signed in"}</div>
+            <div className="text-xs text-slate-500 capitalize">{profile?.role ?? ""}</div>
+          </div>
+
+          <button
+            type="button"
+            onClick={async () => {
+              await logout();
+              window.location.href = "/login";
+            }}
+            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-800 hover:bg-slate-100"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
